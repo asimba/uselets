@@ -15,3 +15,13 @@ _Требования (зависимости):_ Windows Firewall, PowerShell
 _Требования (зависимости):_ [7-Zip](https://www.7-zip.org/)  
 _Архив 7z:_ ```for /d %f in (*) do 7z a -t7z -ms=on -m0=LZMA2 -mx9 -mmt=4 -scsUTF-8 -ssc "%~pnf.7z" "%~pnxf"```  
 _Архив zip:_ ```for /d %f in (*) do 7z a -tzip -m0=Deflate -mx9 "%~pnxf.zip" "%~pnxf"```  
+#### Работа с документами.  
+---  
+- *Разбиение PDF-файла на отдельные страницы (Windows).*  
+_Требования (зависимости):_ [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/) (PDFtk free)  
+```pdftk <имя_файла> burst```  
+_Пример:_```pdftk source.pdf burst```  
+- *Склеивание PDF-файла из отдельных файлов страниц в текущей директории (Windows).*  
+_Требования (зависимости):_ [qpdf](https://github.com/qpdf/qpdf/releases)  
+```qpdf --empty <имя_файла_результата> --pages *.pdf 1-z --```  
+_Пример:_```qpdf --empty destination.pdf --pages *.pdf 1-z --```  
