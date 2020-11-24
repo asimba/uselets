@@ -5,6 +5,9 @@
 - *Синхронизация времени с удалённым сервером из командной строки (Windows).*  
 ```net time \\<сервер> /set /y```  
 _Пример:_ ```net time \\192.168.0.1 /set /y```  
+- *Блокирование доступа в интернет для всех программ, при сохранении доступа в локальную сеть (Windows).*  
+_Требования (зависимости):_ Windows Firewall, PowerShell  
+```New-NetFirewallRule -DisplayName "block-internet" -Direction Outbound -RemoteAddress Internet -Action Block```  
 ---  
 #### Работа с файлами.  
 ---  
