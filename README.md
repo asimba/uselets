@@ -26,3 +26,7 @@ _Пример:_```pdftk source.pdf burst```
 _Требования (зависимости):_ [qpdf](https://github.com/qpdf/qpdf/releases)  
 ```qpdf --empty <имя_файла_результата> --pages *.pdf 1-z --```  
 _Пример:_```qpdf --empty destination.pdf --pages *.pdf 1-z --```  
+- **Пакетное преобразование (сжатие) PDF-файлов (отдельных файлов страниц!) в текущей директории в чёрно-белые с установкой разрешения 200DPI (Windows).**  
+_Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [python](https://www.python.org/), [img2pdf](https://pypi.org/project/img2pdf/)  
+```for %f in (*.pdf) do convert.exe -density 200 -colorspace Gray -normalize -compress group4 "%~nxf" "%~nf.tif"```  
+```for %f in (*.tif) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
