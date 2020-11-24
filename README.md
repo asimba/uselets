@@ -10,5 +10,5 @@ _Пример:_ ```net time \\192.168.0.1 /set /y```
 ---  
 - *Архивация всех директорий в текущей директории из командной строки (Windows).*  
 _Требования (зависимости):_ [7-Zip](https://www.7-zip.org/)  
-_Архив 7z:_ ```for %f in (*.pdf) do 7z a -t7z -ms=on -m0=LZMA2 -mx9 -mmt=4 -scsUTF-8 -ssc "%~pnf.7z" "%~pnxf"```  
+_Архив 7z:_ ```for /d %f in (*) do 7z a -t7z -ms=on -m0=LZMA2 -mx9 -mmt=4 -scsUTF-8 -ssc "%~pnf.7z" "%~pnxf"```  
 _Архив zip:_ ```for /d %f in (*) do 7z a -tzip -m0=Deflate -mx9 "%~pnxf.zip" "%~pnxf"```  
