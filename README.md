@@ -58,3 +58,9 @@ _Требования (зависимости):_ [ImageMagick](https://imagemagi
 ```for %f in (*.pdf) do convert -density 200 -compress none "%~pnxf" ppm:- | cjpeg-static.exe -sample 2x2 -dct int -optimize -progressive -quality 75 -outfile "%~pnf.jpg"```  
 ```for %f in (*.jpg) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
 _Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90; хорошо подходит для больших сканированных изображений (размер файлов может быть уменьшен в несколько раз, но с векторными файлами ситуация обратная)._  
+- **Пакетное преобразование DOCX-файлов в текущей директории в формат PDF (Windows).**  
+_Требования (зависимости):_ [Microsoft Office 2013 или новее](https://www.office.com/), [docx2pdf.js](https://github.com/asimba/uselets/tree/main/tools/docx2pdf)  
+```for %f in (*.docx) do cscript //nologo "docx2pdf.js" "%~pnxf"``` или ```docx2pdf.cmd```  
+- **Пакетное преобразование RTF-файлов в текущей директории в формат PDF (Windows).**  
+_Требования (зависимости):_ [Microsoft Office 2013 или новее](https://www.office.com/), [docx2pdf.js](https://github.com/asimba/uselets/tree/main/tools/docx2pdf)  
+```for %f in (*.rtf) do cscript //nologo "rtf2pdf.js" "%~nxf""``` или ```rtf2pdf.cmd```  
