@@ -5,7 +5,7 @@
 - **Синхронизация времени с удалённым сервером из командной строки (Windows).**  
 ```net time \\<сервер> /set /y```  
 _Пример:_ ```net time \\192.168.0.1 /set /y```  
-- *Блокирование доступа в интернет для всех программ, при сохранении доступа в локальную сеть (Windows).*  
+- **Блокирование доступа в интернет для всех программ, при сохранении доступа в локальную сеть (Windows).**  
 _Требования (зависимости):_ Windows Firewall, PowerShell  
 ```New-NetFirewallRule -DisplayName "block-internet" -Direction Outbound -RemoteAddress Internet -Action Block```  
 ---  
@@ -55,7 +55,7 @@ _Требования (зависимости):_ [ImageMagick](https://imagemagi
 ```for %f in (*.tif) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
 - **Пакетное преобразование (сжатие) PDF-файлов (отдельных файлов страниц!) в текущей директории с установкой разрешения 200DPI (Windows).**  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [python](https://www.python.org/), [img2pdf](https://pypi.org/project/img2pdf/), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
-```for %f in (*.pdf) do convert -density 200 -compress none "%~pnxf" ppm:- | cjpeg-static.exe -sample 2x2 -dct int -optimize -progressive -quality 75 -outfile "%~pnf.jpg"```  
+```for %f in (*.pdf) do convert -density 200 -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 75 -outfile "%~pnf.jpg"```  
 ```for %f in (*.jpg) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
 _Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90; хорошо подходит для больших сканированных изображений (размер файлов может быть уменьшен в несколько раз, но с векторными файлами ситуация обратная)._  
 - **Пакетное преобразование DOCX-файлов в текущей директории в формат PDF (Windows).**  
@@ -64,3 +64,8 @@ _Требования (зависимости):_ [Microsoft Office 2013 или �
 - **Пакетное преобразование RTF-файлов в текущей директории в формат PDF (Windows).**  
 _Требования (зависимости):_ [Microsoft Office 2013 или новее](https://www.office.com/), [docx2pdf.js](https://github.com/asimba/uselets/tree/main/tools/docx2pdf)  
 ```for %f in (*.rtf) do cscript //nologo "rtf2pdf.js" "%~nxf""``` или ```rtf2pdf.cmd```  
+- **Пакетное изменение размеров файлов изображений в текущей директории (Windows).**  
+_Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
+```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "<ширина>>" -distort Resize ">x<высота>" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
+_Пример:_```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "1280>" -distort Resize ">x960" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
+_Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90._  
