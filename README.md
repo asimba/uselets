@@ -64,6 +64,11 @@ _Требования (зависимости):_ [Microsoft Office 2013 или �
 - **Пакетное преобразование RTF-файлов в текущей директории в формат PDF (Windows).**  
 _Требования (зависимости):_ [Microsoft Office 2013 или новее](https://www.office.com/), [rtf2pdf.js](https://github.com/asimba/uselets/tree/main/tools/rtf2pdf)  
 ```for %f in (*.rtf) do cscript //nologo "rtf2pdf.js" "%~nxf""``` или ```rtf2pdf.cmd```  
+- **Пакетное удаление фона в PDF-файлах (отдельных файлах страниц!) в текущей директории с установкой разрешения 300DPI (Windows).**  
+_Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [python](https://www.python.org/), [img2pdf](https://pypi.org/project/img2pdf/), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
+```for %f in (*.pdf) do convert -density 300 -fuzz 10%% -fill white -opaque white -units pixelsperinch -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf.jpg"```  
+```for %f in (*.jpg) do img2pdf.py -d 300 -o "%~pnf.pdf" "%~pnxf"```  
+_Примечание: значение параметра "fuzz" соответствует уровню "фонового шума"._  
 - **Пакетное изменение размеров файлов изображений в текущей директории (Windows).**  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
 ```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "<ширина>>" -distort Resize ">x<высота>" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
