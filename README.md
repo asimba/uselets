@@ -24,8 +24,56 @@ fsck -yvf $vg_group/$lvm_volume-snap
 dump -0uf $backup_path/$lvm_volume.dump $vg_group/$lvm_volume-snap
 lvremove -f $vg_group/$lvm_volume-snap
 xz -9 $backup_path/$lvm_volume.dump
-```
+```  
 _Примечание: "backup_path" - директория для хранения архива, "vg_group" - группа томов, "lvm_volume" - наименование архивируемого тома. Восстановление осуществляется аналогичным образом при помощи комады "restore"._  
+- **Создание архивированного образа тома LVM для последующего дифференциального резервирования (Linux).**  
+_Требования (зависимости):_ rdiff, lz4  
+```
+#!/bin/bash
+backup_path=./system.images
+vg_group=/dev/system
+lvm_volume=srv1c-disk
+if [ -f $backup_path/$lvm_volume ]; then
+   cat  $backup_path/$lvm_volume | lz4 -z -1 -BD > $backup_path/$lvm_volume.before-`date +%Y-%m-%d`.lz4
+   rm -f $backup_path/$lvm_volume
+fi
+if [ -f $backup_path/$lvm_volume.signature ]; then
+   cat  $backup_path/$lvm_volume.signature | lz4 -z -1 -BD > $backup_path/$lvm_volume.before-`date +%Y-%m-%d`.signature.lz4
+   rm -f $backup_path/$lvm_volume.signature
+fi
+lvremove -f $vg_group/$lvm_volume-snap
+lvcreate -L16G -s -n $lvm_volume-snap $vg_group/$lvm_volume
+dd if=$vg_group/$lvm_volume-snap of=$backup_path/$lvm_volume bs=64M
+rdiff -b 262144 -I 67108864 -O 67108864 -- signature $backup_path/$lvm_volume $backup_path/$lvm_volume.signature
+lvremove -f $vg_group/$lvm_volume-snap
+```  
+_Примечание: "backup_path" - директория для хранения архива, "vg_group" - группа томов, "lvm_volume" - наименование архивируемого тома. Способ подходит для разделов фиртуальных машин (параметры блоков "rdiff" подобраны для тома размером 256 GiB)._  
+- **Создание дифференциальной резервной копии для архивированного образа тома LVM (см.выше) (Linux).**  
+_Требования (зависимости):_ rdiff, lz4  
+```
+#!/bin/bash
+backup_path=./system.images
+vg_group=/dev/system
+lvm_volume=srv1c-disk
+# удаление дельта файлов старше 60 дней
+# find $backup_path -name "*.delta.*" -type f -mtime +60 -exec rm -f {} \;
+lvremove -f $vg_group/$lvm_volume-snap
+lvcreate -L16G -s -n $lvm_volume-snap $vg_group/$lvm_volume
+rdiff -b 262144 -I 67108864 -O 67108864 -- delta $backup_path/$lvm_volume.signature $vg_group/$lvm_volume-snap - | lz4 -z -1 -BD > $backup_path/$lvm_volume.`date +%Y-%m-%d-%H:%M:%S`.delta.lz4
+lvremove -f $vg_group/$lvm_volume-snap
+```  
+_Примечание: "backup_path" - директория для хранения архива, "vg_group" - группа томов, "lvm_volume" - наименование архивируемого тома. Способ подходит для разделов фиртуальных машин (параметры блоков "rdiff" подобраны для тома размером 256 GiB)._  
+- **Восстановление дифференциальной резервной копии архивированного образа тома LVM (см.выше) (Linux).**  
+_Требования (зависимости):_ rdiff, lz4  
+```
+#!/bin/bash
+backup_path=./system.images
+lvm_volume=srv1c-disk
+time_stamp=2019-10-02-14:50:18
+lz4cat $backup_path/$lvm_volume.$time_stamp.delta.lz4 | rdiff -b 262144 -I 67108864 -O 67108864 -- patch $backup_path/$lvm_volume - $backup_path/$lvm_volume.new
+dd of=$vg_group/$lvm_volume if=$backup_path/$lvm_volume.new bs=64M
+```  
+_Примечание: "backup_path" - директория хранения архива, "lvm_volume" - наименование тома, "time_stamp" - метка времени восстанавливаемой копии.  
 - **Очистка журнала USN NTFS из командной строки (Windows).**  
 ```fsutil usn deletejournal /n c:```  
 ---  
