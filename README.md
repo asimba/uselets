@@ -11,6 +11,21 @@ _Требования (зависимости):_ Windows Firewall, PowerShell
 ---  
 #### Работа с дисками/разделами/файловыми системами.  
 ---  
+- **Создание архивированного образа файловой системы EXT3/EXT4, расположенной на томе LVM (Linux).**  
+_Требования (зависимости):_ xz-utils, dump  
+```
+#!/bin/bash
+backup_path=./
+vg_group=/dev/system
+lvm_volume=host-root
+lvremove -f $vg_group/$lvm_volume-snap
+lvcreate -L4G -s -n $lvm_volume-snap $vg_group/$lvm_volume
+fsck -yvf $vg_group/$lvm_volume-snap
+dump -0uf $backup_path/$lvm_volume.dump $vg_group/$lvm_volume-snap
+lvremove -f $vg_group/$lvm_volume-snap
+xz -9 $backup_path/$lvm_volume.dump
+```
+_Примечание: "backup_path" - директория для хранения архива, "vg_group" - группа томов, "lvm_volume" - наименование архивируемого тома. Восстановление осуществляется аналогичным образом при помощи комады "restore"._  
 - **Очистка журнала USN NTFS из командной строки (Windows).**  
 ```fsutil usn deletejournal /n c:```  
 ---  
@@ -69,6 +84,16 @@ _Требования (зависимости):_ [ImageMagick](https://imagemagi
 ```for %f in (*.pdf) do convert -density 300 -fuzz 10%% -fill white -opaque white -units pixelsperinch -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf.jpg"```  
 ```for %f in (*.jpg) do img2pdf.py -d 300 -o "%~pnf.pdf" "%~pnxf"```  
 _Примечание: значение параметра "fuzz" соответствует уровню "фонового шума"._  
+- **Удаление аннотаций из PDF-файлов (Linux).**  
+_Требования (зависимости):_ pdftk
+```pdftk <имя_исходного_файла> output - uncompress | sed '/^\/Annots/d' | pdftk - output <имя_результирующего_файла> compress```  
+_Пример:_```pdftk in.pdf output - uncompress | sed '/^\/Annots/d' | pdftk - output out.pdf compress```  
+_Примечание: обычно используется для удаления комментариев "AutoCAD SHX"._  
+- **Удаление аннотаций из PDF-файлов (Windows).**  
+_Требования (зависимости):_ [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/) (PDFtk free), [sed](http://gnuwin32.sourceforge.net/packages/sed.htm), [stripannot](https://github.com/asimba/uselets/tree/main/tools/stripannot)  
+```stripannot.cmd <имя_исходного_файла> <имя_результирующего_файла>```  
+_Пример:_```stripannot.cmd in.pdf out.pdf```  
+_Примечание: обычно используется для удаления комментариев "AutoCAD SHX"._  
 - **Пакетное изменение размеров файлов изображений в текущей директории (Windows).**  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
 ```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "<ширина>>" -distort Resize ">x<высота>" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
