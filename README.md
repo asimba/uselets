@@ -163,3 +163,23 @@ _Требования (зависимости):_ [ImageMagick](https://imagemagi
 ```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "<ширина>>" -distort Resize ">x<высота>" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
 _Пример:_```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "1280>" -distort Resize ">x960" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
 _Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90._  
+- **Создание страниц с миниатюрами файлов изображений для всех поддиректорий в текущей директории (Windows).**  
+_Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php)  
+```for /d %d in (*) do montage -limit thread 6 -limit file 64 -limit memory 8192Mib -limit map 16384MiB -define registry:temporary-path=..\temp -pointsize 10 -label "%wx%h\n%t" -tile 10x10 -geometry 164x162+1+0 -density 200 -units pixelsperinch "%~npxd\*.png" "..\thumbs\%~nxd.png"```  
+_Примечание: параметр "temporary-path" - путь к директории для хранения временных файлов, параметр "tile" - количество миниатюр по горизонтали и вертикали, страницы в данном примере генерируются для "png" файлов, результат размещается в директории "..\thumbs\%~nxd.png"_  
+- **Пакетная генерация файлов скринлистов для всех "mp4" файлов в текущей директории (Windows) (пример).**  
+_Требования (зависимости):_ [movie thumbnailer (mtn)](http://moviethumbnail.sourceforge.net/index.en.html)  
+```for %f in (*.mp4) do mtn -c 4 -r 4 -j 100 -o .jpg -P -w 1200 -Z -D6 "%~pnxf"```  
+- **Пакетное преобразование видео файлов (Windows) (пример).**  
+_Требования (зависимости):_ [ffmpeg](https://ffmpeg.org/), [GPAC MP4Box](https://www.videohelp.com/software/MP4Box), [movie thumbnailer (mtn)](http://moviethumbnail.sourceforge.net/index.en.html)  
+```
+@echo off
+for %%f in (in\*.wmv,in\*.avi,in\*.mp4,in\*.mkv,in\*.flv) do (
+echo "%%~dpnxf"
+ffmpeg -i "%%~dpnxf" -hide_banner -an -filter_complex "scale=1280:720:flags=lanczos,setdar=16/9,setsar=1/1,unsharp,hqdn3d=2:1:2" -c:v libx264 -b:v 2000k -x264opts frameref=15:fast_pskip=0 -pass 1 -passlogfile tmp\mp4 -preset slow -threads 4 -f rawvideo -y -r film NUL
+ffmpeg -i "%%~dpnxf" -hide_banner -c:a aac -b:a 128k -ar 44100 -filter_complex "scale=1280:720:flags=lanczos,setdar=16/9,setsar=1/1,unsharp,hqdn3d=2:1:2" -c:v libx264 -b:v 2000k -x264opts frameref=15:fast_pskip=0 -pass 2 -passlogfile tmp\mp4 -preset slow -threads 4 -y -r film "tmp\out.mp4"
+mp4box -isma -inter 500 -add "tmp\out.mp4" -new "out\%%~nf.mp4"
+mtn -c 4 -r 4 -j 100 -o .jpg -O out -P -w 1200 -Z -D6 "out\%%~nf.mp4"
+del /q tmp\tmp.h264 tmp\mp4-0.log tmp\mp4-0.log.mbtree tmp\out.mp4
+)
+```  
