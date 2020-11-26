@@ -100,6 +100,7 @@ _Требования (зависимости):_ PowerShell, [cleartemp.ps1](htt
 ```powershell -ExecutionPolicy Bypass -command "cleartemp.ps1"```  
 ##### Получение информации о материнской плате из командной строки (Windows).  
 ```wmic baseboard get product,Manufacturer,version,serialnumber```  
+
 ---  
 #### Работа с файлами.  
 ---  
