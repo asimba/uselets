@@ -2,6 +2,29 @@
 ---  
 ### Работа с сетью.  
 ---  
+#### Конфигурация bond-интерфейса без поддержки со стороны коммутатора (Linux) (пример).  
+```
+source /etc/network/interfaces.d/*
+auto lo
+iface lo inet loopback
+auto bond0
+iface bond0 inet manual
+    slaves eno1 eno2
+    bond-mode balance-alb
+    bond-miimon 100
+    bond-downdelay 200
+    bond-updelay 200
+auto xenbr0
+iface xenbr0 inet static
+        address 192.168.1.8/24
+        gateway 192.168.0.1
+        dns-nameservers 192.168.0.1 8.8.8.8 8.8.4.4 77.88.8.8 77.88.8.1 1.1.1.1
+        bridge_ports bond0
+        bridge_stp off
+        bridge_waitport 0
+        bridge_fd 0
+```  
+_Примечание: настройка для использования в режиме моста с гипервизором Xen; файл "/etc/network/interfaces"._  
 #### Синхронизация времени с удалённым сервером из командной строки (Windows).  
 ```net time \\<сервер> /set /y```  
 _Пример:_ ```net time \\192.168.0.1 /set /y```  
@@ -42,6 +65,12 @@ _Примечание: "bpath" - параметр указывает на пут
 ---  
 ### Работа с дисками/разделами/файловыми системами.  
 ---  
+#### Команды LVM, которые стоит помнить (см. man) (Linux).  
+- pvs , pvcreate , pvremove  
+- vgs , vgcreate , vgremove  
+- lvs , lvcreate , lvremove, lvextend  
+- vgcfgbackup -f ./lvm-structure-%s.txt
+- vgcfgrestore -f ... {VG}
 #### Создание архивированного образа файловой системы EXT3/EXT4, расположенной на томе LVM (Linux).  
 _Требования (зависимости):_ xz-utils, dump  
 ```
@@ -117,6 +146,127 @@ _Требования (зависимости):_ PowerShell, [cleartemp.ps1](htt
 ---  
 ### Системные операции.  
 ---  
+#### Команды Xen (xl), которые стоит помнить (см. man) (Linux) (примеры).  
+- xl create \<config_file\>  
+- xl destroy \<Domain\>  
+- xl list  
+- xl usbctrl-attach master-host version=3 ports=8  
+- xl usb-list master-host  
+- xl usbdev-attach master-host hostbus=1 hostaddr=3 controller=1 port=1  
+#### Команды Virsh, которые стоит помнить (см. man) (Linux) (примеры).  
+- virsh domxml-from-native xen-xl master-host.cfg > master-host.xml
+- virsh create master-host.xml  
+- virsh define master-host  
+- virsh autostart master-host  
+- virsh autostart master-host --disable  
+- virsh undefine master-host  
+- virsh list  
+- virsh list --all  
+- virsh list --autostart  
+- virsh create master-host  
+- virsh start master-host  
+- virsh shutdown master-host  
+#### Пример конфигурации Xen для паравиртуальной гостевой системы Linux (Linux).  
+```
+name        = 'i-host'
+#для генерации uuid можно использовать  dbus-uuidgen
+#uuid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+bootloader = 'pygrub'
+vcpus       = '1'
+memory      = '1024'
+root        = '/dev/xvda2 ro'
+disk        = [
+                  'phy:/dev/system/i-host-disk,xvda2,w',
+                  'phy:/dev/system/i-host-swap,xvda1,w',
+                  'phy:/dev/storage/i-base,xvda3,w',
+              ]
+vif         = [ 'mac=00:16:3e:0a:ab:53,bridge=xenbr0' ]
+on_poweroff = 'destroy'
+on_reboot   = 'restart'
+on_crash    = 'restart'
+```  
+#### Пример конфигурации Xen для гостевой системы Windows Server 2008 (Linux).  
+```
+type = 'hvm'
+name = 'master-host'
+#для генерации uuid можно использовать  dbus-uuidgen
+#uuid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+xen_platform_pci = 1
+viridian = 1
+memory = 16384
+vcpus = 4
+maxvcpus = 4
+pae=1
+nx=1
+hap=1
+hpet=1
+acpi = 1
+apic = 1
+vif = [ 'mac=00:16:3e:ef:8e:65,ip=192.168.1.1,type=vif,rate=10Gb/s,bridge=xenbr0' ]
+disk = ['phy:/dev/system/master-disk,sda,rw']
+device_model_version = 'qemu-xen'
+boot='c'
+hdtype='ahci'
+localtime=1
+sdl=0
+serial='pty'
+usbdevice='tablet'
+stdvga=1
+vga='stdvga'
+videoram=32
+gfx_passthru=0
+vkb=[ 'backend-type=qemu' ]
+vnc=1
+# IP адрес Dom-0 (host система)
+vnclisten='192.168.1.8'
+vncdisplay=1
+vncpasswd='XXXXXXX'
+on_poweroff = 'destroy'
+on_reboot = 'restart'
+on_crash = 'restart'
+```  
+#### Пример конфигурации Xen для гостевой системы Windows Server 2012 R2 (Linux).  
+```
+type = 'hvm'
+name = 'srv1c-host'
+#для генерации uuid можно использовать  dbus-uuidgen
+#uuid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+xen_platform_pci = 1
+viridian = 1
+memory = 32768
+vcpus = 8
+maxvcpus = 8
+pae=1
+nx=1
+hap=1
+hpet=1
+acpi = 1
+apic = 1
+vif = [ 'mac=00:16:3e:f0:f5:b8,ip=192.168.1.2,type=vif,rate=10Gb/s,bridge=xenbr1' ]
+disk = ['phy:/dev/system/srv1c-disk,hda,rw']
+device_model_version = 'qemu-xen'
+boot='dc'
+hdtype='ide'
+localtime=1
+sdl=0
+serial='pty'
+usb=1
+usbctrl=['type=devicemodel,version=3,ports=8']
+usbdev=['hostbus=1,hostaddr=3,controller=0,port=1',]
+usbdevice='tablet'
+stdvga=1
+vga='stdvga'
+videoram=32
+gfx_passthru=0
+vkb=[ 'backend-type=qemu' ]
+vnc=1
+# IP адрес Dom-0 (host система)
+vnclisten='192.168.1.8'
+vncdisplay=2
+on_poweroff = 'destroy'
+on_reboot = 'restart'
+on_crash = 'restart'
+```  
 #### Очистка всех журналов событий из командной строки (Windows).  
 _Требования (зависимости):_ PowerShell  
 ```wevtutil el | Foreach-Object {wevtutil cl "$_"}```  
