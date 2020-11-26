@@ -153,6 +153,7 @@ _Требования (зависимости):_ PowerShell, [cleartemp.ps1](htt
 - xl usbctrl-attach master-host version=3 ports=8  
 - xl usb-list master-host  
 - xl usbdev-attach master-host hostbus=1 hostaddr=3 controller=1 port=1  
+- xen-create-image --hostname=example-host --memory=1024mb --vcpus=1 --scsi --size=16G --swap=512mb --lvm=system --ip=192.168.0.2 --gateway=192.168.0.1 --netmask=255.255.255.0 --nameserver="192.168.0.1 8.8.8.8"--nodhcp --pygrub --dist=stretch  
 #### Команды Virsh, которые стоит помнить (см. man) (Linux) (примеры).  
 - virsh domxml-from-native xen-xl master-host.cfg > master-host.xml
 - virsh create master-host.xml  
@@ -166,6 +167,9 @@ _Требования (зависимости):_ PowerShell, [cleartemp.ps1](htt
 - virsh create master-host  
 - virsh start master-host  
 - virsh shutdown master-host  
+#### Генерация случайного MAC-адреса для сетевого интерфейса Xen DomU (Linux).  
+_Требования (зависимости):_ [random_mac.py](https://github.com/asimba/uselets/blob/main/tools/xen/random_mac.py)  
+```python ./random_mac.py```  
 #### Пример конфигурации Xen для паравиртуальной гостевой системы Linux (Linux).  
 ```
 name        = 'i-host'
