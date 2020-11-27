@@ -203,6 +203,82 @@ then
   chroot /opt/chroot.samba /usr/local/bin/smbpass $1 $2
 fi
 ```  
+#### Пример дополнительной блокировки потенциально опасного содержимого в почтовом сервисе Exim (Linux).  
+_Требования (зависимости):_ python, ripole, 7z, unace, unrar, сценарий [checkx.py](https://github.com/asimba/uselets/tree/main/tools/checkx)  
+_Инструкция: в конфигурацию Exim требуется внести изменения нижеследующего вида (предварительно разместив сценарий в директории "/usr/local/bin")  
+```
+---------------------------------------------------------------------
+#exim4.conf
+---------------------------------------------------------------------
+system_filter = /etc/exim4/exim.filter
+...
+acl_check_mime:
+#  deny message = Potentially executable content (in .zip). - blocked!
+  warn message = X-SS-Suspicious-Flag: YES
+       condition = ${if match{$mime_filename}{\N(?i)\.zip$\N}}
+       decode = default
+       condition = ${if match{${run{/usr/local/bin/checkx \
+                                    $mime_decoded_filename zip}}}\
+                             {\N(?i)stop\n\N}}
+#  deny message = Potentially executable content (in .gz). - blocked!
+  warn message = X-SS-Suspicious-Flag: YES
+       condition = ${if match{$mime_filename}{\N(?i)\.gz$\N}}
+       decode = default
+       condition = ${if match{${run{/usr/local/bin/checkx \
+                                    $mime_decoded_filename gz}}}\
+                             {\N(?i)stop\n\N}}
+#  deny message = Potentially executable content (in .7z). - blocked!
+  warn message = X-SS-Suspicious-Flag: YES
+       condition = ${if match{$mime_filename}{\N(?i)\.7z$\N}}
+       decode = default
+       condition = ${if match{${run{/usr/local/bin/checkx \
+                                    $mime_decoded_filename 7z}}}\
+                             {\N(?i)stop\n\N}}
+#  deny message = Potentially executable content (in .rar). - blocked!
+  warn message = X-SS-Suspicious-Flag: YES
+       condition = ${if match{$mime_filename}{\N(?i)\.rar$\N}}
+       decode = default
+       condition = ${if match{${run{/usr/local/bin/checkx \
+                                    $mime_decoded_filename rar}}}\
+                             {\N(?i)stop\n\N}}
+#  deny message = Potentially executable content (in .ace). - blocked!
+  warn message = X-SS-Suspicious-Flag: YES
+       condition = ${if match{$mime_filename}{\N(?i)\.ace$\N}}
+       decode = default
+       condition = ${if match{${run{/usr/local/bin/checkx \
+                                    $mime_decoded_filename ace}}}\
+                             {\N(?i)stop\n\N}}
+#  deny message = Potentially executable content (in .docx). - blocked!
+  warn message = X-SS-Suspicious-Flag: YES
+       condition = ${if match{$mime_filename}{\N(?i)\.docx$\N}}
+       decode = default
+       condition = ${if match{${run{/usr/local/bin/checkx \
+                                    $mime_decoded_filename docx}}}\
+                             {\N(?i)stop\n\N}}
+#  deny message = Potentially executable content (in .doc). - blocked!
+  warn message = X-SS-Suspicious-Flag: YES
+       condition = ${if match{$mime_filename}{\N(?i)\.doc$\N}}
+       decode = default
+       condition = ${if match{${run{/usr/local/bin/checkx \
+                                    $mime_decoded_filename doc}}}\
+                             {\N(?i)stop\n\N}}
+#  deny message = Potentially executable content (in .pdf). - blocked!
+  warn message = X-SS-Suspicious-Flag: YES
+       condition = ${if match{$mime_filename}{\N(?i)\.pdf$\N}}
+       decode = default
+       condition = ${if match{${run{/usr/local/bin/checkx \
+                                    $mime_decoded_filename pdf}}}\
+                             {\N(?i)stop\n\N}}
+  warn message = X-SS-Suspicious-Flag: YES
+       condition = ${if match{$mime_filename}{\N(?i)\.(bat|js|pif|cd|com|exe|lnk|reg|vbs|vbe|jse|msi|ocx|dll|sys|cab|hta|ace|gz|z|jar|xz|ps1|bz2|lzh|uue|001|zipx|arj|iso|appx|appxbundle|msix|msixbundle|ade|mde)$\N}}
+---------------------------------------------------------------------
+#exim.filter
+---------------------------------------------------------------------
+if $h_X-SS-Suspicious-Flag: contains "YES" then
+  deliver suspicious@<имя_сервера>
+endif
+```  
+
 #### Синхронизация времени с удалённым сервером из командной строки (Windows).  
 ```net time \\<сервер> /set /y```  
 _Пример:_ ```net time \\192.168.0.1 /set /y```  
