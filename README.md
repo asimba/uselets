@@ -25,6 +25,135 @@ iface xenbr0 inet static
         bridge_fd 0
 ```  
 _Примечание: настройка для использования в режиме моста с гипервизором Xen; файл "/etc/network/interfaces"._  
+#### Команды OpenVPN, которые стоит помнить (см. man) (Linux).  
+- инициализация (генерация ключей)  
+```
+easyrsa init-pki
+easyrsa gen-dh
+easyrsa gen-req <имя_сервера> nopass
+easyrsa sign-req server <имя_сервера>
+openvpn --genkey --secret ta.key
+```  
+- генерация файла отозванных ключей  
+```
+easyrsa gen-crl
+```  
+- добавление пользователя  
+```
+easyrsa gen-req <имя_конфигурации_пользователя> nopass
+easyrsa sign-req client <имя_конфигурации_пользователя>
+```  
+- отзыв сертификата пользователя  
+```
+easyrsa revoke <имя_конфигурации_пользователя>
+easyrsa gen-crl
+```  
+#### Пример (шаблон) конфигурации OpenVPN сервера (Linux).  
+```
+ignore-unknown-option ncp-ciphers
+port 10788
+proto tcp
+#multihome
+#local 192.168.1.1
+dev tun
+user nobody
+group nogroup
+ifconfig-pool-persist ipp-tcp.txt
+server 10.8.3.0 255.255.255.0
+#маршрутизация с другим VPN сервером на этом же хосте
+push "route 10.8.2.0 255.255.255.0"
+topology subnet
+max-clients 2000
+ping 10
+ping-restart 80
+push "ping 10"
+push "ping-restart 60"
+persist-tun
+persist-key
+cipher AES-128-CBC
+ncp-ciphers AES-128-GCM:AES-128-CBC
+auth SHA1
+status-version 2
+script-security 2
+sndbuf 393216
+rcvbuf 393216
+reneg-sec 2592000
+hash-size 1024 1024
+max-routes-per-client 1000
+verb 2
+mute 3
+client-to-client
+replay-window 128
+comp-lzo no
+push "comp-lzo no"
+status      /var/log/openvpn/openvpn-tcp-status.log
+log         /var/log/openvpn/openvpn-tcp.log
+log-append  /var/log/openvpn/openvpn-tcp.log
+crl-verify /etc/openvpn/keys/crl.pem
+<ca>
+-----BEGIN CERTIFICATE-----
+# ключ (ca)
+-----END CERTIFICATE-----
+</ca>
+key-direction 0
+<tls-auth>
+-----BEGIN OpenVPN Static key V1-----
+# ключ (ta)
+-----END OpenVPN Static key V1-----
+</tls-auth>
+<cert>
+-----BEGIN CERTIFICATE-----
+# ключ (cert)
+-----END CERTIFICATE-----
+</cert>
+<key>
+-----BEGIN PRIVATE KEY-----
+# ключ (key)
+-----END PRIVATE KEY-----
+</key>
+<dh>
+-----BEGIN DH PARAMETERS-----
+# ключ (dh)
+-----END DH PARAMETERS-----
+</dh>
+```  
+#### Пример (шаблон) конфигурации OpenVPN клиента (conf/ovpn).  
+```
+client
+dev tun
+dev-type tun
+remote 192.168.1.1 10788 tcp
+nobind
+persist-tun
+cipher AES-128-CBC
+auth SHA1
+verb 2
+mute 3
+push-peer-info
+ping 10
+ping-restart 60
+hand-window 70
+server-poll-timeout 4
+reneg-sec 2592000
+sndbuf 393216
+rcvbuf 393216
+max-routes 1000
+remote-cert-tls server
+comp-lzo no
+key-direction 1
+<ca>
+# ключ (ca)
+</ca>
+<tls-auth>
+# ключ (ta)
+</tls-auth>
+<cert>
+# ключ (cert)
+</cert>
+<key>
+# клиентский ключ (key)
+</key>
+```  
 #### Синхронизация времени с удалённым сервером из командной строки (Windows).  
 ```net time \\<сервер> /set /y```  
 _Пример:_ ```net time \\192.168.0.1 /set /y```  
