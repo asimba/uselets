@@ -217,56 +217,56 @@ acl_check_mime:
   warn message = X-SS-Suspicious-Flag: YES
        condition = ${if match{$mime_filename}{\N(?i)\.zip$\N}}
        decode = default
-       condition = ${if match{${run{/usr/local/bin/checkx \
+       condition = ${if match{${run{/usr/local/bin/checkx.py \
                                     $mime_decoded_filename zip}}}\
                              {\N(?i)stop\n\N}}
 #  deny message = Potentially executable content (in .gz). - blocked!
   warn message = X-SS-Suspicious-Flag: YES
        condition = ${if match{$mime_filename}{\N(?i)\.gz$\N}}
        decode = default
-       condition = ${if match{${run{/usr/local/bin/checkx \
+       condition = ${if match{${run{/usr/local/bin/checkx.py \
                                     $mime_decoded_filename gz}}}\
                              {\N(?i)stop\n\N}}
 #  deny message = Potentially executable content (in .7z). - blocked!
   warn message = X-SS-Suspicious-Flag: YES
        condition = ${if match{$mime_filename}{\N(?i)\.7z$\N}}
        decode = default
-       condition = ${if match{${run{/usr/local/bin/checkx \
+       condition = ${if match{${run{/usr/local/bin/checkx.py \
                                     $mime_decoded_filename 7z}}}\
                              {\N(?i)stop\n\N}}
 #  deny message = Potentially executable content (in .rar). - blocked!
   warn message = X-SS-Suspicious-Flag: YES
        condition = ${if match{$mime_filename}{\N(?i)\.rar$\N}}
        decode = default
-       condition = ${if match{${run{/usr/local/bin/checkx \
+       condition = ${if match{${run{/usr/local/bin/checkx.py \
                                     $mime_decoded_filename rar}}}\
                              {\N(?i)stop\n\N}}
 #  deny message = Potentially executable content (in .ace). - blocked!
   warn message = X-SS-Suspicious-Flag: YES
        condition = ${if match{$mime_filename}{\N(?i)\.ace$\N}}
        decode = default
-       condition = ${if match{${run{/usr/local/bin/checkx \
+       condition = ${if match{${run{/usr/local/bin/checkx.py \
                                     $mime_decoded_filename ace}}}\
                              {\N(?i)stop\n\N}}
 #  deny message = Potentially executable content (in .docx). - blocked!
   warn message = X-SS-Suspicious-Flag: YES
        condition = ${if match{$mime_filename}{\N(?i)\.docx$\N}}
        decode = default
-       condition = ${if match{${run{/usr/local/bin/checkx \
+       condition = ${if match{${run{/usr/local/bin/checkx.py \
                                     $mime_decoded_filename docx}}}\
                              {\N(?i)stop\n\N}}
 #  deny message = Potentially executable content (in .doc). - blocked!
   warn message = X-SS-Suspicious-Flag: YES
        condition = ${if match{$mime_filename}{\N(?i)\.doc$\N}}
        decode = default
-       condition = ${if match{${run{/usr/local/bin/checkx \
+       condition = ${if match{${run{/usr/local/bin/checkx.py \
                                     $mime_decoded_filename doc}}}\
                              {\N(?i)stop\n\N}}
 #  deny message = Potentially executable content (in .pdf). - blocked!
   warn message = X-SS-Suspicious-Flag: YES
        condition = ${if match{$mime_filename}{\N(?i)\.pdf$\N}}
        decode = default
-       condition = ${if match{${run{/usr/local/bin/checkx \
+       condition = ${if match{${run{/usr/local/bin/checkx.py \
                                     $mime_decoded_filename pdf}}}\
                              {\N(?i)stop\n\N}}
   warn message = X-SS-Suspicious-Flag: YES
