@@ -154,6 +154,55 @@ key-direction 1
 # клиентский ключ (key)
 </key>
 ```  
+#### Пример (шаблон) конфигурации сервиса stunnel 4 для использования в связке с OpenVPN (Linux).  
+```
+chroot = /var/lib/stunnel4/
+setuid = stunnel4
+setgid = stunnel4
+pid    = /stunnel4.pid
+output = /stunnel.log
+debug  = info
+socket = l:TCP_NODELAY=1
+socket = r:TCP_NODELAY=1
+[openvpn]
+accept     = 443
+connect    = 1194
+CApath     = certs
+CRLpath    = crls
+cert       = /etc/stunnel/servercert.pem
+key        = /etc/stunnel/serverkey.pem
+verify     = 3
+verifyPeer = yes
+options    = NO_SSLv2
+options    = NO_SSLv3
+;перенаправление соединения в случае ошибки "рукопожатия"
+redirect   = <имя_сервера_для_перенаправления>:80
+```  
+#### Вариант сценария добавления пользователя Samba 3 (smbuseradd) (Linux).  
+```
+#!/bin/bash
+if test $1
+then
+  useradd -M -s /sbin/nologin -p xxxxxxxx -g sambausers -d /mnt/storage/local.hive/exchange $1
+  rm -f /opt/chroot.samba/etc/passwd ; ln /etc/passwd /opt/chroot.samba/etc/passwd
+  rm -f /opt/chroot.samba/etc/shadow ; ln /etc/shadow /opt/chroot.samba/etc/shadow
+  rm -f /opt/chroot.samba/etc/group ; ln /etc/group /opt/chroot.samba/etc/group
+  rm -f /opt/chroot.samba/etc/gshadow ; ln /etc/gshadow /opt/chroot.samba/etc/gshadow
+  echo $1:$2 | chpasswd
+  chroot /opt/chroot.samba /usr/local/bin/smbuseradd $1 $2
+  xfs_quota -x -c "limit -u bsoft=64G bhard=64G $1" /mnt/storage
+fi
+```  
+_Примечание: используется chroot и квоты xfs, аутентификация только по имени пользователя._  
+#### Вариант сценария смены пароля пользователя Samba 3 (smbuseradd) (Linux).  
+```
+#!/bin/bash
+if test $1
+then
+  echo $1:$2 | chpasswd
+  chroot /opt/chroot.samba /usr/local/bin/smbpass $1 $2
+fi
+```  
 #### Синхронизация времени с удалённым сервером из командной строки (Windows).  
 ```net time \\<сервер> /set /y```  
 _Пример:_ ```net time \\192.168.0.1 /set /y```  
