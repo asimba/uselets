@@ -587,6 +587,10 @@ _Требования (зависимости):_ PowerShell
 ```wevtutil el | Foreach-Object {wevtutil cl "$_"}```  
 #### Получение информации о материнской плате из командной строки (Windows).  
 ```wmic baseboard get product,Manufacturer,version,serialnumber```  
+#### Отключение (снижение активности) Windows Defender (Windows 10).  
+_Требования (зависимости):_ PowerShell [ddefender](https://github.com/asimba/uselets/tree/main/tools/ddefender)  
+```powershell -ExecutionPolicy Bypass -command "ddefender.ps1"``` или ```ddefender.cmd```   
+_Примечание: сценарий требуется запускать два раза с последующей перезагрузкой после каждого запуска._  
 
 ---  
 ### Работа с файлами.  
