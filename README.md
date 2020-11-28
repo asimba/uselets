@@ -181,7 +181,49 @@ options    = NO_SSLv3
 ;перенаправление соединения в случае ошибки "рукопожатия"
 redirect   = &lt;имя_сервера_для_перенаправления&gt;:80
 </code></pre></details>  
-  
+
+#### Пример (шаблон) конфигурации клиентского сервиса stunnel 4 для использования в связке с OpenVPN (Linux).  
+<details><summary>Конфигурация</summary><pre><code>
+debug   = info
+output  = /var/log/stunnel4/stunnel.log
+pid     = /var/run/stunnel4.pid
+
+[vpn]
+client     = yes
+accept     = 127.0.0.1:1194
+connect    = &lt;имя_сервера_stunnel_openvpn&gt;:443
+options    = -NO_SSLv3
+cert       = /etc/stunnel/clientcert.pem
+key        = /etc/stunnel/clientkey.pem
+CAfile     = /etc/stunnel/servercert.pem
+verify     = 3
+verifyPeer = yes
+</code></pre></details>  
+
+#### Команды для использования совместно со stunnel 4, которые стоит помнить (см. man) (Linux). 
+- генерация серверных ключей  
+```openssl req -nodes -new -days 3650 -newkey rsa:1024 -x509 -keyout serverkey.pem -out servercert.pem```  
+- генерация клиентских ключей (аналогично серверным)  
+```openssl req -nodes -new -days 3650 -newkey rsa:1024 -x509 -keyout clientkey.pem -out clientcert.pem```  
+- создание хэш-ссылок на клиентские ключи
+  <details><summary>Код</summary><pre><code>
+  #!/bin/sh
+  #
+  # usage: certlink.sh filename [filename ...]
+  for CERTFILE in "$@"; do
+    # Убедиться, что файл существует и это сертификат
+    test -f "$CERTFILE" || continue
+    HASH=$(openssl x509 -noout -hash -in "$CERTFILE")
+    test -n "$HASH" || continue
+    # использовать для ссылки наименьший итератор
+    for ITER in 0 1 2 3 4 5 6 7 8 9; do
+      test -f "${HASH}.${ITER}" && continue
+      ln -s "$CERTFILE" "${HASH}.${ITER}"
+      test -L "${HASH}.${ITER}" && break
+    done
+  done
+  </code></pre></details>
+
 #### Вариант сценария добавления пользователя Samba 3 (smbuseradd) (Linux).  
 <details><summary>Код</summary><pre><code>
 #!/bin/bash
@@ -621,7 +663,7 @@ _Требования (зависимости):_ [movie thumbnailer (mtn)](http:
 ```for %f in (*.mp4) do mtn -c 4 -r 4 -j 100 -o .jpg -P -w 1200 -Z -D6 "%~pnxf"```  
 #### Пакетное преобразование видео файлов (Windows) (пример).  
 _Требования (зависимости):_ [ffmpeg](https://ffmpeg.org/), [GPAC MP4Box](https://www.videohelp.com/software/MP4Box), [movie thumbnailer (mtn)](http://moviethumbnail.sourceforge.net/index.en.html)  
-```
+<details><summary>Код</summary><pre><code>
 @echo off
 for %%f in (in\*.wmv,in\*.avi,in\*.mp4,in\*.mkv,in\*.flv) do (
 echo "%%~dpnxf"
@@ -631,4 +673,4 @@ mp4box -isma -inter 500 -add "tmp\out.mp4" -new "out\%%~nf.mp4"
 mtn -c 4 -r 4 -j 100 -o .jpg -O out -P -w 1200 -Z -D6 "out\%%~nf.mp4"
 del /q tmp\tmp.h264 tmp\mp4-0.log tmp\mp4-0.log.mbtree tmp\out.mp4
 )
-```  
+</code></pre></details>  
