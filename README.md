@@ -3,7 +3,7 @@
 ### Работа с сетью.  
 ---  
 #### Конфигурация bond-интерфейса без поддержки со стороны коммутатора (Linux) (пример).  
-```
+<details><summary>Конфигурация</summary><pre><code>
 source /etc/network/interfaces.d/*
 auto lo
 iface lo inet loopback
@@ -23,7 +23,8 @@ iface xenbr0 inet static
         bridge_stp off
         bridge_waitport 0
         bridge_fd 0
-```  
+</code></pre></details>  
+
 _Примечание: настройка для использования в режиме моста с гипервизором Xen; файл "/etc/network/interfaces"._  
 #### Команды OpenVPN, которые стоит помнить (см. man) (Linux).  
 - инициализация (генерация ключей)  
@@ -49,7 +50,7 @@ easyrsa revoke <имя_конфигурации_пользователя>
 easyrsa gen-crl
 ```  
 #### Пример (шаблон) конфигурации OpenVPN сервера (Linux).  
-```
+<details><summary>Конфигурация</summary><pre><code>
 ignore-unknown-option ncp-ciphers
 port 10788
 proto tcp
@@ -90,35 +91,36 @@ status      /var/log/openvpn/openvpn-tcp-status.log
 log         /var/log/openvpn/openvpn-tcp.log
 log-append  /var/log/openvpn/openvpn-tcp.log
 crl-verify /etc/openvpn/keys/crl.pem
-<ca>
+&lt;ca&gt;
 -----BEGIN CERTIFICATE-----
 # ключ (ca)
 -----END CERTIFICATE-----
-</ca>
+&lt;/ca&gt;
 key-direction 0
-<tls-auth>
+&lt;tls-auth&gt;
 -----BEGIN OpenVPN Static key V1-----
 # ключ (ta)
 -----END OpenVPN Static key V1-----
-</tls-auth>
-<cert>
+&lt;/tls-auth&gt;
+&lt;cert&gt;
 -----BEGIN CERTIFICATE-----
 # ключ (cert)
 -----END CERTIFICATE-----
-</cert>
-<key>
+&lt;/cert&gt;
+&lt;key&gt;
 -----BEGIN PRIVATE KEY-----
 # ключ (key)
 -----END PRIVATE KEY-----
-</key>
-<dh>
+&lt;/key&gt;
+&lt;dh&gt;
 -----BEGIN DH PARAMETERS-----
 # ключ (dh)
 -----END DH PARAMETERS-----
-</dh>
-```  
+&lt;/dh&gt;
+</code></pre></details>  
+
 #### Пример (шаблон) конфигурации OpenVPN клиента (conf/ovpn).  
-```
+<details><summary>Конфигурация</summary><pre><code>
 client
 dev tun
 dev-type tun
@@ -141,21 +143,22 @@ max-routes 1000
 remote-cert-tls server
 comp-lzo no
 key-direction 1
-<ca>
+&lt;ca&gt;
 # ключ (ca)
-</ca>
-<tls-auth>
+&lt;/ca&gt;
+&lt;tls-auth&gt;
 # ключ (ta)
-</tls-auth>
-<cert>
+&lt;/tls-auth&gt;
+&lt;cert&gt;
 # ключ (cert)
-</cert>
-<key>
+&lt;/cert&gt;
+&lt;key&gt;
 # клиентский ключ (key)
-</key>
-```  
+&lt;/key&gt;
+</code></pre></details>  
+  
 #### Пример (шаблон) конфигурации сервиса stunnel 4 для использования в связке с OpenVPN (Linux).  
-```
+<details><summary>Конфигурация</summary><pre><code>
 chroot = /var/lib/stunnel4/
 setuid = stunnel4
 setgid = stunnel4
@@ -176,10 +179,11 @@ verifyPeer = yes
 options    = NO_SSLv2
 options    = NO_SSLv3
 ;перенаправление соединения в случае ошибки "рукопожатия"
-redirect   = <имя_сервера_для_перенаправления>:80
-```  
+redirect   = &lt;имя_сервера_для_перенаправления&gt;:80
+</code></pre></details>  
+  
 #### Вариант сценария добавления пользователя Samba 3 (smbuseradd) (Linux).  
-```
+<details><summary>Код</summary><pre><code>
 #!/bin/bash
 if test $1
 then
@@ -192,22 +196,23 @@ then
   chroot /opt/chroot.samba /usr/local/bin/smbuseradd $1 $2
   xfs_quota -x -c "limit -u bsoft=64G bhard=64G $1" /mnt/storage
 fi
-```  
+</code></pre></details>  
+
 _Примечание: используется chroot и квоты xfs, аутентификация только по имени пользователя._  
-#### Вариант сценария смены пароля пользователя Samba 3 (smbuseradd) (Linux).  
-```
+#### Вариант сценария смены пароля пользователя Samba 3 (smbpass) (Linux).  
+<details><summary>Код</summary><pre><code>
 #!/bin/bash
 if test $1
 then
   echo $1:$2 | chpasswd
   chroot /opt/chroot.samba /usr/local/bin/smbpass $1 $2
 fi
-```  
+</code></pre></details>  
+
 #### Пример дополнительной блокировки потенциально опасного содержимого в почтовом сервисе Exim (Linux).  
 _Требования (зависимости):_ python, ripole, 7z, unace, unrar, сценарий [checkx.py](https://github.com/asimba/uselets/tree/main/tools/checkx)  
 _Инструкция: в конфигурацию Exim требуется внести изменения нижеследующего вида (предварительно разместив сценарий в директории "/usr/local/bin")_  
-<details><summary>Конфигурация</summary>
-<pre>
+<details><summary>Конфигурация</summary><pre><code>
 ---------------------------------------------------------------------
 #exim4.conf
 ---------------------------------------------------------------------
@@ -276,9 +281,9 @@ acl_check_mime:
 #exim.filter
 ---------------------------------------------------------------------
 if $h_X-SS-Suspicious-Flag: contains "YES" then
-  deliver suspicious@<имя_сервера>
+  deliver suspicious@suspicious@&lt;имя_сервера&gt;
 endif
-</pre></details>  
+</code></pre></details>  
 
 #### Синхронизация времени с удалённым сервером из командной строки (Windows).  
 ```net time \\<сервер> /set /y```  
@@ -288,16 +293,17 @@ _Требования (зависимости):_ Windows Firewall, PowerShell
 ```New-NetFirewallRule -DisplayName "block-internet" -Direction Outbound -RemoteAddress Internet -Action Block```  
 #### Отправка почтового сообщения администратору системы при успешном входе в систему по протоколу SSH (Linux).  
 _Инструкция: в директории "/etc/profile.d/" требуется разместить исполняемый файл сценария с инжеследующим содержанием:_  
-```
+<details><summary>Код</summary><pre><code>
 if [ -n "$SSH_CLIENT" ]; then
     TEXT="$(date): ssh login to ${USER}@$(hostname -f)"
     TEXT="$TEXT from $(echo $SSH_CLIENT|awk '{print $1}')"
     echo $TEXT|mail -s "ssh login (hive)" root
 fi
-```  
+</code></pre></details>  
+
 #### Синхронизация содержимого локальной директории с директорией расположенной на удалённом сервере по протоколу SSH (Linux) (пример).  
 _Требования (зависимости):_ rsync, предварительная генерация ключа "id_rsa" на принимающей стороне, обновление файла "authorized_keys" на отдающей стороне и файла "known_hosts" на принимающей стороне.  
-```
+<details><summary>Код</summary><pre><code>
 #!/bin/bash
 if [ -f /var/tmp/remote-dump ]; then
     echo "Still running..."
@@ -312,7 +318,8 @@ rscmd='rsync '$rsopt"'"$sshcm"'"
 bserv=root@10.8.0.42
 eval $rscmd $bserv:$spath /mnt/backups/server.pool/
 rm -f /var/tmp/remote-dump
-```  
+</code></pre></details>  
+  
 _Примечание: "bpath" - параметр указывает на путь к директории, в которой хранятся ключ и исполняемый скрипт; "spath" - параметр указывает на путь к исходной директории на удалённом сервере; "bserv" - IP-адрес удалённого сервера; "/mnt/backups/server.pool/" - локальная директория ("принимающая")._  
 #### Разрешение доступа в сеть (NAT) в CentOS 7.  
 ```firewall-cmd --zone=public --add-masquerade --permanent```  
@@ -328,7 +335,7 @@ _Примечание: "bpath" - параметр указывает на пут
 - vgcfgrestore -f ... {VG}
 #### Создание архивированного образа файловой системы EXT3/EXT4, расположенной на томе LVM (Linux).  
 _Требования (зависимости):_ xz-utils, dump  
-```
+<details><summary>Код</summary><pre><code>
 #!/bin/bash
 backup_path=./
 vg_group=/dev/system
@@ -339,11 +346,12 @@ fsck -yvf $vg_group/$lvm_volume-snap
 dump -0uf $backup_path/$lvm_volume.dump $vg_group/$lvm_volume-snap
 lvremove -f $vg_group/$lvm_volume-snap
 xz -9 $backup_path/$lvm_volume.dump
-```  
+</code></pre></details>  
+
 _Примечание: "backup_path" - директория для хранения архива, "vg_group" - группа томов, "lvm_volume" - наименование архивируемого тома. Восстановление осуществляется аналогичным образом при помощи комады "restore"._  
 #### Создание архивированного образа тома LVM для последующего дифференциального резервирования (Linux).  
 _Требования (зависимости):_ rdiff, lz4  
-```
+<details><summary>Код</summary><pre><code>
 #!/bin/bash
 backup_path=./system.images
 vg_group=/dev/system
@@ -361,11 +369,12 @@ lvcreate -L16G -s -n $lvm_volume-snap $vg_group/$lvm_volume
 dd if=$vg_group/$lvm_volume-snap of=$backup_path/$lvm_volume bs=64M
 rdiff -b 262144 -I 67108864 -O 67108864 -- signature $backup_path/$lvm_volume $backup_path/$lvm_volume.signature
 lvremove -f $vg_group/$lvm_volume-snap
-```  
+</code></pre></details>  
+
 _Примечание: "backup_path" - директория для хранения архива, "vg_group" - группа томов, "lvm_volume" - наименование архивируемого тома. Способ подходит для разделов фиртуальных машин (параметры блоков "rdiff" подобраны для тома размером 256 GiB)._  
 #### Создание дифференциальной резервной копии для архивированного образа тома LVM (см.выше) (Linux).  
 _Требования (зависимости):_ rdiff, lz4  
-```
+<details><summary>Код</summary><pre><code>
 #!/bin/bash
 backup_path=./system.images
 vg_group=/dev/system
@@ -376,18 +385,20 @@ lvremove -f $vg_group/$lvm_volume-snap
 lvcreate -L16G -s -n $lvm_volume-snap $vg_group/$lvm_volume
 rdiff -b 262144 -I 67108864 -O 67108864 -- delta $backup_path/$lvm_volume.signature $vg_group/$lvm_volume-snap - | lz4 -z -1 -BD > $backup_path/$lvm_volume.`date +%Y-%m-%d-%H:%M:%S`.delta.lz4
 lvremove -f $vg_group/$lvm_volume-snap
-```  
+</code></pre></details>  
+
 _Примечание: "backup_path" - директория для хранения архива, "vg_group" - группа томов, "lvm_volume" - наименование архивируемого тома. Способ подходит для разделов фиртуальных машин (параметры блоков "rdiff" подобраны для тома размером 256 GiB)._  
 #### Восстановление дифференциальной резервной копии архивированного образа тома LVM (см.выше) (Linux).  
 _Требования (зависимости):_ rdiff, lz4  
-```
+<details><summary>Код</summary><pre><code>
 #!/bin/bash
 backup_path=./system.images
 lvm_volume=srv1c-disk
 time_stamp=2019-10-02-14:50:18
 lz4cat $backup_path/$lvm_volume.$time_stamp.delta.lz4 | rdiff -b 262144 -I 67108864 -O 67108864 -- patch $backup_path/$lvm_volume - $backup_path/$lvm_volume.new
 dd of=$vg_group/$lvm_volume if=$backup_path/$lvm_volume.new bs=64M
-```  
+</code></pre></details>  
+
 _Примечание: "backup_path" - директория хранения архива, "lvm_volume" - наименование тома, "time_stamp" - метка времени восстанавливаемой копии._  
 #### Очистка журнала USN NTFS из командной строки (Windows).  
 ```fsutil usn deletejournal /n c:```  
@@ -426,7 +437,7 @@ _Требования (зависимости):_ PowerShell, [cleartemp.ps1](htt
 _Требования (зависимости):_ [random_mac.py](https://github.com/asimba/uselets/blob/main/tools/xen/random_mac.py)  
 ```python ./random_mac.py```  
 #### Пример конфигурации Xen для паравиртуальной гостевой системы Linux (Linux).  
-```
+<details><summary>Конфигурация</summary><pre><code>
 name        = 'i-host'
 #для генерации uuid можно использовать  dbus-uuidgen
 #uuid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -443,9 +454,10 @@ vif         = [ 'mac=00:16:3e:0a:ab:53,bridge=xenbr0' ]
 on_poweroff = 'destroy'
 on_reboot   = 'restart'
 on_crash    = 'restart'
-```  
+</code></pre></details>  
+
 #### Пример конфигурации Xen для гостевой системы Windows Server 2008 (Linux).  
-```
+<details><summary>Конфигурация</summary><pre><code>
 type = 'hvm'
 name = 'master-host'
 #для генерации uuid можно использовать  dbus-uuidgen
@@ -483,9 +495,10 @@ vncpasswd='XXXXXXX'
 on_poweroff = 'destroy'
 on_reboot = 'restart'
 on_crash = 'restart'
-```  
+</code></pre></details>  
+
 #### Пример конфигурации Xen для гостевой системы Windows Server 2012 R2 (Linux).  
-```
+<details><summary>Конфигурация</summary><pre><code>
 type = 'hvm'
 name = 'srv1c-host'
 #для генерации uuid можно использовать  dbus-uuidgen
@@ -525,7 +538,8 @@ vncdisplay=2
 on_poweroff = 'destroy'
 on_reboot = 'restart'
 on_crash = 'restart'
-```  
+</code></pre></details>  
+
 #### Очистка всех журналов событий из командной строки (Windows).  
 _Требования (зависимости):_ PowerShell  
 ```wevtutil el | Foreach-Object {wevtutil cl "$_"}```  
