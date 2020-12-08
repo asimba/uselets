@@ -257,6 +257,20 @@ then
 fi
 </code></pre></details>  
 
+#### Вариант описания сервиса systemd для запуска Samba 3 из chroot окружения (Linux).  
+<details><summary>Код</summary><pre><code>
+[Unit]
+  Description=chroot()ed Samba
+[Service]
+  Type=forking
+  RootDirectory=/opt/chroot.samba
+  ExecStart=/etc/init.d/samba start
+  ExecReload=/etc/init.d/samba restart
+  ExecStop=/etc/init.d/samba stop
+[Install]
+  WantedBy=multi-user.target
+</code></pre></details>  
+
 #### Пример дополнительной блокировки потенциально опасного содержимого в почтовом сервисе Exim (Linux).  
 _Требования (зависимости):_ python, ripole, 7z, unace, unrar, сценарий [checkx.py](https://github.com/asimba/uselets/tree/main/tools/checkx)  
 _Инструкция: в конфигурацию Exim требуется внести изменения нижеследующего вида (предварительно разместив сценарий в директории "/usr/local/bin")_  
@@ -460,6 +474,28 @@ _Требования (зависимости):_ PowerShell, [cleartemp.ps1](htt
 ---  
 ### Системные операции.  
 ---  
+#### Очистка кэшей файловых систем и очистка файла/раздела подкачки (Linux).  
+<details><summary>Код</summary><pre><code>
+#! /bin/sh
+sync; echo 1 > /proc/sys/vm/drop_caches
+swapoff -a; sudo swapon -a
+</code></pre></details>  
+
+#### Команды systemd, которые стоит помнить (см. man) (Linux).  
+```
+systemctl list-units
+systemctl status <имя_службы>
+systemctl restart <имя_службы>
+systemctl start <имя_службы>
+systemctl stop <имя_службы>
+systemctl enable <имя_службы>
+systemctl disable <имя_службы>
+systemctl daemon-reload
+journalctl
+#journalctl --list-boots равнозначно who -b
+```  
+
+_Примечание: см. также файл \"\/etc\/sysctl.d\/\*-sysctl.conf\" (переменные \"vm.swappiness=5\" и \"vm.vfs_cache_pressure=2000\")._  
 #### Команды Xen (xl), которые стоит помнить (см. man) (Linux) (примеры).  
 - xl create \<config_file\>  
 - xl destroy \<Domain\>  
