@@ -271,6 +271,49 @@ fi
   WantedBy=multi-user.target
 </code></pre></details>  
 
+#### Вариант простой конфигурации Samba 4 (Linux).  
+<details><summary>Конфигурация</summary><pre><code>
+[global]
+   workgroup = SPB
+   netbios name = BackupSrv
+   server string = BackupSrv
+   dns proxy = no
+   hosts allow = 192.168.10. 127.
+   log file = /var/log/samba/log.%m
+   max log size = 1000
+   logging = file
+   panic action = /usr/share/samba/panic-action %d
+   server role = standalone server
+   obey pam restrictions = yes
+   unix password sync = yes
+   ldap ssl = No
+   security = user
+   passdb backend = smbpasswd
+   passwd program = /usr/bin/passwd %u
+   passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+   pam password change = yes
+   invalid users = root
+   guest account = nobody
+   map to guest = bad user
+   dos charset = 866
+   unix charset = utf8
+   unix extensions = no
+   ntlm auth = yes
+   username map = /etc/samba/user.map
+[backup]
+   comment = Backup
+   path = /mnt/share/backup
+   valid users = @smbusers
+   force group = smbusers
+   guest ok = no
+   guest only = no
+   read only = no
+   browseable = yes
+   fake oplocks = no
+   create mask = 0666
+   directory mask = 0777
+</code></pre></details>  
+
 #### Пример дополнительной блокировки потенциально опасного содержимого в почтовом сервисе Exim (Linux).  
 _Требования (зависимости):_ python, ripole, 7z, unace, unrar, сценарий [checkx.py](https://github.com/asimba/uselets/tree/main/tools/checkx)  
 _Инструкция: в конфигурацию Exim требуется внести изменения нижеследующего вида (предварительно разместив сценарий в директории "/usr/local/bin")_  
@@ -462,6 +505,16 @@ dd of=$vg_group/$lvm_volume if=$backup_path/$lvm_volume.new bs=64M
 </code></pre></details>  
 
 _Примечание: "backup_path" - директория хранения архива, "lvm_volume" - наименование тома, "time_stamp" - метка времени восстанавливаемой копии._  
+#### Пример конфигурации iSCSI-цели (служба tgt) (Linux).  
+<details><summary>/etc/tgt/conf.d/iscsi-base.conf</summary><pre><code>
+&lt;target&gt; iqn.2020-12.local:lun1>
+backing-store /dev/xvda3
+initiator-address 192.168.10.1
+incominguser iscsi-user q7n8TNnzLsv7
+outgoinguser iscsi-target vUD6YXvz7Klb
+&lt;/target&gt;
+</code></pre></details>  
+
 #### Очистка журнала USN NTFS из командной строки (Windows).  
 ```fsutil usn deletejournal /n c:```  
 #### Стандартная очистка дисков из командной строки (Windows).  
@@ -474,6 +527,9 @@ _Требования (зависимости):_ PowerShell, [cleartemp.ps1](htt
 ---  
 ### Системные операции.  
 ---  
+#### Пример генерации пароля (Linux).  
+```cat /dev/urandom|head -c9|base64```  
+_Примечание: длину пароля можно менять, задавая параметр \"-с\"._  
 #### Очистка кэшей файловых систем и очистка файла/раздела подкачки (Linux).  
 <details><summary>Код</summary><pre><code>
 #! /bin/sh
