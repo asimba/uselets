@@ -755,6 +755,11 @@ _Требования (зависимости):_ [pdftk](https://www.pdflabs.com
 ```stripannot.cmd <имя_исходного_файла> <имя_результирующего_файла>```  
 _Пример:_```stripannot.cmd in.pdf out.pdf```  
 _Примечание: обычно используется для удаления комментариев "AutoCAD SHX"._  
+#### Удаление всего текста из PDF-файлов (Linux/Windows).  
+_Требования (зависимости):_ [ghostscript](https://www.ghostscript.com/download.html)  
+Linux: ```gs -o <имя_результирующего_файла> -sDEVICE=pdfwrite -dFILTERTEXT <имя_исходного_файла>```  
+Windows: ```gswin64c.exe -o <имя_результирующего_файла> -sDEVICE=pdfwrite -dFILTERTEXT <имя_исходного_файла>```  
+_Пример:_```gswin64c.exe -o output.pdf -sDEVICE=pdfwrite -dFILTERTEXT input.pdf```  
 #### Пакетное изменение размеров файлов изображений в текущей директории (Windows).  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
 ```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "<ширина>>" -distort Resize ">x<высота>" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
