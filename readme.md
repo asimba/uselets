@@ -687,8 +687,8 @@ _Требования (зависимости):_ PowerShell
 ```wmic baseboard get product,Manufacturer,version,serialnumber```  
 #### Отключение (снижение активности) Windows Defender (Windows 10).  
 _Требования (зависимости):_ PowerShell, [ddefender](https://github.com/asimba/uselets/tree/main/tools/ddefender)  
-```powershell -ExecutionPolicy Bypass -command "ddefender.ps1"``` или ```ddefender.cmd```  
-_Примечание: сценарий требуется запускать два раза с последующей перезагрузкой после каждого запуска._  
+Требуется выполнить сценарий ```run.cmd``` из ddefender  
+_Примечание: после запуска сценария система будет дважды перезагружена._  
 #### Удаление bloatware, отключение телеметрии и автообновлений Windows 10.  
 _Требования (зависимости):_ PowerShell, [PsExec](https://docs.microsoft.com/en-us/sysinternals/downloads/psexec), [ddefender](https://github.com/asimba/uselets/tree/main/tools/ddefender), [w10fix](https://github.com/asimba/uselets/tree/main/tools/w10fix)  
 Сначала необходимо отключить Windows Defender (см. выше), а затем выполнить ```run.cmd``` из w10fix (для запуска fix.ps1)  
