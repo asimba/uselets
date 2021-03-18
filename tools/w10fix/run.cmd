@@ -129,3 +129,6 @@ if '%errorlevel%' NEQ '0' (
     netsh advfirewall firewall add rule name="MS Block-Out SpeechRuntime" dir=out interface=any action=block program=%SystemRoot%\System32\Speech_OneCore\common\SpeechRuntime.exe >nul 2>&1
     netsh advfirewall firewall add rule name="MS Block-Out SystemSettings" dir=out interface=any action=block program=%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe >nul 2>&1
     netsh advfirewall firewall add rule name="MS Block-Out OneDriveSetup" dir=out interface=any action=block program=%SystemRoot%\System32\OneDriveSetup.exe >nul 2>&1
+    reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "app-fix" /f >nul 2>&1
+    reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v "" /t REG_SZ /d "shutdown -f -r -t 30" /f
+    shutdown -f -r -t 0

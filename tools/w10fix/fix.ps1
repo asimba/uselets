@@ -108,6 +108,8 @@ $apps = @(
     "Windows.MiracastView"
     "Microsoft.YourPhone"
     "Microsoft.ScreenSketch"
+    "Microsoft.MixedReality.Portal"
+    "Microsoft.549981C3F5F10"
     "*yandex*"
     "*netflix*"
     "*sodasaga*"
@@ -186,10 +188,13 @@ $services = @(
     "XblGameSave"                              # Xbox Live Game Save Service
     "XboxNetApiSvc"                            # Xbox Live Networking Service
     "SSDPSRV"
+    "BITS"
+    "wuauserv"
 )
 
 $bservices = @(
     "xbgm*"
+    "OneSyncSvc*"
     "SecurityHealthService*"
 )
 
@@ -288,6 +293,7 @@ function remove-onedrive(){
     reg load "hku\Default" "C:\Users\Default\NTUSER.DAT" | out-null
     reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f | out-null
     reg unload "hku\Default" | out-null
+    reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f | out-null
     Write-Output "Removing startmenu entry"
     Remove-Item -Force -ErrorAction SilentlyContinue "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
     Write-Output "Removing scheduled task"
@@ -556,6 +562,8 @@ function fix-taskbar(){
     reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView" /f| out-null
     reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView" /v "AllUpView" /t REG_DWORD /d "0" /f| out-null
     reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v "SearchboxTaskbarMode" /t REG_DWORD /d 0 /f| out-null
+    reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "HideSCAMeetNow" /t REG_DWORD /d 1 /f| out-null
+    reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "HideSCAMeetNow" /t REG_DWORD /d 1 /f| out-null
 }
 
 fix-taskbar
