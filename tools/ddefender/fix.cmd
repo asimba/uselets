@@ -1,6 +1,5 @@
 @echo off
-pushd "%CD%"
-CD /D "%~dp0"
+cd /d "%~dp0"
 timeout 20
 powershell -ExecutionPolicy Bypass -command "&`%~dp0\fix.ps1"
 bcdedit /deletevalue {current} safeboot
