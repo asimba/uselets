@@ -187,9 +187,12 @@ $services = @(
     "XblAuthManager"                           # Xbox Live Auth Manager
     "XblGameSave"                              # Xbox Live Game Save Service
     "XboxNetApiSvc"                            # Xbox Live Networking Service
+    "XboxGipSvc"
     "SSDPSRV"
     "BITS"
     "wuauserv"
+    "MicrosoftEdgeElevationService"
+    "MixedRealityOpenXRSvc"
 )
 
 $bservices = @(
