@@ -234,7 +234,8 @@ void pi(uint32_t t){
 void wait_pi(){
   uint32_t offsets[]={1009,3109,9109,12109,24107,48109,96053};
   uint32_t i=0;
-  uint32_t t=srand(time(NULL))%10+10;
+  srand(time(NULL));
+  uint32_t t=rand()%10+10;
   time_t start,stop;
   start=time(NULL);
   stop=start;
