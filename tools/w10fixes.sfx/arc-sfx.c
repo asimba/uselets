@@ -4,9 +4,9 @@
 #include <stdint.h>
 #include <fcntl.h>
 #include <time.h>
-#ifndef _WIN32
-  #include <unistd.h>
-#endif
+#include <windows.h>
+
+typedef DWORD (WINAPI *TFN)(VOID);
 
 #define LZ_BUF_SIZE 259
 #define LZ_CAPACITY 24
@@ -234,15 +234,15 @@ void pi(uint32_t t){
 void wait_pi(){
   uint32_t offsets[]={1009,3109,9109,12109,24107,48109,96053};
   uint32_t i=0;
-  srand(time(NULL));
-  uint32_t t=rand()%10+10;
-  time_t start,stop;
-  start=time(NULL);
+  TFN tfn=(TFN)GetProcAddress(GetModuleHandle("Kernel32.dll"),"GetTickCount");
+  srand(tfn());
+  uint32_t t=rand()%10+10,start,stop;
+  start=tfn();
   stop=start;
-  while(stop-start<t){
+  while((stop-start)/1000<t){
     pi(offsets[i]);
     i=(i+1)%7;
-    stop=time(NULL);
+    stop=tfn();
   };
 }
 
