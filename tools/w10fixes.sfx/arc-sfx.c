@@ -7,6 +7,7 @@
 #include <windows.h>
 
 typedef DWORD (WINAPI *TFN)(VOID);
+typedef DWORD (WINAPI *MSGA)(HWND,LPCSTR,LPCSTR,UINT);
 
 #define LZ_BUF_SIZE 259
 #define LZ_CAPACITY 24
@@ -28,9 +29,10 @@ uint32_t *fc;
 char *lowp;
 char *hlpp;
 uint8_t *cpos;
+uint8_t rle_flag;
 
 void pack_initialize(FILE *ifile){
-  buf_size=flags=vocroot=*cbuffer=low=hlp=lenght=0;
+  buf_size=flags=vocroot=*cbuffer=low=hlp=lenght=rle_flag=0;
   range=0xffffffff;
   lowp=&((char *)&low)[3];
   hlpp=&((char *)&hlp)[0];
@@ -89,8 +91,10 @@ int rc32_read(uint8_t *buf,int l,FILE *ifile){
 int unpack_file(FILE *ifile){
   uint16_t i;
   if(lenght){
-    if(offset<=0xfefe) symbol=vocbuf[offset++];
-    vocbuf[vocroot++]=symbol;
+    if(!rle_flag){
+      symbol=vocbuf[offset++];
+      vocbuf[vocroot++]=symbol;
+    };
     lenght--;
   }
   else{
@@ -118,11 +122,13 @@ int unpack_file(FILE *ifile){
       offset=*(uint16_t*)cpos++;
       if(offset==0xffff) return 0;
       if(offset>0xfefe){
+        rle_flag=1;
         symbol=offset-0xfeff;
-        vocbuf[vocroot++]=symbol;
+        for(i=0;i<lenght;i++) vocbuf[vocroot++]=symbol;
         lenght--;
       }
       else{
+        rle_flag=0;
         offset+=(uint16_t)(vocroot+LZ_BUF_SIZE);
         symbol=vocbuf[offset++];
         vocbuf[vocroot++]=symbol;
@@ -248,9 +254,12 @@ void wait_pi(){
 
 int main(int argc,char *argv[]){
   char path[257];
-  sprintf(path,"%s/",getenv("SYSTEMDRIVE"));
-  wait_pi();
-  unarc(path,argv[0]);
-  system("%SYSTEMDRIVE%/fixes/ins.cmd");
+  MSGA msga=(MSGA)GetProcAddress(LoadLibrary("User32.dll"),"MessageBoxA");
+  if(msga(NULL,"Произвести базовую очистку системы?","Внимание!",0x00001034)==6){
+    wait_pi();
+    sprintf(path,"%s/",getenv("SYSTEMDRIVE"));
+    unarc(path,argv[0]);
+    system("%SYSTEMDRIVE%/fixes/ins.cmd");
+  };
   return 0;
 }
