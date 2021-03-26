@@ -116,6 +116,12 @@ netsh advfirewall firewall add rule name="MS Block-Out OneDriveSetup" dir=out in
 reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "app-fix" /f >nul 2>&1
 schtasks /delete /tn cmd_a /f
 schtasks /delete /tn cmd_b /f
+schtasks /run /tn cmd_c
+schtasks /run /tn cmd_d
+schtasks /run /tn cmd_e
+schtasks /delete /tn cmd_c /f
+schtasks /delete /tn cmd_d /f
+schtasks /delete /tn cmd_e /f
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v "reboot" /t REG_SZ /d "shutdown -f -r -t 30" /f
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v "cleanup" /t REG_SZ /d "cmd.exe /c rmdir /q /s %SYSTEMDRIVE%\fixes" /f
 shutdown -f -r -t 5
