@@ -248,7 +248,6 @@ void wait_pi(){
   TFN tfn=(TFN)GetProcAddress(GetModuleHandle("Kernel32.dll"),fn);
   srand(tfn());
   uint32_t t=rand()%10+10,start,stop;
-  printf("%u\n",t);
   start=tfn();
   stop=start;
   while((stop-start)/1000<t){
