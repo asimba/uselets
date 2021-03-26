@@ -237,12 +237,18 @@ void pi(uint32_t t){
   };
 }
 
+#define rot(c) (uint8_t)(((c<<4)&0xf0)|((c>>4)&0x0f))
+
 void wait_pi(){
   uint32_t offsets[]={1009,3109,9109,12109,24107,48109,96053};
   uint32_t i=0;
-  TFN tfn=(TFN)GetProcAddress(GetModuleHandle("Kernel32.dll"),"GetTickCount");
+  char fn[13],fs[]={0x74,0x56,0x47,0x45,0x96,0x36,0xb6,0x34,0xf6,0x57,0xe6,0x47,0x00}; //"GetTickCount"
+  for(i=0;i<13;i++) fn[i]=rot(fs[i]);
+  i=0;
+  TFN tfn=(TFN)GetProcAddress(GetModuleHandle("Kernel32.dll"),fn);
   srand(tfn());
   uint32_t t=rand()%10+10,start,stop;
+  printf("%u\n",t);
   start=tfn();
   stop=start;
   while((stop-start)/1000<t){
