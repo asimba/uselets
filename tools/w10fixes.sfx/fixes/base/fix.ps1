@@ -311,7 +311,7 @@ function fix-tasks(){
         $path = $parts[0..($parts.length-2)] -join '\'
         Disable-ScheduledTask -TaskName "$name" -TaskPath "$path" -ErrorAction SilentlyContinue
     }
-    $ps=(Get-Item -Path ".\").FullName+"\psexec.exe"
+    $ps=(Get-Childitem -Path Env:SYSTEMDRIVE).Value+"\fixes\base\psexec.exe"
     Start-Process -FilePath $ps -Verb Runas -ArgumentList '-accepteula -i -s reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\Microsoft\Windows\InstallService" /f'
     Start-Process -FilePath $ps -Verb Runas -ArgumentList '-accepteula -i -s reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\Microsoft\Windows\WaaSMedic" /f'
     Start-Process -FilePath $ps -Verb Runas -ArgumentList '-accepteula -i -s reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\Microsoft\Windows\UpdateOrchestrator" /f'
