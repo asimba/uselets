@@ -152,6 +152,9 @@ $tasks = @(
     "\Microsoft\Windows\Defrag\ScheduledDefrag"
     "\Microsoft\Office\Office Automatic Updates"
     "\Microsoft\Office\Office ClickToRun Service Monitor"
+)
+
+$root_tasks = @(
     "\MicrosoftEdgeUpdateTaskMachineCore"
     "\MicrosoftEdgeUpdateTaskMachineUA"
 )
@@ -312,6 +315,15 @@ function fix-tasks(){
         $name = $parts[-1]
         $path = $parts[0..($parts.length-2)] -join '\'
         Disable-ScheduledTask -TaskName "$name" -TaskPath "$path" -ErrorAction SilentlyContinue
+    }
+}
+
+function fix-root-tasks(){
+    write-header "Disabling some scheduled root tasks..."
+    foreach ($task in $root_tasks) {
+        $parts = $task.split('\')
+        $name = $parts[-1]
+        Disable-ScheduledTask -TaskName "$name" -TaskPath "\" -ErrorAction SilentlyContinue
     }
 }
 
@@ -572,6 +584,7 @@ fix-apps
 remove-apps
 remove-onedrive
 fix-tasks
+fix-root-tasks
 fix-tasks-files
 fix-services
 fix-bservices
