@@ -21,11 +21,13 @@ $bservices = @(
     "wscsvc*" #WSCSVC (Windows Security Center)
     "SecurityHealthService*" #Windows Security Health Servce
     "WinDefend*" #Windows Defender Service
+    "WdNisSvc"
+    "Sense"
 )
 
 function fix-services() {
     foreach ($bservice in $bservices) {
-        Set-ItemProperty -ErrorAction SilentlyContinue "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice" "Start" 4
+        Set-ItemProperty -ErrorAction SilentlyContinue "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice" "Start" 4 | out-null
         Set-Registry-ReadOnly "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice"
     }
 }
