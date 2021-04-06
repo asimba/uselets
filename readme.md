@@ -725,6 +725,9 @@ _Пример:_ ```par2 r source.tar.gz.par2```
 _Требования (зависимости):_ [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/) (PDFtk free)  
 ```pdftk <имя_файла> burst```  
 _Пример:_```pdftk source.pdf burst```  
+_Требования (зависимости):_ [qpdf](https://github.com/qpdf/qpdf/releases)  
+```qpdf --split-pages=1-z <имя_файла> <префикс_имён_файлов_результата>.pdf```  
+_Пример:_```qpdf --split-pages=1-z source.pdf page.pdf```  
 #### Склеивание PDF-файла из отдельных файлов страниц в текущей директории (Windows).  
 _Требования (зависимости):_ [qpdf](https://github.com/qpdf/qpdf/releases)  
 ```qpdf --empty <имя_файла_результата> --pages *.pdf 1-z --```  
