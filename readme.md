@@ -390,6 +390,10 @@ if $h_X-SS-Suspicious-Flag: contains "YES" then
 endif
 </code></pre></details>  
 
+#### Изменение профиля локальной сети (частная, общественная) (Windows 10).  
+_Требования (зависимости):_ Windows PowerShell  
+```Get-NetConnectionProfile``` изпользуется для перечисления текущих профилей  
+```Set-NetConnectionProfile -Name "<Название Вашей сети>" -NetworkCategory <Private|Public>``` изпользуется для смены профиля  
 #### Синхронизация времени с удалённым сервером из командной строки (Windows).  
 ```net time \\<сервер> /set /y```  
 _Пример:_ ```net time \\192.168.0.1 /set /y```  
