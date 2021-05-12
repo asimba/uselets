@@ -7,6 +7,7 @@ from sys import argv,path,exit
 from os import walk,access,mkdir,R_OK,popen
 from os.path import isfile,dirname,realpath,join
 from subprocess import Popen,PIPE,STDOUT
+from platform import system
 path.insert(0,join(dirname(realpath(argv[0])),'zipfix.zip'))
 import zipfix
 from string import find,rstrip
@@ -14,20 +15,35 @@ import re
 
 stopmask=re.compile('(\.(ade|adp|bas|bat|chm|cmd|com|cpl|crt|exe|hlp|hta|inf|\
 ins|isp|jse|js|lnk|mde|msc|msi|msp|pcd|reg|scr|sct|url|vbs|vbe|wsf|wsh|wsc|\
-wmv|wma|mp3|avi|mpg|hta|ppsx|zip)|incorrect|password|not\ supported)',re.IGNORECASE)
+wmv|wma|mp3|avi|mpg|hta|ppsx)|incorrect|password|not\ supported)',re.IGNORECASE)
+
+stopmask_arc=re.compile('(\.rar|7z|zip|zipx|arj|ace)',re.IGNORECASE)
+
+allowmask=re.compile('(7-Zip|p7zip|Scanning|Testing\ archive|Path|Type|Listing)',re.IGNORECASE)
 
 up='/usr/bin/'
 bp='/bin/'
-fp=up+'file'
-rp=up+'ripole'
-pr=up+'unrar'
-p7=up+'7z'
-p7t=up+'7z'
-pz=up+'unzip'
-pg=bp+'gunzip'
-pa=up+'unace'
+if system()=="Windows":
+    fp=realpath('file.exe')
+    rp=realpath('ripole.exe')
+    pr=realpath('unrar.exe')
+    p7=realpath('7z.exe')
+    pz=realpath('unzip.exe')
+    pg=realpath('gunzip.exe')
+    pa=realpath('unace.exe')
+else:
+    fp=up+'file'
+    rp=up+'ripole'
+    pr=up+'unrar'
+    prt=up+'unrar'
+    p7=up+'7z'
+    p7t=up+'7z'
+    pz=up+'unzip'
+    pg=bp+'gunzip'
+    pa=up+'unace'
 fp+=' -b '
 pr+=' lb -p- '
+prt+=' t -p- '
 p7+=' l -p- '
 p7t+=' t -p- '
 pz+=' -l '
@@ -108,7 +124,12 @@ def checkdocx(src):
 def checkarc(cmd,src):
     try:
         for l in checkcmd(cmd,src): 
-            if stopmask.search(l): print 'stop'; break
+            if stopmask.search(l) and not allowmask.search(l):
+                 print 'stop'
+                 break
+            if stopmask_arc.search(l) and not allowmask.search(l):
+                 print 'stop'
+                 break
     except: pass
 
 if __name__ == "__main__":
@@ -117,9 +138,13 @@ if __name__ == "__main__":
         if not(isfile(src) and access(src,R_OK)): exit()
         elif argv[2]=='docx': checkdocx(src)
         elif argv[2]=='doc': checkdoc(src)
-        elif argv[2]=='rar': checkarc(pr,src)
+        elif argv[2]=='rar':
+            checkarc(pr,src)
+            checkarc(prt,src)
         elif argv[2]=='7z': checkarc(p7,src)
-        elif argv[2]=='zip': checkarc(p7t,src)
+        elif argv[2]=='zip':
+            checkarc(p7,src)
+            checkarc(p7t,src)
         elif argv[2]=='gz': checkarc(pg,src)
         elif argv[2]=='ace': checkarc(pa,src)
     else: exit()
