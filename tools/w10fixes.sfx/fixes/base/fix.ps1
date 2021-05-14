@@ -581,6 +581,12 @@ function fix-taskbar(){
     reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "HideSCAMeetNow" /t REG_DWORD /d 1 /f| out-null
 }
 
+function fix-tiles(){
+    Import-StartLayout -LayoutPath "$Env:SYSTEMDRIVE\fixes\base\layout.xml" -MountPath "$Env:SYSTEMDRIVE\"
+    reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store" /f| out-null
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" /v "HideRecentlyAddedApps" /t REG_DWORD /d 1 /f| out-null
+}
+
 fix-taskbar
 fix-apps
 remove-apps
@@ -591,4 +597,5 @@ fix-tasks-files
 fix-services
 fix-bservices
 fix-telemetry
+fix-tiles
 cleanup
