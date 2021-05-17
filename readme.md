@@ -432,6 +432,40 @@ rm -f /var/tmp/remote-dump
 _Примечание: "bpath" - параметр указывает на путь к директории, в которой хранятся ключ и исполняемый скрипт; "spath" - параметр указывает на путь к исходной директории на удалённом сервере; "bserv" - IP-адрес удалённого сервера; "/mnt/backups/server.pool/" - локальная директория ("принимающая")._  
 #### Разрешение доступа в сеть (NAT) в CentOS 7.  
 ```firewall-cmd --zone=public --add-masquerade --permanent```  
+#### Разрешение доступа в сеть (NAT) с использованием iptables (Debian Linux).  
+<details><summary>Команды</summary><pre><code>
+echo 1 > /proc/sys/net/ipv4/ip_forward
+iptables -F
+iptables -t nat -F
+iptables -t mangle -F
+iptables -X
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+#ens33 - интерфейс локальной сети
+iptables -A INPUT -i ens33 -j ACCEPT
+iptables -A OUTPUT -o ens33 -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+#ens32 - интерфейс внешней сети
+iptables -A INPUT -i ens32 -j ACCEPT
+iptables -A OUTPUT -o ens32 -j ACCEPT
+iptables -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -m state --state INVALID -j DROP
+iptables -A FORWARD -m state --state INVALID -j DROP
+iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
+iptables -A OUTPUT -p tcp ! --syn -m state --state NEW -j DROP
+iptables -A FORWARD -i ens33 -o ens32 -j ACCEPT
+iptables -A FORWARD -i ens32 -o ens33 -j REJECT
+iptables -t nat -A POSTROUTING -o ens32 -j MASQUERADE
+</code></pre></details>  
 
 ---  
 ### Работа с дисками/разделами/файловыми системами.  
