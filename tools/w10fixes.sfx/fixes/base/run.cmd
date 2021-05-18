@@ -3,67 +3,108 @@ cd /d "%~dp0"
 powercfg /hibernate off
 powershell -ExecutionPolicy Bypass -command "&`%~dp0\fix.ps1"
 set list=(^
-  wpad.localdomain,^
-  www.bing.com,^
-  europe.smartscreen-prod.microsoft.com,^
-  wd-prod-ss-eu.trafficmanager.net,^
-  wd-prod-ss-eu-north-1-fe.northeurope.cloudapp.azure.com,^
-  go.microsoft.com,^
-  go.microsoft.com.edgekey.net,^
-  dmd.metaservices.microsoft.com,^
-  dmd.metaservices.microsoft.com.akadns.net,^
-  support.microsoft.com,^
-  ev.support.microsoft.com.edgekey.net,^
-  e3843.g.akamaiedge.net,^
-  e11290.dspg.akamaiedge.net,^
   a-0001.a-afdentry.net.trafficmanager.net,^
   a-0001.a-msedge.net,^
-  onecs-live.azureedge.net,^
-  onecs-live.ec.azureedge.net,^
-  cs9.wpc.v0cdn.net,^
-  watson.telemetry.microsoft.com,^
-  modern.watson.data.microsoft.com.akadns.net,^
-  sls.update.microsoft.com,^
-  ctldl.windowsupdate.com,^
-  audownload.windowsupdate.nsatc.net,^
+  a-0003.a-msedge.net,^
+  a767.dscg3.akamai.net,^
+  activation-v2.sls.microsoft.com,^
+  activation-v2.sls.trafficmanager.net,^
+  array605-prod.do.dsp.mp.microsoft.com,^
+  asimov-win.settings.data.microsoft.com.akadns.net,^
   au.au-msedge.net,^
+  au-bg-shim.trafficmanager.net,^
   au.c-0001.c-msedge.net,^
+  au.download.windowsupdate.com.edgesuite.net,^
+  audownload.windowsupdate.nsatc.net,^
   c-0001.c-msedge.net,^
-  displaycatalog.mp.microsoft.com,^
-  displaycatalog.md.mp.microsoft.com.akadns.net,^
-  displaycatalog-europe.md.mp.microsoft.com.akadns.net,^
+  checkappexec.microsoft.com,^
+  client.wns.windows.com,^
+  cs9.wpc.v0cdn.net,^
+  ctldl.windowsupdate.com,^
   db5.displaycatalog.md.mp.microsoft.com.akadns.net,^
-  login.live.com,^
-  login.msa.akadns6.net,^
-  vs.login.msa.akadns6.net,^
+  db5-eap.settings.data.microsoft.com.akadns.net,^
+  db5.settings.data.microsoft.com.akadns.net,^
+  displaycatalog-europe.md.mp.microsoft.com.akadns.net,^
+  displaycatalog.md.mp.microsoft.com.akadns.net,^
+  displaycatalog.mp.microsoft.com,^
+  dlc-shim.trafficmanager.net,^
+  dmd.metaservices.microsoft.com,^
+  dmd.metaservices.microsoft.com.akadns.net,^
+  download.microsoft.com,^
+  download.microsoft.com.edgekey.net,^
+  e10198.b.akamaiedge.net,^
+  e11290.dspg.akamaiedge.net,^
+  e12358.g.akamaiedge.net,^
+  e12594.b.akamaiedge.net,^
+  e1706.g.akamaiedge.net,^
+  e3673.dscg.akamaiedge.net,^
+  e3843.g.akamaiedge.net,^
+  e9659.dspg.akamaiedge.net,^
+  europe.smartscreen-prod.microsoft.com,^
+  ev.support.microsoft.com.edgekey.net,^
   geo-prod.do.dsp.mp.microsoft.com,^
   geo-prod.dodsp.mp.microsoft.com.nsatc.net,^
+  geo.settings.data.microsoft.com.akadns.net,^
   geover-prod.do.dsp.mp.microsoft.com,^
   geover-prod.dodsp.mp.microsoft.com.nsatc.net,^
-  prod.do.dsp.mp.microsoft.com.edgekey.net,^
-  e1706.g.akamaiedge.net,^
-  array605-prod.do.dsp.mp.microsoft.com,^
-  storecatalogrevocation.storequality.microsoft.com,^
-  storecatalogrevocation.storequality.microsoft.com.edgekey.net,^
-  e10198.b.akamaiedge.net,^
-  kv601-prod.do.dsp.mp.microsoft.com,^
-  kv601-prod.dodsp.mp.microsoft.com.nsatc.net,^
-  kv601-prod.do.dsp.mp.microsoft.com.edgekey.net,^
-  e12358.g.akamaiedge.net,^
-  settings-win.data.microsoft.com,^
-  asimov-win.settings.data.microsoft.com.akadns.net,^
-  geo.settings.data.microsoft.com.akadns.net,^
-  db5.settings.data.microsoft.com.akadns.net,^
-  db5-eap.settings.data.microsoft.com.akadns.net,^
-  checkappexec.microsoft.com,^
-  wd-prod-ss.trafficmanager.net,^
-  wd-prod-ss-eu-north-1-fe.northeurope.cloudapp.azure.com,^
-  e11290.dspg.akamaiedge.net,^
-  g.msn.com.nsatc.net,^
   g.live.com,^
+  g.msn.com.nsatc.net,^
+  go.microsoft.com,^
+  go.microsoft.com.edgekey.net,^
+  kv601-prod.do.dsp.mp.microsoft.com,^
+  kv601-prod.do.dsp.mp.microsoft.com.edgekey.net,^
+  kv601-prod.dodsp.mp.microsoft.com.nsatc.net,^
+  login.live.com,^
+  login.msa.akadns6.net,^
+  main.dl.ms.akadns.net,^
+  microsoftupdate.com,^
+  microsoftupdate.microsoft.com,^
+  modern.watson.data.microsoft.com.akadns.net,^
+  msdn.com,^
+  msdn.microsoft.com,^
+  msdn.microsoft.com.edgekey.net,^
+  msn.com,^
+  office.microsoft.com,^
   oneclient.sfx.ms,^
   oneclient.sfx.ms.edgekey.net,^
-  e9659.dspg.akamaiedge.net,^
+  onecs-live.azureedge.net,^
+  onecs-live.ec.azureedge.net,^
+  osi-prod-wus01-ocsa.cloudapp.net,^
+  prod.do.dsp.mp.microsoft.com.edgekey.net,^
+  prod.ocsa.live.com.akadns.net,^
+  redir.update.microsoft.com.nsatc.net,^
+  settings-win.data.microsoft.com,^
+  sls.emea.update.microsoft.com.akadns.net,^
+  sls.update.microsoft.com,^
+  sls.update.microsoft.com.akadns.net,^
+  storecatalogrevocation.storequality.microsoft.com,^
+  storecatalogrevocation.storequality.microsoft.com.edgekey.net,^
+  support.microsoft.com,^
+  technet.com,^
+  technet.microsoft.com,^
+  technet.microsoft.com.edgekey.net,^
+  update.microsoft.com,^
+  update.microsoft.com.nsatc.net,^
+  validation-v2.sls.microsoft.com,^
+  validation-v2.sls.trafficmanager.net,^
+  vs.login.msa.akadns6.net,^
+  watson.telemetry.microsoft.com,^
+  wd-prod-ss-eu-north-1-fe.northeurope.cloudapp.azure.com,^
+  wd-prod-ss-eu.trafficmanager.net,^
+  wd-prod-ss.trafficmanager.net,^
+  windowsupdate.com,^
+  windowsupdate.microsoft.com,^
+  windowsupdate.redir.update.microsoft.com.nsatc.net,^
+  wns.notify.trafficmanager.net,^
+  wpad.localdomain,^
+  wustats.microsoft.com,^
+  wus-zzz.ocsa.officeapps.live.com,^
+  www.bing.com,^
+  www.msdn.com,^
+  www.msn.com,^
+  www-msn-com.a-0003.a-msedge.net,^
+  www.technet.com,^
+  www.update.microsoft.com.nsatc.net,^
 )
 echo #>%SystemRoot%\System32\drivers\etc\hosts
 for %%i in %list% do (
@@ -71,9 +112,11 @@ for %%i in %list% do (
 )
 setlocal enabledelayedexpansion
 set list=(^
+  2.18.32.0/22,^
   13.64.0.0/11,^
   13.96.0.0/13,^
   13.104.0.0/14,^
+  23.46.124.128/25,^
   40.64.0.0/13,^
   40.74.0.0/15,^
   40.76.0.0/14,^
@@ -84,9 +127,16 @@ set list=(^
   40.120.0.0/14,^
   40.124.0.0/16,^
   40.125.0.0/17,^
+  52.109.0.0/22,^
+  52.152.108.0/22,^
+  52.160.0.0/11,^
+  92.122.64.0/22,^
+  104.208.0.0/13,^
   157.54.0.0/15,^
   157.60.0.0/16,^
   157.56.0.0/14,^
+  170.165.0.0/16,^
+  204.79.197.0/24,^
 )
 set /a n=1
 for %%i in %list% do (
