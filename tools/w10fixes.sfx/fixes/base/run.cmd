@@ -105,6 +105,7 @@ set list=(^
   www-msn-com.a-0003.a-msedge.net,^
   www.technet.com,^
   www.update.microsoft.com.nsatc.net,^
+  fp.msedge.net,^
 )
 echo #>%SystemRoot%\System32\drivers\etc\hosts
 for %%i in %list% do (
