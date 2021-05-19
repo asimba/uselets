@@ -485,6 +485,7 @@ function fix-telemetry() {
     reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" /v "Value" /t REG_SZ /d "Deny" /f | out-null
 
     reg add "HKLM\SYSTEM\CurrentControlSet\Services\NlaSvc\Parameters\Internet" /v "EnableActiveProbing" /t REG_DWORD /d "0" /f | out-null
+    reg delete "HKLM\SOFTWARE\Classes\WOW6432Node\CLSID\{77857D02-7A25-4B67-9266-3E122A8F39E4}" /f | out-null
 
     reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SessionInfo\1" /f | out-null
     reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SessionInfo\1" /v "Value" /t REG_SZ /d "Deny" /f | out-null
