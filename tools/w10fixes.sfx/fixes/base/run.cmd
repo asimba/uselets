@@ -27,6 +27,10 @@ set list=(^
   displaycatalog-europe.md.mp.microsoft.com.akadns.net,^
   displaycatalog.md.mp.microsoft.com.akadns.net,^
   displaycatalog.mp.microsoft.com,^
+  fe3cr.delivery.mp.microsoft.com,^
+  fe3.delivery.dsp.mp.microsoft.com.nsatc.net,^
+  slscr.update.microsoft.com,^
+  slscr.update.microsoft.com.akadns.net,^
   dlc-shim.trafficmanager.net,^
   dmd.metaservices.microsoft.com,^
   dmd.metaservices.microsoft.com.akadns.net,^
@@ -117,6 +121,7 @@ set list=(^
   13.64.0.0/11,^
   13.96.0.0/13,^
   13.104.0.0/14,^
+  20.48.0.0/12,^
   23.46.124.128/25,^
   40.64.0.0/13,^
   40.74.0.0/15,^
@@ -131,12 +136,14 @@ set list=(^
   52.109.0.0/22,^
   52.152.108.0/22,^
   52.160.0.0/11,^
+  52.224.0.0/11,^
   92.122.64.0/22,^
   104.208.0.0/13,^
   157.54.0.0/15,^
   157.60.0.0/16,^
   157.56.0.0/14,^
   170.165.0.0/16,^
+  178.18.232.0/22,^
   204.79.197.0/24,^
 )
 set /a n=1
@@ -158,9 +165,11 @@ netsh advfirewall firewall delete rule name="MS Block-In OneDriveSetup" >nul 2>&
 netsh advfirewall firewall delete rule name="MS Block-Out SpeechRuntime" >nul 2>&1
 netsh advfirewall firewall delete rule name="MS Block-Out SystemSettings" >nul 2>&1
 netsh advfirewall firewall delete rule name="MS Block-Out OneDriveSetup" >nul 2>&1
+netsh advfirewall firewall add rule name="MS Block-In SIHClient" dir=in interface=any action=block program=%SystemRoot%\System32\SIHClient.exe >nul 2>&1
 netsh advfirewall firewall add rule name="MS Block-In SpeechRuntime" dir=in interface=any action=block program=%SystemRoot%\System32\Speech_OneCore\common\SpeechRuntime.exe >nul 2>&1
 netsh advfirewall firewall add rule name="MS Block-In SystemSettings" dir=in interface=any action=block program=%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe >nul 2>&1
 netsh advfirewall firewall add rule name="MS Block-In OneDriveSetup" dir=in interface=any action=block program=%SystemRoot%\System32\OneDriveSetup.exe >nul 2>&1
+netsh advfirewall firewall add rule name="MS Block-Out SIHClient" dir=out interface=any action=block program=%SystemRoot%\System32\SIHClient.exe >nul 2>&1
 netsh advfirewall firewall add rule name="MS Block-Out SpeechRuntime" dir=out interface=any action=block program=%SystemRoot%\System32\Speech_OneCore\common\SpeechRuntime.exe >nul 2>&1
 netsh advfirewall firewall add rule name="MS Block-Out SystemSettings" dir=out interface=any action=block program=%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe >nul 2>&1
 netsh advfirewall firewall add rule name="MS Block-Out OneDriveSetup" dir=out interface=any action=block program=%SystemRoot%\System32\OneDriveSetup.exe >nul 2>&1
