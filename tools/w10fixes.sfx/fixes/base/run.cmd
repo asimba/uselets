@@ -21,6 +21,7 @@ set list=(^
   checkappexec.microsoft.com,^
   client.wns.windows.com,^
   cs9.wpc.v0cdn.net,^
+  cs11.wpc.v0cdn.net,^
   ctldl.windowsupdate.com,^
   db5.displaycatalog.md.mp.microsoft.com.akadns.net,^
   db5-eap.settings.data.microsoft.com.akadns.net,^
@@ -101,6 +102,10 @@ set list=(^
   windowsupdate.microsoft.com,^
   windowsupdate.redir.update.microsoft.com.nsatc.net,^
   wns.notify.trafficmanager.net,^
+  wu.azureedge.net,^
+  wu.ec.azureedge.net,^
+  wu.wpc.apr-52dd2.edgecastdns.net,^
+  hlb.apr-52dd2-0.edgecastdns.net,^
   wpad.localdomain,^
   wustats.microsoft.com,^
   wus-zzz.ocsa.officeapps.live.com,^
@@ -143,7 +148,9 @@ set list=(^
   52.152.108.0/22,^
   52.160.0.0/11,^
   52.224.0.0/11,^
+  72.247.42.0/23,^
   92.122.64.0/22,^
+  93.184.221.240,^
   104.208.0.0/13,^
   157.54.0.0/15,^
   157.60.0.0/16,^
