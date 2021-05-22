@@ -16,6 +16,7 @@ set list=(^
   au.c-0001.c-msedge.net,^
   au.download.windowsupdate.com.edgesuite.net,^
   audownload.windowsupdate.nsatc.net,^
+  auto.au.download.windowsupdate.com.c.footprint.net,^
   c-0001.c-msedge.net,^
   checkappexec.microsoft.com,^
   client.wns.windows.com,^
@@ -118,6 +119,11 @@ for %%i in %list% do (
 setlocal enabledelayedexpansion
 set list=(^
   2.18.32.0/22,^
+  8.238.100.0/22,^
+  8.238.104.0/22,^
+  8.238.108.0/22,^
+  8.250.242.0/23,^
+  8.250.243.254,^
   13.64.0.0/11,^
   13.96.0.0/13,^
   13.104.0.0/14,^
