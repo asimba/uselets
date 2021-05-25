@@ -152,6 +152,8 @@ $tasks = @(
     "\Microsoft\Windows\Defrag\ScheduledDefrag"
     "\Microsoft\Office\Office Automatic Updates"
     "\Microsoft\Office\Office ClickToRun Service Monitor"
+    "\Microsoft\XblGameSave\XblGameSaveTask"
+    "\Microsoft\Windows\WindowsUpdate\Scheduled Start"
 )
 
 $root_tasks = @(
