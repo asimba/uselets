@@ -562,6 +562,47 @@ outgoinguser iscsi-target vUD6YXvz7Klb
 &lt;/target&gt;
 </code></pre></details>  
 
+#### Пример (шаблон) сценария резервного копирования файлов с использованием службы Volume Shadow Copy (Windows 10).  
+_Требования (зависимости):_ [7-Zip Extra](https://www.7-zip.org/a/7z1900-extra.7z)  
+<details><summary>backupcycle.cmd</summary><pre><code>
+@echo off
+
+set drv="C:\\"
+set src="\Windows\System32\config"
+set mnt="C:\temp\mount"
+set bak="C:\temp\backup"
+
+rmdir %mnt% >nul 2>&1
+
+for /f "tokens=*" %%c in ('date /t') do (set dt=%%c)
+for /f "tokens=*" %%c in ('time /t') do (set tm=%%c)
+set tmp=%dt%%tm%
+set datestr=%tmp:/=-%
+set datestr=%datestr: =-%
+set datestr=%datestr::=-%
+set datestr=%datestr:.=-%
+set bakname=backup-%datestr%
+
+mkdir %bak%\%bakname%
+
+vssadmin.exe delete shadows /for=%drv% /all /quiet >nul 2>&1
+wmic shadowcopy call create Volume='%drv%' >nul 2>&1
+setlocal enabledelayedexpansion
+for /F "delims=" %%c in ('vssadmin.exe list shadows /for^=%drv% ^| findstr /c:GLOBALROOT') do set sw=%%c
+set "find=* \\?\"
+call set sw=%%sw:!find!=\\?\%%
+mklink /D %mnt% %sw%\ >nul 2>&1
+endlocal
+set src=%src:"=%
+set mnt=%mnt:"=%
+set src=%mnt%%src%
+robocopy %src% %bak%\%bakname% /e /copyall /NS /NC /NFL /NDL /NP >nul 2>&1
+7za a -t7z -ms=on -m0=LZMA2 -mx9 -mmt=4 -scsUTF-8 -ssc "%bak%\%bakname%.7z" "%bak%\%bakname%"
+rmdir %mnt% >nul 2>&1
+takeown /r /f %bak%\%bakname% /d y >nul 2>&1
+rd /q /s %bak%\%bakname% >nul 2>&1
+</code></pre></details>  
+
 #### Очистка журнала USN NTFS из командной строки (Windows).  
 ```fsutil usn deletejournal /n c:```  
 #### Стандартная очистка дисков из командной строки (Windows).  
