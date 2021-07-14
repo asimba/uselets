@@ -567,13 +567,23 @@ _Требования (зависимости):_ [7-Zip Extra](https://www.7-zip
 <details><summary>backupcycle.cmd</summary><pre><code>
 @echo off
 
+cd /d "%~dp0"
+
 set drv="C:\\"
 set src="\Windows\System32\config"
 set mnt="C:\temp\mount"
 set bak="C:\temp\backup"
+set log="C:\temp\backup\backup.log"
 
+echo ================================================================================>>%log%
+echo %date% %time% : Starting backup task.>>%log%
+echo ================================================================================>>%log%
+echo %date% %time% : Removing the old mount point.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
 rmdir %mnt% >nul 2>&1
-
+echo -------------------------------------------------------------------------------->>%log%
+echo %date% %time% : Creating the temporary backup directory.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
 for /f "tokens=*" %%c in ('date /t') do (set dt=%%c)
 for /f "tokens=*" %%c in ('time /t') do (set tm=%%c)
 set tmp=%dt%%tm%
@@ -582,25 +592,48 @@ set datestr=%datestr: =-%
 set datestr=%datestr::=-%
 set datestr=%datestr:.=-%
 set bakname=backup-%datestr%
-
-mkdir %bak%\%bakname%
-
-vssadmin.exe delete shadows /for=%drv% /all /quiet >nul 2>&1
-wmic shadowcopy call create Volume='%drv%' >nul 2>&1
+mkdir %bak%\%bakname% >>%log% 2>&1
+echo -------------------------------------------------------------------------------->>%log%
+echo %date% %time% : Deleting all of the specified volume's shadow copies.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
+vssadmin.exe delete shadows /for=%drv% /all /quiet >>%log% 2>&1
+echo -------------------------------------------------------------------------------->>%log%
+echo %date% %time% : Creating new shadow copy.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
+wmic shadowcopy call create Volume='%drv%' >>%log% 2>&1
 setlocal enabledelayedexpansion
+echo -------------------------------------------------------------------------------->>%log%
+echo %date% %time% : Searching the name of the new shadow copy.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
+vssadmin.exe list shadows >>%log% 2>&1
 for /F "delims=" %%c in ('vssadmin.exe list shadows /for^=%drv% ^| findstr /c:GLOBALROOT') do set sw=%%c
 set "find=* \\?\"
 call set sw=%%sw:!find!=\\?\%%
-mklink /D %mnt% %sw%\ >nul 2>&1
+mklink /D %mnt% %sw%\ >>%log% 2>&1
 endlocal
 set src=%src:"=%
 set mnt=%mnt:"=%
 set src=%mnt%%src%
-robocopy %src% %bak%\%bakname% /e /copyall /NS /NC /NFL /NDL /NP >nul 2>&1
+echo -------------------------------------------------------------------------------->>%log%
+echo %date% %time% : Copying requested source files.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
+robocopy %src% %bak%\%bakname% /e /copyall /xj /xjd /xjf /ns /nc /nfl /ndl /np >>%log% 2>&1
+echo -------------------------------------------------------------------------------->>%log%
+echo %date% %time% : Packing the temporary backup directory.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
 7za a -t7z -ms=on -m0=LZMA2 -mx9 -mmt=4 -scsUTF-8 -ssc "%bak%\%bakname%.7z" "%bak%\%bakname%"
-rmdir %mnt% >nul 2>&1
-takeown /r /f %bak%\%bakname% /d y >nul 2>&1
-rd /q /s %bak%\%bakname% >nul 2>&1
+echo -------------------------------------------------------------------------------->>%log%
+echo %date% %time% : Removing the mount point.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
+rmdir %mnt% >>%log% 2>&1
+echo -------------------------------------------------------------------------------->>%log%
+echo %date% %time% : Removing the temporary backup directory.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
+takeown /r /skipsl /f %bak%\%bakname% /d y >nul 2>&1
+rd /q /s %bak%\%bakname% >>%log% 2>&1
+echo ================================================================================>>%log%
+echo %date% %time% : Finished.>>%log%
+echo ================================================================================>>%log%
 </code></pre></details>  
 
 #### Очистка журнала USN NTFS из командной строки (Windows).  
