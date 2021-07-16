@@ -569,11 +569,25 @@ _Требования (зависимости):_ [7-Zip Extra](https://www.7-zip
 
 cd /d "%~dp0"
 
-set drv="C:\\"
-set src="\Windows\System32\config"
-set mnt="C:\temp\mount"
-set bak="C:\temp\backup"
-set log="C:\temp\backup\backup.log"
+set drv=C:\
+set src=\Windows\System32\config
+set pfx=registry
+
+set tdr=%drv%temp
+set mnt=%tdr%\mount
+set bak=%tdr%\backup
+set log=%~dp0backup.log
+
+rem echo %drv%
+rem echo %src%
+rem echo %tdr%
+rem echo %mnt%
+rem echo %bak%
+rem echo %log%
+
+rem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+mkdir %bak%
+rem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 echo ================================================================================>>%log%
 echo %date% %time% : Starting backup task.>>%log%
@@ -591,7 +605,7 @@ set datestr=%tmp:/=-%
 set datestr=%datestr: =-%
 set datestr=%datestr::=-%
 set datestr=%datestr:.=-%
-set bakname=backup-%datestr%
+set bakname=%pfx%-backup-%datestr%
 mkdir %bak%\%bakname% >>%log% 2>&1
 echo -------------------------------------------------------------------------------->>%log%
 echo %date% %time% : Deleting all of the specified volume's shadow copies.>>%log%
@@ -600,12 +614,12 @@ vssadmin.exe delete shadows /for=%drv% /all /quiet >>%log% 2>&1
 echo -------------------------------------------------------------------------------->>%log%
 echo %date% %time% : Creating new shadow copy.>>%log%
 echo -------------------------------------------------------------------------------->>%log%
-wmic shadowcopy call create Volume='%drv%' >>%log% 2>&1
+wmic shadowcopy call create Volume='^"%drv%\^"' >>%log% 2>&1
 setlocal enabledelayedexpansion
 echo -------------------------------------------------------------------------------->>%log%
 echo %date% %time% : Searching the name of the new shadow copy.>>%log%
 echo -------------------------------------------------------------------------------->>%log%
-vssadmin.exe list shadows >>%log% 2>&1
+vssadmin.exe list shadows /for=%drv% >>%log% 2>&1
 for /F "delims=" %%c in ('vssadmin.exe list shadows /for^=%drv% ^| findstr /c:GLOBALROOT') do set sw=%%c
 set "find=* \\?\"
 call set sw=%%sw:!find!=\\?\%%
@@ -631,9 +645,18 @@ echo %date% %time% : Removing the temporary backup directory.>>%log%
 echo -------------------------------------------------------------------------------->>%log%
 takeown /r /skipsl /f %bak%\%bakname% /d y >nul 2>&1
 rd /q /s %bak%\%bakname% >>%log% 2>&1
+echo -------------------------------------------------------------------------------->>%log%
+echo %date% %time% : Deleting all of the specified volume's shadow copies.>>%log%
+echo -------------------------------------------------------------------------------->>%log%
+vssadmin.exe delete shadows /for=%drv% /all /quiet >>%log% 2>&1
 echo ================================================================================>>%log%
 echo %date% %time% : Finished.>>%log%
 echo ================================================================================>>%log%
+
+rem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+move "%bak%\%bakname%.7z" "%~dp0\%bakname%.7z"
+rd /q /s %tdr%
+rem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 </code></pre></details>  
 
 #### Очистка журнала USN NTFS из командной строки (Windows).  
