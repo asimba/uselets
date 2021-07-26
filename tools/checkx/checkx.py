@@ -5,7 +5,7 @@ from tempfile import mkdtemp
 from shutil import rmtree
 from sys import argv,path,exit
 from os import walk,access,mkdir,R_OK,popen
-from os.path import isfile,dirname,realpath,join
+from os.path import isfile,dirname,realpath,join,basename
 from subprocess import Popen,PIPE,STDOUT
 from platform import system
 path.insert(0,join(dirname(realpath(argv[0])),'zipfix.zip'))
@@ -17,30 +17,23 @@ stopmask=re.compile('(\.(ade|adp|bas|bat|chm|cmd|com|cpl|crt|exe|hlp|hta|inf|\
 ins|isp|jse|js|lnk|mde|msc|msi|msp|pcd|reg|scr|sct|url|vbs|vbe|wsf|wsh|wsc|\
 wmv|wma|mp3|avi|mpg|hta|ppsx)|incorrect|password|not\ supported)',re.IGNORECASE)
 
-stopmask_arc=re.compile('(\.rar|7z|zip|zipx|arj|ace)',re.IGNORECASE)
+stopmask_arc=re.compile('(\.rar|7z|zip|zipx|arj|ace|daa)',re.IGNORECASE)
 
 allowmask=re.compile('(7-Zip|p7zip|Scanning|Testing\ archive|Path|Type|Listing)',re.IGNORECASE)
 
+file_types=re.compile('^.*(\.docx|doc|rar|7z|zip|gz|ace|ls|[0-9]{3}|r[0-9]{2})$',re.IGNORECASE)
+
 up='/usr/bin/'
 bp='/bin/'
-if system()=="Windows":
-    fp=realpath('file.exe')
-    rp=realpath('ripole.exe')
-    pr=realpath('unrar.exe')
-    p7=realpath('7z.exe')
-    pz=realpath('unzip.exe')
-    pg=realpath('gunzip.exe')
-    pa=realpath('unace.exe')
-else:
-    fp=up+'file'
-    rp=up+'ripole'
-    pr=up+'unrar'
-    prt=up+'unrar'
-    p7=up+'7z'
-    p7t=up+'7z'
-    pz=up+'unzip'
-    pg=bp+'gunzip'
-    pa=up+'unace'
+fp=up+'file'
+rp=up+'ripole'
+pr=up+'unrar'
+prt=up+'unrar'
+p7=up+'7z'
+p7t=up+'7z'
+pz=up+'unzip'
+pg=bp+'gunzip'
+pa=up+'unace'
 fp+=' -b '
 pr+=' lb -p- '
 prt+=' t -p- '
@@ -66,7 +59,13 @@ def checktype(lines):
         if find(l,'executable')!=-1: print 'stop'; return 1
     return 0
 
+def arctype(src):
+    for l in checkcmd(fp,src):
+        if find(l,' archive data,')!=-1: print 'stop'; return 1
+    return 0
+
 def checkdoc(src):
+    if arctype(src): return
     try:
         tdir=mkdtemp()
         try:
@@ -132,9 +131,16 @@ def checkarc(cmd,src):
                  break
     except: pass
 
+#from shutil import copy
+
 if __name__ == "__main__":
     if len(argv)>2:
         src=realpath(rstrip(argv[1]))
+#        fo=open('/var/log/checkx.log','a')
+#        fo.write(src+':'+argv[2]+'\n')
+#        if len(argv)>3: fo.write(argv[3]+'\n')
+#        fo.close()
+#        copy(src,join('/mnt/storage/temp/vx',basename(argv[1])))
         if not(isfile(src) and access(src,R_OK)): exit()
         elif argv[2]=='docx': checkdocx(src)
         elif argv[2]=='doc': checkdoc(src)
@@ -147,4 +153,7 @@ if __name__ == "__main__":
             checkarc(p7t,src)
         elif argv[2]=='gz': checkarc(pg,src)
         elif argv[2]=='ace': checkarc(pa,src)
+        elif argv[2]=='bin' and len(argv)>3:
+            if not file_types.search(argv[3]): arctype(src)
     else: exit()
+
