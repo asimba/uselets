@@ -333,6 +333,12 @@ _Инструкция: в конфигурацию Exim требуется вн�
 system_filter = /etc/exim4/exim.filter
 ...
 acl_check_mime:
+#  deny message = Potentially type mismatch. - blocked!
+  warn message = X-SS-Suspicious-Flag: YES
+       decode = default
+       condition = ${if match{${run{/usr/local/bin/checkx.py \
+                                    $mime_decoded_filename bin \"$mime_filename\"}}}\
+                             {\N(?i)stop\n\N}}
 #  deny message = Potentially executable content (in .zip). - blocked!
   warn message = X-SS-Suspicious-Flag: YES
        condition = ${if match{$mime_filename}{\N(?i)\.zip$\N}}
