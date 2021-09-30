@@ -673,6 +673,8 @@ _Требования (зависимости):_ PowerShell, [cleandisk.ps1](htt
 #### Удаление временных файлов для всех пользователей из командной строки (Windows).  
 _Требования (зависимости):_ PowerShell, [cleartemp.ps1](https://github.com/asimba/uselets/tree/main/tools/cleartemp)  
 ```powershell -ExecutionPolicy Bypass -command "cleartemp.ps1"```  
+#### Удаление файлов созданных ранее текущей даты на заданное количество дней из командной строки (Windows).  
+```forfiles /P <"Путь к директории для поиска файлов"> /S /M *.<Расширение имён файлов> /D -<Количество дней> /C "cmd /c del /q @path"```  
 
 ---  
 ### Системные операции.  
