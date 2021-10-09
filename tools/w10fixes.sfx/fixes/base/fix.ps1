@@ -93,6 +93,9 @@ $apps = @(
     "Microsoft.ScreenSketch"
     "Microsoft.MixedReality.Portal"
     "Microsoft.549981C3F5F10"
+    "Microsoft.Todos"
+    "Microsoft.PowerAutomateDesktop"
+    "Microsoft.GamingApp"
     "*yandex*"
     "*netflix*"
     "*sodasaga*"
@@ -233,8 +236,12 @@ $cleanflags = @(
 
 function remove-app($app) {
     Write-Output "Trying to remove $app"
-    (Get-AppxPackage -Name "$app" -AllUsers -ErrorAction SilentlyContinue | Remove-AppxPackage -ErrorAction SilentlyContinue) | out-null;
-    (Get-AppXProvisionedPackage -Online -ErrorAction SilentlyContinue | Where-Object DisplayName -EQ "$app" | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue) | out-null;
+    try{
+        (Get-AppxPackage -Name "$app" -AllUsers -ErrorAction SilentlyContinue | Remove-AppxPackage -ErrorAction SilentlyContinue) | out-null;
+        (Get-AppXProvisionedPackage -Online -ErrorAction SilentlyContinue | Where-Object DisplayName -EQ "$app" | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue) | out-null;
+    }
+    catch{
+    };
 }
 
 function remove-apps() {
@@ -376,6 +383,10 @@ function fix-telemetry() {
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" /v DisableFileSyncNGSC /t REG_DWORD /d 1 /f | out-null
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v DontSendAdditionalData /t REG_DWORD /d 1 /f | out-null
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v AllowCortana /t REG_DWORD /d 0 /f | out-null
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v SafeSearchMode /t REG_DWORD /d 0 /f | out-null
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v IsMSACloudSearchEnabled /t REG_DWORD /d 0 /f | out-null
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v IsAADCloudSearchEnabled /t REG_DWORD /d 0 /f | out-null
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v IsDeviceSearchHistoryEnabled /t REG_DWORD /d 0 /f | out-null
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v EnableActivityFeed /t REG_DWORD /d 0 /f | out-null
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v PublishUserActivities /t REG_DWORD /d 0 /f | out-null
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v UploadUserActivities /t REG_DWORD /d 0 /f | out-null
@@ -385,8 +396,10 @@ function fix-telemetry() {
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | out-null
     reg add "HKLM\SOFTWARE\Microsoft\OneDrive" /v PreventNetworkTrafficPreUserSignIn /t REG_DWORD /d 1 /f | out-null
     reg add "HKLM\SOFTWARE\Microsoft\Windows Search" /v AllowCortana /t REG_DWORD /d 0 /f | out-null
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb /t REG_DWORD /d 0 /f | out-null
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v DisableWebSearch /t REG_DWORD /d 1 /f | out-null
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v AllowCortana /t REG_DWORD /d 0 /f | out-null
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" /v DisableSearchBoxSuggestions /t REG_DWORD /d 1 /f | out-null
     reg add "HKLM\SOFTWARE\Microsoft\PolicyManager\default\Experience\AllowCortana" /v value /t REG_DWORD /d 0 /f | out-null
     reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v CortanaEnabled /t REG_DWORD /d 0 /f | out-null
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb /t REG_DWORD /d 0 /f | out-null
@@ -448,6 +461,10 @@ function fix-telemetry() {
     reg add "HKCU\SOFTWARE\Microsoft\Edge\SmartScreenPuaEnabled" /t REG_DWORD /d 0 /f| out-null
     reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v CortanaEnabled /t REG_DWORD /d 0 /f | out-null
     reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v CanCortanaBeEnabled /t REG_DWORD /d 0 /f | out-null
+    reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings" /v SafeSearchMode /t REG_DWORD /d 0 /f | out-null
+    reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings" /v IsMSACloudSearchEnabled /t REG_DWORD /d 0 /f | out-null
+    reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings" /v IsAADCloudSearchEnabled /t REG_DWORD /d 0 /f | out-null
+    reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings" /v IsDeviceSearchHistoryEnabled /t REG_DWORD /d 0 /f | out-null
     reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.SecurityAndMaintenance" /v Enabled /t REG_DWORD /d 0 /f | out-null
     reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v RotatingLockScreenEnabled /t REG_DWORD /d 0 /f | out-null
     reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v RotatingLockScreenOverlayEnabled /t REG_DWORD /d 0 /f | out-null
@@ -501,6 +518,8 @@ function fix-telemetry() {
     reg add "HKCU\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel" /v HomePage /t REG_DWORD /d 1 /f | out-null
     reg add "HKCU\SOFTWARE\Policies\Microsoft\Internet Explorer\TabbedBrowsing" /v NewTabPageShow /t REG_DWORD /d 0 /f | out-null
     reg add "HKCU\SOFTWARE\Microsoft\Internet Explorer\Main" /v "Start Page" /t REG_SZ /d "about:blank" /f | out-null
+    reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /t REG_DWORD /d 0 /f | out-null
+    reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /t REG_DWORD /d 0 /f | out-null
 
 }
 
@@ -566,6 +585,7 @@ function fix-taskbar(){
 
 function fix-tiles(){
     reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store" /f| out-null
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Dsh" /v AllowNewsAndInterests /t REG_DWORD /d 0 /f| out-null
     reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" /v HideRecentlyAddedApps /t REG_DWORD /d 1 /f| out-null
 }
 
