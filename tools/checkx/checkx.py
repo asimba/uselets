@@ -21,7 +21,7 @@ stopmask_arc=re.compile('(\.rar|7z|zip|zipx|arj|ace|daa)',re.IGNORECASE)
 
 allowmask=re.compile('(7-Zip|p7zip|Scanning|Testing\ archive|Path|Type|Listing)',re.IGNORECASE)
 
-file_types=re.compile('^.*(\.docx|doc|xslx|xls|rar|7z|zip|gz|ace|ods|odt|odp|ls|[0-9]{3}|r[0-9]{2})$',re.IGNORECASE)
+file_types=re.compile('^.*(\.docx|doc|xlsx|xls|rar|7z|zip|gz|ace|ods|odt|odp|ls|[0-9]{3}|r[0-9]{2})$',re.IGNORECASE)
 
 up='/usr/bin/'
 bp='/bin/'
@@ -131,9 +131,16 @@ def checkarc(cmd,src):
                  break
     except: pass
 
+#from shutil import copy
+
 if __name__ == "__main__":
     if len(argv)>2:
         src=realpath(rstrip(argv[1]))
+#        fo=open('/var/log/checkx.log','a')
+#        fo.write(src+':'+argv[2]+'\n')
+#        if len(argv)>3: fo.write(argv[3]+'\n')
+#        fo.close()
+#        copy(src,join('/mnt/storage/temp/vx',basename(argv[1])))
         if not(isfile(src) and access(src,R_OK)): exit()
         elif argv[2]=='docx': checkdocx(src)
         elif argv[2]=='doc': checkdoc(src)
