@@ -477,6 +477,9 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","IsDeviceSearchHistoryEnabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","IsMSACloudSearchEnabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","SafeSearchMode",0),
+@("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","EnableVirtualizationBasedSecurity",0),
+@("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","RequirePlatformSecurityFeatures",0),
+@("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity","Enabled",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener","Start",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\WMI\AutoLogger\SQMLogger","Start",0),
 @("HKLM\SYSTEM\CurrentControlSet\Services\NlaSvc\Parameters\Internet","EnableActiveProbing",0)
