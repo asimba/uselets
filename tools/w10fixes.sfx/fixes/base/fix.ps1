@@ -87,7 +87,6 @@ $apps = @(
     "Microsoft.Xbox.TCUI"
     "Microsoft.Microsoft3DViewer"
     "Microsoft.StorePurchaseApp"
-    "Windows.MiracastView"
     "Microsoft.YourPhone"
     "Microsoft.ScreenSketch"
     "Microsoft.MixedReality.Portal"
@@ -95,6 +94,9 @@ $apps = @(
     "Microsoft.Todos"
     "Microsoft.PowerAutomateDesktop"
     "Microsoft.GamingApp"
+    "Microsoft.Teams"
+    "MicrosoftTeams"
+    "Windows.MiracastView"
     "*yandex*"
     "*netflix*"
     "*sodasaga*"
@@ -254,7 +256,7 @@ function remove-apps() {
 function remove-onedrive(){
     write-header "Removing OneDrive..."
     Write-Output "Kill OneDrive process"
-    (taskkill.exe /F /IM "OneDrive.exe") | out-null
+    (taskkill.exe /F /IM "OneDrive.exe") 2>&1 | out-null
     Write-Output "Remove OneDrive"
     if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
         & "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
