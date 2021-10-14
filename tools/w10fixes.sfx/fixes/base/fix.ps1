@@ -94,6 +94,7 @@ $apps = @(
     "Microsoft.Todos"
     "Microsoft.PowerAutomateDesktop"
     "Microsoft.GamingApp"
+    "Microsoft.Services.Store.Engagement"
     "Microsoft.Teams"
     "MicrosoftTeams"
     "Windows.MiracastView"
@@ -115,7 +116,6 @@ $apps = @(
     "*polarr*"
     "*minecraft*"
     "*dolbyaccess*"
-    "Microsoft.Services.Store.Engagement"
 )
 
 $tasks = @(
@@ -531,8 +531,8 @@ $reg_sz=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Internet Settings","ProvisionedHomePages","about:blank")
 )
 
-function fix-telemetry() {
-    write-header "Disabling some telemetry..."
+function fix-registry() {
+    write-header "Tuning registry keys..."
     foreach ($r in $reg_dw) {
         rdw $r[0] $r[1] $r[2]
     }
@@ -550,12 +550,12 @@ function cleanup(){
     write-header "Deleting system restore points..."
     vssadmin delete shadows /for=$env:systemdrive /all | Out-Null
     write-header "Deleting temporary folders..."
-    if (test-path $env:systemdrive\Config.Msi) {remove-item -Path $env:systemdrive\Config.Msi -force -recurse}
-    if (test-path $env:systemdrive\Intel) {remove-item -Path $env:systemdrive\Intel -force -recurse}
-    if (test-path $env:systemdrive\PerfLogs) {remove-item -Path $env:systemdrive\PerfLogs -force -recurse}
-    if (test-path $env:windir\memory.dmp) {remove-item $env:windir\memory.dmp -force}
+    if (test-path $env:systemdrive\Config.Msi) {Remove-Item -Path $env:systemdrive\Config.Msi -Force -Recurse}
+    if (test-path $env:systemdrive\Intel) {Remove-Item -Path $env:systemdrive\Intel -Force -Recurse}
+    if (test-path $env:systemdrive\PerfLogs) {Remove-Item -Path $env:systemdrive\PerfLogs -Force -Recurse}
+    if (test-path $env:windir\memory.dmp) {Remove-Item $env:windir\memory.dmp -Force}
     write-header "Deleting Windows error reporting files"
-    if (test-path $env:systemdrive\ProgramData\Microsoft\Windows\WER) {Get-ChildItem -ErrorAction SilentlyContinue -Path $env:systemdrive\ProgramData\Microsoft\Windows\WER -Recurse | Remove-Item -ErrorAction SilentlyContinue -force -recurse}
+    if (test-path $env:systemdrive\ProgramData\Microsoft\Windows\WER) {Get-ChildItem -ErrorAction SilentlyContinue -Path $env:systemdrive\ProgramData\Microsoft\Windows\WER -Recurse | Remove-Item -ErrorAction SilentlyContinue -Force -Recurse}
     write-header "Removing system and user temporary Files"
     Remove-Item -Path "$env:windir\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue
     Remove-Item -Path "$env:windir\minidump\*" -Force -Recurse -ErrorAction SilentlyContinue
@@ -570,12 +570,11 @@ function cleanup(){
     Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCookies\*" -Force -Recurse -ErrorAction SilentlyContinue
     Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Terminal Server Client\Cache\*" -Force -Recurse -ErrorAction SilentlyContinue
     write-header "Removing Windows updates downloads..."
-    Stop-Service wuauserv -Force -Verbose -ErrorAction SilentlyContinue
-    Stop-Service TrustedInstaller -Force -Verbose -ErrorAction SilentlyContinue
+    Stop-Service wuauserv -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
+    Stop-Service TrustedInstaller -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
     Remove-Item -Path "$env:windir\SoftwareDistribution\*" -Force -Recurse
-    Remove-Item $env:windir\Logs\CBS\* -force -recurse
-    Start-Service wuauserv -Verbose -ErrorAction SilentlyContinue
-    Start-Service TrustedInstaller -Verbose -ErrorAction SilentlyContinue
+    Remove-Item $env:windir\Logs\CBS\* -Force -Recurse
+    Start-Service TrustedInstaller -ErrorAction SilentlyContinue 2>&1 | Out-Null
     write-header "Running Windows system cleanup..."
     $StateFlags = 'StateFlags1234'
     $StateRun = $StateFlags.Substring($StateFlags.get_Length()-4)
@@ -593,8 +592,8 @@ function cleanup(){
     fsutil usn deletejournal /n $env:systemdrive | Out-Null
 } 
 
-function fix-taskbar(){
-    write-header "Fixing taskbar view..."
+function fix-view(){
+    write-header "Fixing view..."
     rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" ShowTaskViewButton 0
     rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView" AllUpView 0
     rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" HideSCAMeetNow 1
@@ -603,9 +602,24 @@ function fix-taskbar(){
     rdw "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" HideSCAMeetNow 1
     rdw "HKLM\SOFTWARE\Policies\Microsoft\Dsh" AllowNewsAndInterests 0
     rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" HideRecentlyAddedApps 1
+    try{
+        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" 2>&1 | out-null
+    }
+    catch{
+    };
+    try{
+        Start-Process wt.exe -WindowStyle hidden 2>&1 | out-null
+        Start-Sleep -s 5
+        $r=(Get-Content "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Encoding UTF8 -ErrorAction SilentlyContinue) -replace "^\s*\/\/.*" | Out-String -ErrorAction SilentlyContinue
+        $j=(ConvertFrom-Json -InputObject $r -ErrorAction SilentlyContinue)
+        $j.profiles.list | % {if($_.name -eq "Azure Cloud Shell"){$_.hidden=[boolean]"true"}}
+        $j | ConvertTo-Json -depth 32  -ErrorAction SilentlyContinue | Set-Content "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Encoding UTF8 -ErrorAction SilentlyContinue
+    }
+    catch{
+    };
 }
 
-fix-taskbar
+fix-view
 remove-apps
 remove-onedrive
 fix-tasks
@@ -613,5 +627,5 @@ fix-root-tasks
 fix-tasks-files
 fix-services
 fix-bservices
-fix-telemetry
+fix-registry
 cleanup
