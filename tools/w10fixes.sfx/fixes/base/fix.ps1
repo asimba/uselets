@@ -38,201 +38,203 @@ function Takeown-File($path) {
     Set-Acl -Path $path -AclObject $acl
 }
 
-$apps = @(
-    "Microsoft.3DBuilder"
-    "Microsoft.Appconnector"
-    "Microsoft.BingFinance"
-    "Microsoft.BingNews"
-    "Microsoft.BingSports"
-    "Microsoft.BingWeather"
-    "Microsoft.Getstarted"
-    "Microsoft.MicrosoftOfficeHub"
-    "Microsoft.MicrosoftSolitaireCollection"
-    "Microsoft.MicrosoftStickyNotes"
-    "Microsoft.Office.OneNote"
-    "Microsoft.OneConnect"
-    "Microsoft.People"
-    "Microsoft.SkypeApp"
-    "Microsoft.WindowsAlarms"
-    "Microsoft.WindowsCamera"
-    "Microsoft.WindowsMaps"
-    "Microsoft.WindowsPhone"
-    "Microsoft.WindowsSoundRecorder"
-    "Microsoft.WindowsStore"
-    "Microsoft.XboxApp"
-    "Microsoft.ZuneMusic"
-    "Microsoft.ZuneVideo"
-    "microsoft.windowscommunicationsapps"
-    "Microsoft.MinecraftUWP"
-    "Microsoft.MicrosoftPowerBIForWindows"
-    "Microsoft.NetworkSpeedTest"
-    "Microsoft.CommsPhone"
-    "Microsoft.ConnectivityStore"
-    "Microsoft.Messaging"
-    "Microsoft.Office.Sway"
-    "Microsoft.OneConnect"
-    "Microsoft.WindowsFeedbackHub"
-    "Microsoft.BingFoodAndDrink"
-    "Microsoft.BingTravel"
-    "Microsoft.BingHealthAndFitness"
-    "Microsoft.WindowsReadingList"
-    "Microsoft.GetHelp"
-    "Microsoft.Wallet"
-    "Microsoft.Print3D"
-    "Microsoft.MSPaint"
-    "Microsoft.XboxSpeechToTextOverlay"
-    "Microsoft.XboxGameOverlay"
-    "Microsoft.XboxGamingOverlay"
-    "Microsoft.XboxIdentityProvider"
-    "Microsoft.Xbox.TCUI"
-    "Microsoft.Microsoft3DViewer"
-    "Microsoft.StorePurchaseApp"
-    "Microsoft.YourPhone"
-    "Microsoft.ScreenSketch"
-    "Microsoft.MixedReality.Portal"
-    "Microsoft.549981C3F5F10"
-    "Microsoft.Todos"
-    "Microsoft.PowerAutomateDesktop"
-    "Microsoft.GamingApp"
-    "Microsoft.Services.Store.Engagement"
-    "Microsoft.Teams"
-    "MicrosoftTeams"
-    "Windows.MiracastView"
-    "*yandex*"
-    "*netflix*"
-    "*sodasaga*"
-    "*twitter*"
-    "*sketchbook*"
-    "*bubblewitch*"
-    "*advertising*"
-    "*hpjumpstart*"
-    "*dropbox*"
-    "*amazon*"
-    "*marchofempires*"
-    "*powermediaplayer*"
-    "*.plex*"
-    "*saladgames*"
-    "*king.com*"
-    "*polarr*"
-    "*minecraft*"
-    "*dolbyaccess*"
+$apps=@(
+"Microsoft.3DBuilder"
+"Microsoft.Appconnector"
+"Microsoft.BingFinance"
+"Microsoft.BingNews"
+"Microsoft.BingSports"
+"Microsoft.BingWeather"
+"Microsoft.Getstarted"
+"Microsoft.MicrosoftOfficeHub"
+"Microsoft.MicrosoftSolitaireCollection"
+"Microsoft.MicrosoftStickyNotes"
+"Microsoft.Office.OneNote"
+"Microsoft.OneConnect"
+"Microsoft.People"
+"Microsoft.SkypeApp"
+"Microsoft.WindowsAlarms"
+"Microsoft.WindowsCamera"
+"Microsoft.WindowsMaps"
+"Microsoft.WindowsPhone"
+"Microsoft.WindowsSoundRecorder"
+"Microsoft.WindowsStore"
+"Microsoft.XboxApp"
+"Microsoft.ZuneMusic"
+"Microsoft.ZuneVideo"
+"microsoft.windowscommunicationsapps"
+"Microsoft.MinecraftUWP"
+"Microsoft.MicrosoftPowerBIForWindows"
+"Microsoft.NetworkSpeedTest"
+"Microsoft.CommsPhone"
+"Microsoft.ConnectivityStore"
+"Microsoft.Messaging"
+"Microsoft.Office.Sway"
+"Microsoft.OneConnect"
+"Microsoft.WindowsFeedbackHub"
+"Microsoft.BingFoodAndDrink"
+"Microsoft.BingTravel"
+"Microsoft.BingHealthAndFitness"
+"Microsoft.WindowsReadingList"
+"Microsoft.GetHelp"
+"Microsoft.Wallet"
+"Microsoft.Print3D"
+"Microsoft.MSPaint"
+"Microsoft.XboxSpeechToTextOverlay"
+"Microsoft.XboxGameOverlay"
+"Microsoft.XboxGamingOverlay"
+"Microsoft.XboxIdentityProvider"
+"Microsoft.Xbox.TCUI"
+"Microsoft.Microsoft3DViewer"
+"Microsoft.StorePurchaseApp"
+"Microsoft.YourPhone"
+"Microsoft.ScreenSketch"
+"Microsoft.MixedReality.Portal"
+"Microsoft.549981C3F5F10"
+"Microsoft.Todos"
+"Microsoft.PowerAutomateDesktop"
+"Microsoft.GamingApp"
+"Microsoft.Services.Store.Engagement"
+"Microsoft.Teams"
+"MicrosoftTeams"
+"Windows.MiracastView"
+"*yandex*"
+"*netflix*"
+"*sodasaga*"
+"*twitter*"
+"*sketchbook*"
+"*bubblewitch*"
+"*advertising*"
+"*hpjumpstart*"
+"*dropbox*"
+"*amazon*"
+"*marchofempires*"
+"*powermediaplayer*"
+"*.plex*"
+"*saladgames*"
+"*king.com*"
+"*polarr*"
+"*minecraft*"
+"*dolbyaccess*"
 )
 
-$tasks = @(
-    "\Microsoft\Windows\AppID\SmartScreenSpecific"
-    "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
-    "\Microsoft\Windows\Application Experience\ProgramDataUpdater"
-    "\Microsoft\Windows\CloudExperienceHost\CreateObjectTask"
-    "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator"
-    "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask"
-    "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
-    "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
-    "\Microsoft\Windows\Feedback\Siuf\DmClient"
-    "\Microsoft\Windows\Mobile Broadband Accounts\MNO Metadata Parser"
-    "\Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem"
-    "\Microsoft\Windows\Ras\MobilityManager"
-    "\Microsoft\Windows\Windows Error Reporting\QueueReporting"
-    "\Microsoft\Windows\Speech\SpeechModelDownloadTask"
-    "\Microsoft\Windows\Maps\MapsUpdateTask"
-    "\Microsoft\Windows\Maps\MapsToastTask"
-    "\Microsoft\Windows\DUSM\dusmtask"
-    "\Microsoft\Windows\Defrag\ScheduledDefrag"
-    "\Microsoft\Office\Office Automatic Updates"
-    "\Microsoft\Office\Office ClickToRun Service Monitor"
-    "\Microsoft\XblGameSave\XblGameSaveTask"
-    "\Microsoft\Windows\WindowsUpdate\Scheduled Start"
+$tasks=@(
+"\Microsoft\Windows\AppID\SmartScreenSpecific"
+"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
+"\Microsoft\Windows\Application Experience\ProgramDataUpdater"
+"\Microsoft\Windows\CloudExperienceHost\CreateObjectTask"
+"\Microsoft\Windows\Customer Experience Improvement Program\Consolidator"
+"\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask"
+"\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
+"\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
+"\Microsoft\Windows\Feedback\Siuf\DmClient"
+"\Microsoft\Windows\Mobile Broadband Accounts\MNO Metadata Parser"
+"\Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem"
+"\Microsoft\Windows\Ras\MobilityManager"
+"\Microsoft\Windows\Windows Error Reporting\QueueReporting"
+"\Microsoft\Windows\Speech\SpeechModelDownloadTask"
+"\Microsoft\Windows\Maps\MapsUpdateTask"
+"\Microsoft\Windows\Maps\MapsToastTask"
+"\Microsoft\Windows\DUSM\dusmtask"
+"\Microsoft\Windows\Defrag\ScheduledDefrag"
+"\Microsoft\Office\Office Automatic Updates"
+"\Microsoft\Office\Office ClickToRun Service Monitor"
+"\Microsoft\XblGameSave\XblGameSaveTask"
+"\Microsoft\Windows\WindowsUpdate\Scheduled Start"
 )
 
-$root_tasks = @(
-    "\MicrosoftEdgeUpdateTaskMachineCore"
-    "\MicrosoftEdgeUpdateTaskMachineUA"
+$root_tasks=@(
+"\MicrosoftEdgeUpdateTaskMachineCore"
+"\MicrosoftEdgeUpdateTaskMachineUA"
 )
 
-$tpaths = @(
-    "\WaaS\services"
-    "\WaaS\tasks"
-    "\System32\Tasks\Microsoft\Windows\Customer Experience Improvement Program"
-    "\System32\Tasks\Microsoft\Windows\Feedback\Siuf"
-    "\System32\Tasks\Microsoft\Windows\InstallService"
-    "\System32\Tasks\Microsoft\Windows\Setup"
-    "\System32\Tasks\Microsoft\Windows\SyncCenter"
-    "\System32\Tasks\Microsoft\Windows\UNP"
-    "\System32\Tasks\Microsoft\Windows\Windows Error Reporting"
-    "\System32\Tasks_Migrated\Microsoft\Windows\InstallService"
-    "\System32\Tasks_Migrated\Microsoft\Windows\Setup"
-    "\System32\Tasks_Migrated\Microsoft\Windows\UNP"
-    "\System32\Tasks_Migrated\Microsoft\Windows\Windows Error Reporting"
-    "\System32\Tasks_Migrated\Microsoft\Windows\Windows Media Sharing"
+$tpaths=@(
+"\WaaS\services"
+"\WaaS\tasks"
+"\System32\Tasks\Microsoft\Windows\Customer Experience Improvement Program"
+"\System32\Tasks\Microsoft\Windows\Feedback\Siuf"
+"\System32\Tasks\Microsoft\Windows\InstallService"
+"\System32\Tasks\Microsoft\Windows\Setup"
+"\System32\Tasks\Microsoft\Windows\SyncCenter"
+"\System32\Tasks\Microsoft\Windows\UNP"
+"\System32\Tasks\Microsoft\Windows\Windows Error Reporting"
+"\System32\Tasks_Migrated\Microsoft\Windows\InstallService"
+"\System32\Tasks_Migrated\Microsoft\Windows\Setup"
+"\System32\Tasks_Migrated\Microsoft\Windows\UNP"
+"\System32\Tasks_Migrated\Microsoft\Windows\Windows Error Reporting"
+"\System32\Tasks_Migrated\Microsoft\Windows\Windows Media Sharing"
 )
 
-$services = @(
-    "diagnosticshub.standardcollector.service" # Microsoft (R) Diagnostics Hub Standard Collector Service
-    "DiagTrack"                                # Diagnostics Tracking Service
-    "dmwappushservice"                         # WAP Push Message Routing Service (see known issues)
-    "lfsvc"                                    # Geolocation Service
-    "MapsBroker"                               # Downloaded Maps Manager
-    "RemoteAccess"                             # Routing and Remote Access
-    "RemoteRegistry"                           # Remote Registry
-    "SharedAccess"                             # Internet Connection Sharing (ICS)
-    "TrkWks"                                   # Distributed Link Tracking Client
-    "WbioSrvc"                                 # Windows Biometric Service
-    "WMPNetworkSvc"                            # Windows Media Player Network Sharing Service
-    "WSearch"                                  # Windows Search
-    "XblAuthManager"                           # Xbox Live Auth Manager
-    "XblGameSave"                              # Xbox Live Game Save Service
-    "XboxNetApiSvc"                            # Xbox Live Networking Service
-    "XboxGipSvc"
-    "SSDPSRV"
-    "BITS"
-    "wuauserv"
-    "MicrosoftEdgeElevationService"
-    "MixedRealityOpenXRSvc"
-    "edgeupdate"
-    "edgeupdatem"
+$services=@(
+"diagnosticshub.standardcollector.service" # Microsoft (R) Diagnostics Hub Standard Collector Service
+"DiagTrack"                                # Diagnostics Tracking Service
+"dmwappushservice"                         # WAP Push Message Routing Service (see known issues)
+"lfsvc"                                    # Geolocation Service
+"MapsBroker"                               # Downloaded Maps Manager
+"RemoteAccess"                             # Routing and Remote Access
+"RemoteRegistry"                           # Remote Registry
+"SharedAccess"                             # Internet Connection Sharing (ICS)
+"TrkWks"                                   # Distributed Link Tracking Client
+"WbioSrvc"                                 # Windows Biometric Service
+"WMPNetworkSvc"                            # Windows Media Player Network Sharing Service
+"WSearch"                                  # Windows Search
+"XblAuthManager"                           # Xbox Live Auth Manager
+"XblGameSave"                              # Xbox Live Game Save Service
+"XboxNetApiSvc"                            # Xbox Live Networking Service
+"XboxGipSvc"
+"SSDPSRV"
+"WerSvc"
+"BITS"
+"wuauserv"
+"UsoSvc"
+"MicrosoftEdgeElevationService"
+"MixedRealityOpenXRSvc"
+"edgeupdate"
+"edgeupdatem"
 )
 
-$bservices = @(
-    "xbgm*"
-    "OneSyncSvc*"
-    "SecurityHealthService*"
+$bservices=@(
+"xbgm*"
+"OneSyncSvc*"
+"SecurityHealthService*"
 )
 
-$cleanflags = @(
-    "Active Setup Temp Folders"
-    "BranchCache"
-    "Content Indexer Cleaner"
-    "D3D Shader Cache"
-    "Delivery Optimization Files"
-    "Device Driver Packages"
-    "Downloaded Program Files"
-    "GameNewsFiles"
-    "GameStatisticsFiles"
-    "GameUpdateFiles"
-    "Internet Cache Files"
-    "Offline Pages Files"
-    "Old ChkDsk Files"
-    "Previous Installations"
-    "Memory Dump Files"
-    "Recycle Bin"
-    "Service Pack Cleanup"
-    "Setup Log Files"
-    "System error memory dump files"
-    "System error minidump files"
-    "Temporary Files"
-    "Temporary Setup Files"
-    "Thumbnail Cache"
-    "Update Cleanup"
-    "Upgrade Discarded Files"
-    "User file versions"
-    "Windows Defender"
-    "Windows Error Reporting Archive Files"
-    "Windows Error Reporting Queue Files"
-    "Windows Error Reporting System Archive Files"
-    "Windows Error Reporting System Queue Files"
-    "Windows Error Reporting Temp Files"
-    "Windows Error Reporting Files"
-    "Windows ESD installation files"
-    "Windows Upgrade Log Files"
+$cleanflags=@(
+"Active Setup Temp Folders"
+"BranchCache"
+"Content Indexer Cleaner"
+"D3D Shader Cache"
+"Delivery Optimization Files"
+"Device Driver Packages"
+"Downloaded Program Files"
+"GameNewsFiles"
+"GameStatisticsFiles"
+"GameUpdateFiles"
+"Internet Cache Files"
+"Offline Pages Files"
+"Old ChkDsk Files"
+"Previous Installations"
+"Memory Dump Files"
+"Recycle Bin"
+"Service Pack Cleanup"
+"Setup Log Files"
+"System error memory dump files"
+"System error minidump files"
+"Temporary Files"
+"Temporary Setup Files"
+"Thumbnail Cache"
+"Update Cleanup"
+"Upgrade Discarded Files"
+"User file versions"
+"Windows Defender"
+"Windows Error Reporting Archive Files"
+"Windows Error Reporting Queue Files"
+"Windows Error Reporting System Archive Files"
+"Windows Error Reporting System Queue Files"
+"Windows Error Reporting Temp Files"
+"Windows Error Reporting Files"
+"Windows ESD installation files"
+"Windows Upgrade Log Files"
 )
 
 function remove-app($app) {
@@ -250,6 +252,8 @@ function remove-apps() {
     foreach ($app in $apps) {
         remove-app $app
     }
+    Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Deprecation -NoRestart -ErrorAction SilentlyContinue | Out-Null
+    Disable-WindowsOptionalFeature -Online -FeatureName WorkFolders-Client -NoRestart  -ErrorAction SilentlyContinue | Out-Null
     Get-Job | Wait-Job
 }
 
@@ -413,6 +417,7 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer","AllowOnlineTips",0),
 @("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Search","CortanaEnabled",0),
 @("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Application-Experience/Program-Telemetry","Enabled",0),
+@("HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting","Disabled",1),
 @("HKLM\SOFTWARE\Microsoft\Windows Search","AllowCortana",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Edge","ConfigureDoNotTrack",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Edge\EdgeUpdate","AutoUpdateCheckPeriodMinutes",0),
@@ -452,6 +457,7 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3","1004",3),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\PushNotifications","NoCloudApplicationNotification",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection","AllowTelemetry",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection","DisableOneSettingsDownloads",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization","DODownloadMode",99),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\EnhancedStorageDevices","TCGSecurityActivationDisabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer","DisableSearchBoxSuggestions",1),
@@ -466,8 +472,10 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","EnableActivityFeed",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","PublishUserActivities",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","UploadUserActivities",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","AllowCrossDeviceClipboard",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\TabletPC","PreventHandwritingDataSharing",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Chat","ChatIcon",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting","Disabled",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting","DontSendAdditionalData",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","AllowCortana",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","AllowIndexingEncryptedStoresOrItems",0),
@@ -479,6 +487,8 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","IsDeviceSearchHistoryEnabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","IsMSACloudSearchEnabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","SafeSearchMode",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\WindowsStore","AutoDownload",2),
+@("HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\WindowsUpdate","AutoDownload",2),
 @("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","EnableVirtualizationBasedSecurity",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","RequirePlatformSecurityFeatures",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity","Enabled",0),
@@ -541,6 +551,24 @@ function fix-registry() {
     }
     reg delete "HKLM\SOFTWARE\Classes\WOW6432Node\CLSID\{77857D02-7A25-4B67-9266-3E122A8F39E4}" /f 2>&1 | out-null
     reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store" /f 2>&1 | out-null
+}
+
+$prg_list=@(
+"%SystemRoot%\System32\SIHClient.exe"
+"%SystemRoot%\System32\mousocoreworker.exe"
+"%SystemRoot%\UUS\amd64\MoUsoCoreWorker.exe"
+"%SystemRoot%\System32\Speech_OneCore\common\SpeechRuntime.exe"
+"%SystemRoot%\System32\OneDriveSetup.exe"
+"%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe"
+"%SystemRoot%\explorer.exe"
+)
+
+function fix-network() {
+    write-header "Adding firewall rules..."
+    foreach ($p in $prg_list) {
+        Remove-NetFirewallRule -DisplayName "$p block-internet" -ErrorAction SilentlyContinue | Out-Null
+        New-NetFirewallRule -Program "$p" -DisplayName "$p block-internet" -Direction Outbound -RemoteAddress Internet -Action Block -ErrorAction SilentlyContinue | Out-Null
+    }
 }
 
 function cleanup(){
@@ -628,4 +656,5 @@ fix-tasks-files
 fix-services
 fix-bservices
 fix-registry
+fix-network
 cleanup
