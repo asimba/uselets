@@ -182,6 +182,7 @@ $services=@(
 "XblGameSave"                              # Xbox Live Game Save Service
 "XboxNetApiSvc"                            # Xbox Live Networking Service
 "XboxGipSvc"
+"SmsRouter"
 "SSDPSRV"
 "WerSvc"
 "BITS"
@@ -363,6 +364,7 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Microsoft\Messaging","CloudServiceSyncEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Personalization\Settings","AcceptedPrivacyPolicy",0),
 @("HKCU\SOFTWARE\Microsoft\Siuf\Rules","NumberOfSIUFInPeriod",0),
+@("HKCU\SOFTWARE\Microsoft\Siuf\Rules","PeriodInNanoSeconds",0),
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Preferences","ModelDownloadAllowed",0),
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Settings\VoiceActivation\UserPreferenceForAllApps","AgentActivationEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Settings\VoiceActivation\UserPreferenceForAllApps","AgentActivationOnLockScreenEnabled",0),
@@ -458,6 +460,7 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\PushNotifications","NoCloudApplicationNotification",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection","AllowTelemetry",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection","DisableOneSettingsDownloads",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection","DoNotShowFeedbackNotifications",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization","DODownloadMode",99),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\EnhancedStorageDevices","TCGSecurityActivationDisabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer","DisableSearchBoxSuggestions",1),
