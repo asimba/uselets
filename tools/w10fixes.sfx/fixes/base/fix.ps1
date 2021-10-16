@@ -118,6 +118,15 @@ $apps=@(
 "*dolbyaccess*"
 )
 
+$caps=@(
+"App.Support.QuickAssist*"
+"Language.Handwriting*"
+"Language.OCR*"
+"MathRecognizer*"
+"OneCoreUAP.OneSync*"
+"Analog.Holographic.Desktop*"
+)
+
 $tasks=@(
 "\Microsoft\Windows\AppID\SmartScreenSpecific"
 "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
@@ -247,13 +256,26 @@ function remove-app($app) {
   Catch {}
 }
 
+function remove-cap($app) {
+  Write-Output "Trying to remove $app"
+  Try{
+    (Get-WindowsCapability -Online -Name "$app" -ErrorAction SilentlyContinue | Where-Object State -EQ "Installed" | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue) | Out-Null;
+  }
+  Catch {}
+}
+
 function remove-apps() {
   write-header "Uninstalling default apps..."
+  Remove-Item $env:windir\Logs\CBS\* -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   foreach ($app in $apps) {
     remove-app $app
   }
   Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Deprecation -NoRestart -ErrorAction SilentlyContinue | Out-Null
   Disable-WindowsOptionalFeature -Online -FeatureName WorkFolders-Client -NoRestart  -ErrorAction SilentlyContinue | Out-Null
+  Disable-WindowsOptionalFeature -Online -FeatureName WindowsMediaPlayer -NoRestart  -ErrorAction SilentlyContinue | Out-Null
+  foreach ($app in $caps) {
+    remove-cap $app
+  }
   Get-Job | Wait-Job
 }
 
@@ -326,7 +348,7 @@ function fix-services(){
   write-header "Disabling some services..."
   foreach ($service in $services) {
     Write-Output "Trying to disable $service"
-    Get-Service -Name $service | Set-Service -StartupType Disabled
+    Get-Service -Name $service -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
   }
 }
 
@@ -601,8 +623,7 @@ function cleanup(){
   write-header "Removing Windows updates downloads..."
   Stop-Service wuauserv -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Stop-Service TrustedInstaller -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\SoftwareDistribution\*" -Force -Recurse
-  Remove-Item $env:windir\Logs\CBS\* -Force -Recurse
+  Remove-Item -Path "$env:windir\SoftwareDistribution\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Start-Service TrustedInstaller -ErrorAction SilentlyContinue 2>&1 | Out-Null
   write-header "Running Windows system cleanup..."
   $StateFlags='StateFlags1234'
