@@ -119,15 +119,17 @@ $apps=@(
 )
 
 $caps=@(
+"Analog.Holographic.Desktop*"
 "App.Support.QuickAssist*"
 "Language.Handwriting*"
 "Language.OCR*"
 "MathRecognizer*"
 "OneCoreUAP.OneSync*"
-"Analog.Holographic.Desktop*"
 )
 
 $tasks=@(
+"\Microsoft\Office\Office Automatic Updates"
+"\Microsoft\Office\Office ClickToRun Service Monitor"
 "\Microsoft\Windows\AppID\SmartScreenSpecific"
 "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
 "\Microsoft\Windows\Application Experience\ProgramDataUpdater"
@@ -135,21 +137,23 @@ $tasks=@(
 "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator"
 "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask"
 "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
+"\Microsoft\Windows\Defrag\ScheduledDefrag"
 "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
+"\Microsoft\Windows\DUSM\dusmtask"
 "\Microsoft\Windows\Feedback\Siuf\DmClient"
+"\Microsoft\Windows\Maps\MapsToastTask"
+"\Microsoft\Windows\Maps\MapsUpdateTask"
 "\Microsoft\Windows\Mobile Broadband Accounts\MNO Metadata Parser"
 "\Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem"
 "\Microsoft\Windows\Ras\MobilityManager"
-"\Microsoft\Windows\Windows Error Reporting\QueueReporting"
 "\Microsoft\Windows\Speech\SpeechModelDownloadTask"
-"\Microsoft\Windows\Maps\MapsUpdateTask"
-"\Microsoft\Windows\Maps\MapsToastTask"
-"\Microsoft\Windows\DUSM\dusmtask"
-"\Microsoft\Windows\Defrag\ScheduledDefrag"
-"\Microsoft\Office\Office Automatic Updates"
-"\Microsoft\Office\Office ClickToRun Service Monitor"
-"\Microsoft\XblGameSave\XblGameSaveTask"
+"\Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance"
+"\Microsoft\Windows\Windows Defender\Windows Defender Cleanup"
+"\Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan"
+"\Microsoft\Windows\Windows Defender\Windows Defender Verification"
+"\Microsoft\Windows\Windows Error Reporting\QueueReporting"
 "\Microsoft\Windows\WindowsUpdate\Scheduled Start"
+"\Microsoft\XblGameSave\XblGameSaveTask"
 )
 
 $root_tasks=@(
