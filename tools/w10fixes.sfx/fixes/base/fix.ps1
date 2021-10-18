@@ -96,6 +96,7 @@ $apps=@(
 "Microsoft.GamingApp"
 "Microsoft.Services.Store.Engagement"
 "Microsoft.Teams"
+"Microsoft.Whiteboard"
 "MicrosoftTeams"
 "Windows.MiracastView"
 "*yandex*"
