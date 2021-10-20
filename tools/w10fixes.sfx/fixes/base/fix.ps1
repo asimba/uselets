@@ -121,10 +121,12 @@ $apps=@(
 
 $caps=@(
 "Analog.Holographic.Desktop*"
+"App.StepsRecorder*"
 "App.Support.QuickAssist*"
 "Language.Handwriting*"
 "Language.OCR*"
 "MathRecognizer*"
+"Media.WindowsMediaPlayer*"
 "OneCoreUAP.OneSync*"
 )
 
