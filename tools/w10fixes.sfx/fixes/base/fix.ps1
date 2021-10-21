@@ -144,6 +144,8 @@ $tasks=@(
 "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
 "\Microsoft\Windows\DUSM\dusmtask"
 "\Microsoft\Windows\Feedback\Siuf\DmClient"
+"\Microsoft\Windows\LanguageComponentsInstaller\Installation"
+"\Microsoft\Windows\LanguageComponentsInstaller\ReconcileLanguageResources"
 "\Microsoft\Windows\Maps\MapsToastTask"
 "\Microsoft\Windows\Maps\MapsUpdateTask"
 "\Microsoft\Windows\Mobile Broadband Accounts\MNO Metadata Parser"
@@ -412,6 +414,7 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer","ShowFrequent",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Feeds","ShellFeedsTaskbarViewMode",2),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.SecurityAndMaintenance","Enabled",0),
+@("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel","Enabled",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy","TailoredExperiencesWithDiagnosticDataEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search","BingSearchEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search","CanCortanaBeEnabled",0),
