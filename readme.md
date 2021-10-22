@@ -560,7 +560,7 @@ dd of=$vg_group/$lvm_volume if=$backup_path/$lvm_volume.new bs=64M
 _Примечание: "backup_path" - директория хранения архива, "lvm_volume" - наименование тома, "time_stamp" - метка времени восстанавливаемой копии._  
 #### Пример конфигурации iSCSI-цели (служба tgt) (Linux).  
 <details><summary>/etc/tgt/conf.d/iscsi-base.conf</summary><pre><code>
-&lt;target&gt; iqn.2020-12.local:lun1>
+&lt;target iqn.2020-12.local:lun1&gt;
 backing-store /dev/xvda3
 initiator-address 192.168.10.1
 incominguser iscsi-user q7n8TNnzLsv7
