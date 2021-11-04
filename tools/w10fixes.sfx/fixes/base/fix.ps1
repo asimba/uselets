@@ -146,6 +146,8 @@ $tasks=@(
 "\Microsoft\Windows\Feedback\Siuf\DmClient"
 "\Microsoft\Windows\LanguageComponentsInstaller\Installation"
 "\Microsoft\Windows\LanguageComponentsInstaller\ReconcileLanguageResources"
+"\Microsoft\Windows\Management\Provisioning\Cellular"
+"\Microsoft\Windows\Management\Provisioning\Logon"
 "\Microsoft\Windows\Maps\MapsToastTask"
 "\Microsoft\Windows\Maps\MapsUpdateTask"
 "\Microsoft\Windows\Mobile Broadband Accounts\MNO Metadata Parser"
