@@ -65,7 +65,6 @@ def arctype(src):
     return 0
 
 def checkdoc(src):
-    if arctype(src): return
     try:
         tdir=mkdtemp()
         try:
