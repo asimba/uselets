@@ -21,7 +21,7 @@ stopmask_arc=re.compile('(\.rar|7z|zip|zipx|arj|ace|daa)',re.IGNORECASE)
 
 allowmask=re.compile('(7-Zip|p7zip|Scanning|Testing\ archive|Path|Type|Listing)',re.IGNORECASE)
 
-file_types=re.compile('^.*\.(docx|doc|xlsx|xls|rar|7z|zip|gz|ace|ods|odt|odp|pkpass|ls|os|[0-9]{3}|r[0-9]{2})$',re.IGNORECASE)
+file_types=re.compile('^.*\.(docx|doc|xlsx|xls|rar|7z|zip|gz|ace|ods|odt|odp|pkpass|ls|os|cdw|[0-9]{3}|r[0-9]{2})$',re.IGNORECASE)
 
 up='/usr/bin/'
 bp='/bin/'
