@@ -54,6 +54,11 @@ openvpn --genkey --secret ta.key
 ```
 easyrsa gen-crl
 ```  
+- генерация файла отозванных ключей (вариант для старых версий)  
+```
+source ./vars
+openssl ca -gencrl -keyfile keys/ca.key -cert keys/ca.crt -out keys/crl.pem -config ./openssl.cnf
+```  
 - добавление пользователя  
 ```
 easyrsa gen-req <имя_конфигурации_пользователя> nopass
