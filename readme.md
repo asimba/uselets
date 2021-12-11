@@ -936,6 +936,10 @@ _Требования (зависимости):_ [ImageMagick](https://imagemagi
 ```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "<ширина>>" -distort Resize ">x<высота>" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
 _Пример:_```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "1280>" -distort Resize ">x960" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
 _Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90._  
+#### Пакетное преобразование файлов изображений в формате PNG, находящихся в текущей директории, в формат JPEG (Linux).  
+_Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
+```find . -name \*.png  -type f -exec bash -c 'convert -compress none {} ppm:- | cjpeg -sample 2x2 -dct int -optimize -progressive -quality 100 -outfile {}.jpg' \;```  
+_Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90._  
 #### Создание страниц с миниатюрами файлов изображений для всех поддиректорий в текущей директории (Windows).  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php)  
 ```for /d %d in (*) do montage -limit thread 6 -limit file 64 -limit memory 8192Mib -limit map 16384MiB -define registry:temporary-path=..\temp -pointsize 10 -label "%wx%h\n%t" -tile 10x10 -geometry 164x162+1+0 -density 200 -units pixelsperinch "%~npxd\*.png" "..\thumbs\%~nxd.png"```  
