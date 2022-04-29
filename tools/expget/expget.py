@@ -3,7 +3,7 @@
 
 import sys
 
-from PyQt6.QtCore import QUrl,QFile,qInstallMessageHandler,QObject,pyqtSlot,QIODeviceBase
+from PyQt6.QtCore import QUrl,QFile,qInstallMessageHandler,QObject,pyqtSlot,QIODeviceBase,QVariant
 from PyQt6.QtWidgets import QApplication,QLineEdit,QMainWindow,QPushButton,QWidget,\
      QGridLayout,QHBoxLayout,QLabel
 from PyQt6.QtWebEngineCore import QWebEnginePage
@@ -36,22 +36,30 @@ class CallHandler(QObject):
     def set_parent(self,parent):
         self.parent=parent
 
-    @pyqtSlot(name="backrun_a")
-    def backrun_a(self):
-        self.parent.get_part_links_py_callback()
+    @pyqtSlot(name="backrun_error")
+    def backrun_error(self):
+        self.parent.getfilelist_error_callback()
 
-    @pyqtSlot(name="backrun_b")
-    def backrun_b(self):
-        self.parent.getfilelist_cycle_py_callback()
+    @pyqtSlot(QVariant,result=QVariant,name="backrun_success")
+    def backrun_success(self,links):
+        self.parent.getfilelist_success_callback(links)
+
+    @pyqtSlot(QVariant,result=QVariant,name="backrun_progress")
+    def backrun_progress(self,counter):
+        self.parent.progress_callback(counter)
 
 class MainWindow(QWidget):
     def reload(self):
-        if len(self.div_list) or len(self.parts_list) or len(self.file_list): return
+        if len(self.file_list): return
         self.webEngineView.reload()
 
     def on_downloadRequestState(self,event):
         if not len(self.file_list):
-            self.label.setText('Статус:...'+tmp[0])
+            self.alllock=False
+            self.label.setText('Статус:...')
+            self.webEngineView.page().setVisible(True)
+            try: self.setEnabled(True)
+            except: pass
             return
         if event.value>1:
             if event.value==2:
@@ -64,11 +72,18 @@ class MainWindow(QWidget):
                             tm+=(int(self.file_list[-1][1])%60)
                             utime(self.file_list[-1][-1],(tm,tm))
                         except: pass
-                        print('Ok. ("%s") - %i'%(self.file_list[-1][-1],event.value))
-                    else:  print('Error. ("%s") - %i'%(self.file_list[-1][-1],event.value))
+                    else:
+                        print('Error. ("%s") - %i'%(self.file_list[-1][-1],event.value))
+                        self.label.setText('Статус: ошибка скачивания файла ("'+tmp[0]+'")')
                 self.file_list.pop()
                 self.download_files()
-            else: print('Error. ("%s") - %i'%(self.file_list[-1][-1],event.value))
+            else:
+                print('Error. ("%s") - %i'%(self.file_list[-1][-1],event.value))
+                self.label.setText('Статус: ошибка скачивания файла ("%s", код ошибки: %i)!'%(self.file_list[-1][-1],event.value))
+                self.alllock=False
+                self.webEngineView.page().setVisible(True)
+                try: self.setEnabled(True)
+                except: pass
 
     def on_downloadRequested(self,event):
         if event.state().value==0:
@@ -76,277 +91,241 @@ class MainWindow(QWidget):
             event.accept()
 
     def download_files(self):
-        print(len(self.file_list))
         if len(self.file_list):
+            if not self.file_number: self.file_number=len(self.file_list)
             tmp=self.file_list[-1]
             if exists(tmp[-1]):
                 try: remove(tmp[-1])
                 except: pass
             self.webEngineView.page().profile().downloadRequested.connect(lambda event:\
                 self.on_downloadRequested(event))
-            self.label.setText('Статус: скачивание файла '+tmp[0])
+            self.label.setText('Статус: скачивание файла "%s" ( %i из %i )'%\
+                               (tmp[0],self.file_number-len(self.file_list)-1,self.file_number))
             if len(tmp)>3: self.webEngineView.page().download(QUrl(tmp[4]),tmp[-1])
             else: self.webEngineView.page().download(QUrl(tmp[1]),tmp[-1])
         else:
             self.webEngineView.page().profile().downloadRequested.disconnect()
             self.label.setText('Статус:...')
-            if len(self.url):
-                self.webEngineView.load(QUrl(self.url))
-                self.url=''
-
-    def get_details_finished_back(self,links,path):
-        if self.lock:
-            sleep(1)
-            self.get_details_finished_back(links,path)
-        else:
-            try: self.webEngineView.loadFinished.disconnect()
+            self.alllock=False
+            self.webEngineView.page().setVisible(True)
+            try: self.setEnabled(True)
             except: pass
-            if len(links):
-                self.webEngineView.loadFinished.connect(lambda: self.get_details_callback(links,path))
-                self.webEngineView.load(QUrl(links[-1]))
 
-    def get_details_js_callback(self,result,links,path):
-        if self.lock: return
-        self.lock=True
-        if result and len(result) and len(links):
-            for i in range(len(result)):
-                if result[i][1] not in self.links:
-                    self.links.append(result[i][1])
-                    self.file_list.append(result[i])
-                    self.file_list[-1].append(realpath(join(path,result[i][0])))
-            self.webEngineView.loadFinished.disconnect()
-            links.pop()
-            self.lock=False
-            if len(links):
-                self.webEngineView.loadFinished.connect(lambda: self.get_details_finished_back(links,path))
-            else:
-                if len(self.div_list): self.div_list.pop()
-                if len(self.div_list):
-                    print(len(self.div_list))
-                    self.getfilelist_cycle()
-                    return
-                else:
-                    self.download_files()
-                    return
-            self.webEngineView.back()
-        else: self.webEngineView.loadFinished.disconnect()
-        self.lock=False
+    def getfilelist_error_callback(self):
+        self.label.setText('Статус: ошибка при получении списка файлов для скачивания!')
+        self.alllock=False
+        self.file_list=[]
+        self.file_number=0
+        self.webEngineView.page().setVisible(True)
+        try: self.setEnabled(True)
+        except: pass
 
-    def get_details_callback(self,links,path):
-        self.webEngineView.page().runJavaScript(\
-            """
-            function getlinks(){
-                var list=[];
-                var req=document.querySelectorAll('a[href*=\"GetFile\"]');
-                for(const e of req){
-                    if(e.text.includes(\".sig\")) list.push([e.text,e.href]);
-                };
-                return list;
-            };\
-            getlinks();""",lambda x: self.get_details_js_callback(x,links,path))
-
-    def get_row_details(self,links,path):
-        if self.lock:
-            sleep(1)
-            self.get_row_details(links,path)
-        else:
-            try: self.webEngineView.loadFinished.disconnect()
-            except: pass
-            self.webEngineView.loadFinished.connect(lambda: self.get_details_callback(links,path))
-            self.webEngineView.load(QUrl(links[-1]))
-
-    def get_rows_js_callback(self,path,result):
-        if self.lock: return
-        self.lock=True
-        if result and len(path) and len(result):
-            result=sorted(result,key=lambda s: s[0],reverse=False)
-            detail_links=[]
-            for i in range(len(result)):
-                result[i].append(realpath(join(path,result[i][0])))
-                s=result[i][4].split('/')[-1]
-                detail_links.append('https://lk.spbexp.ru/SF/FileCspViewer/'+s)
-                if result[i][4] not in self.links:
-                    self.links.append(result[i][4])
-                    self.file_list.append(result[i])
-            self.lock=False
-            self.get_row_details(detail_links,path)
-        self.lock=False
-
-    def get_header_js_callback(self,result):
-        if self.lock: return
-        self.lock=True
-        if result and len(result) and result!='Отсутствует':
-            u=self.webEngineView.url().toString()
-            if 'ProjectDocuments' in u: u='ПД'
-            elif 'RIIDocuments' in u: u='РИИ'
-            elif 'SmetaDocuments' in u: u='СД'
-            elif 'IrdDocuments' in u: u='ИРД'
-            else: u=''
-            path=join(self.basepath,u,result.strip().rstrip().replace('"','_')[:64])
-            self.lock=False
+    def getfilelist_success_callback(self,links):
+        for link in links:
+            if link[0]=='ProjectDocuments': link[0]='ПД'
+            elif link[0]=='RIIDocuments': link[0]='РИИ'
+            elif link[0]=='SmetaDocuments': link[0]='СД'
+            elif link[0]=='IrdDocuments': link[0]='ИРД'
+            link[1]=link[1].strip().rstrip().replace('"','_')[:64]
+            path=join(self.basepath,link[0],link[1])
             try: makedirs(path,exist_ok=True)
             except: return
-            self.webEngineView.page().runJavaScript(\
-                """function listrows(){
-                    var grid=$('#grid').data('kendoGrid');
-                    var files=[];
-                    grid._data.forEach(function(item,index,array){
-                        files.push([item.Nazvanie,item.Number,item.sDateTo,item.sMD5,
-                            'https://lk.spbexp.ru/File/GetFile/'+item.IDRow.toString()]);
-                    });
-                    return files;
-                };
-                listrows();""",lambda x: self.get_rows_js_callback(path,x))
-        self.lock=False
+            if len(link)>4:
+                self.file_list.append([link[2],link[6],link[4],link[5],link[3],realpath(join(path,link[2]))])
+            else: self.file_list.append([link[2],link[3],realpath(join(path,link[2]))])
+        if len(self.file_list):
+            self.alllock=False
+            self.download_files()
 
-    def getfilelist_cycle_py_callback(self):
-        if self.lock: return
-        self.lock=True
-        self.webEngineView.page().runJavaScript(\
-            "find_header();",self.get_header_js_callback)
-        self.lock=False
+    def progress_callback(self,counter):
+        self.label.setText('Статус: получение списка файлов для скачивания (получено %d ссылок)...'%counter)
 
-    def getfilelist_cycle_callback(self):
-        if self.lock:
-            sleep(1)
-            self.getfilelist_cycle_callback()
-        else:
-            try: self.webEngineView.loadFinished.disconnect()
-            except: pass
-            self.webEngineView.page().runJavaScript(\
-                self.qwebchannel_js+"""
-                window.find_header_ready=false;
-                function find_header(){
-                    if(window.find_header_ready==false){
-                        var v=document.querySelector('span[style=\"font-weight:600; color:darkblue\"]');
-                        if(v!=null) return v.textContent;
-                        window.find_header_ready=true;
-                    };
-                    return '';
-                };
-                function call_py(){
-                    new QWebChannel(qt.webChannelTransport,function(channel){
-                        channel.objects.backend.backrun_b();
-                    });
-                };
-                var grid=$("#grid").data("kendoGrid");
-                if(grid){
-                    grid.bind("dataBound",call_py);
-                    grid.dataSource.read();
-                };""",lambda x: None)
-
-    def getfilelist_cycle(self):
-        if self.lock:
-            sleep(1)
-            self.getfilelist_cycle()
-        else:
-            try: self.webEngineView.loadFinished.disconnect()
-            except: pass
-            if len(self.div_list):
-                self.webEngineView.loadFinished.connect(self.getfilelist_cycle_callback)
-                self.webEngineView.load(QUrl(self.div_list[-1]))
-
-    def getfilelist(self):
-        if len(self.div_list) or len(self.parts_list) or len(self.file_list): return
-        self.file_list=[]
-        self.links=[]
+    def getfileslist(self):
+        if self.alllock or len(self.file_list): return
         self.url=self.webEngineView.url().toString()
-        if 'Files/prt' in self.url:
-            self.div_list=[self.url]
-            self.getfilelist_cycle()
-
-    def get_part_links_back_callback(self):
-        if len(self.parts_list): self.parts_list.pop()
-        if len(self.parts_list): self.get_part_links()
-        else: self.getfilelist_cycle()
-
-    def get_part_links_js_complete_callback(self,result):
-        if self.lock: return
-        self.lock=True
-        selectors=[s+'Files' for s in self.selectors]
-        if len(result):
-            for r in result:
-                if any(s in r for s in selectors) and r not in self.div_list:
-                    self.div_list.append(r)
-        else:
-            self.lock=False
-            return;
-        self.webEngineView.loadFinished.disconnect()
-        self.lock=False
-        self.get_part_links_back_callback()
-
-    def get_part_links_py_callback(self):
-        if self.lock:
-            sleep(1)
-            self.get_part_links_py_callback()
-        else:
-            self.webEngineView.page().runJavaScript(\
-                "getlinks();",self.get_part_links_js_complete_callback)
-
-    def get_part_links_callback(self):
-        if self.lock:
-            sleep(1)
-            self.get_part_links_callback()
-        else:
-            self.webEngineView.page().runJavaScript(\
-                self.qwebchannel_js+"""
-                window.getlinks_ready=false;
-                function getlinks(){
-                    var list=[];
-                    if(window.getlinks_ready==false){
-                        var req=document.querySelectorAll('a[href*=\"Files/prt\"]');
-                        for(const e of req) list.push(e.href);
-                        window.getlinks_ready=true;
+        if not('Files/prt0' in self.url): return
+        self.file_list=[]
+        self.file_number=0
+        self.webEngineView.page().setVisible(False)
+        try: self.setEnabled(False)
+        except: pass
+        self.label.setText('Статус: получение списка файлов для скачивания...')
+        self.webEngineView.page().runJavaScript(\
+            self.qwebchannel_js+"""
+            function get_sig_links_details_parse(file_links,details_links,partition,section,data){
+                var parser=new DOMParser();
+                var doc=parser.parseFromString(data,'text/html');
+                var req=doc.querySelectorAll('a[href*=\"GetFile\"]');
+                for(const e of req){
+                    if(e.text.includes('.sig')){
+                        file_links.push([partition,section,e.text,e.href]);
+                        progress(file_links);
                     };
-                    return list;
                 };
-                function call_py(){
-                    new QWebChannel(qt.webChannelTransport,function(channel){
-                        channel.objects.backend.backrun_a();
-                    });
+                if(details_links.length) get_sig_links_details(file_links,details_links);
+                else success(file_links);
+            };
+            async function get_sig_links_details(file_links,details_links){
+                if(details_links.length){
+                    var d=details_links.pop();
+                    return await fetch(d[2])
+                                .then(async (response) => {
+                                    const j=await response.text();
+                                    get_sig_links_details_parse(file_links,details_links,d[0],d[1],j);
+                                }).catch((error) => { errlog(error); });
                 };
-                var grid=$("#grid").data("kendoGrid");
-                if(grid){
-                    grid.bind("dataBound",call_py);
-                    grid.dataSource.read();
-                };""",lambda x: None)
-
-    def get_part_links(self):
-        if self.lock:
-            sleep(1)
-            self.get_part_links()
-        else:
-            try: self.webEngineView.loadFinished.disconnect()
-            except: pass
-            if len(self.parts_list):
-                self.webEngineView.loadFinished.connect(self.get_part_links_callback)
-                self.webEngineView.load(QUrl(self.parts_list[-1]))
-
-    def getallfileslist_js_callback(self,result):
-        if self.lock: return
-        self.lock=True
-        if result and len(result):
-            for r in result:
-                if any(s in r for s in self.selectors) and  '#' not in r:
-                    self.parts_list.append(r)
-        self.lock=False
-        self.get_part_links()
+            };
+            function get_pd_links_details_parse(links,file_links,details_links,partition,section,data){
+                for(const d of data.Data){
+                    file_links.push([partition,section,d['Nazvanie'],''.concat('https://lk.spbexp.ru/File/GetFile/',
+                        d['IDRow']),d['sDateTo'],d['sMD5'],d['Number']]);
+                    progress(file_links);
+                    details_links.push([partition,section,''.concat('https://lk.spbexp.ru/SF/FileCspViewer/',d['IDRow'])]);
+                };
+                get_sig_links_details(file_links,details_links);
+            };
+            async function get_pd_links_details(links,file_links,details_links){
+                if(links.length){
+                    var d=links.pop();
+                    return await fetch(d[2])
+                                .then(async (response) => {
+                                    const j=await response.json();
+                                    get_pd_links_details_parse(links,file_links,details_links,d[0],d[1],j);
+                                }).catch((error) => { errlog(error); });
+                };
+            };
+            function errlog(error){
+                window.qtwebchannel.backrun_error();
+            };
+            function success(file_links){
+                window.qtwebchannel.backrun_success(file_links);
+            };
+            function progress(file_links){
+                window.qtwebchannel.backrun_progress(file_links.length);
+            };
+            function start_parser(){
+                var file_links=[];
+                var details_links=[];
+                var url=window.location.href.toString();
+                var path='';
+                if(url.includes('ProjectDocuments')) path='ProjectDocuments';
+                else if(url.includes('RIIDocuments')) path='RIIDocuments';
+                    else if(url.includes('SmetaDocuments')) path='SmetaDocuments';
+                        else if(url.includes('IrdDocuments')) path='IrdDocuments';
+                var href=''.concat('https://lk.spbexp.ru/Grid/',path,'FilesRead/own',
+                    window.location.href.toString().split('\/').pop());
+                var v=document.querySelector('span[style=\"font-weight:600; color:darkblue\"]');\
+                if(v==null) return;
+                var section=v.textContent;
+                var links=[[path,section,href]];
+                new QWebChannel(qt.webChannelTransport,(channel)=>{
+                    window.qtwebchannel=channel.objects.backend;
+                });
+                get_pd_links_details(links,file_links,details_links);
+            };
+            start_parser();
+            """,lambda x: None)
 
     def getallfileslist(self):
-        if len(self.div_list) or len(self.parts_list) or len(self.file_list): return
-        self.file_list=[]
-        self.parts_list=[]
-        self.div_list=[]
-        self.links=[]
+        if self.alllock or len(self.file_list): return
         self.url=self.webEngineView.url().toString()
+        if not('lk.spbexp.ru/Zeg/Zegmain' in self.url or\
+               ('lk.spbexp.ru/SF/' in self.url and '/prt0/' in self.url)): return
+        self.file_list=[]
+        self.file_number=0
+        self.webEngineView.page().setVisible(False)
+        try: self.setEnabled(False)
+        except: pass
+        self.label.setText('Статус: получение списка файлов для скачивания...')
         self.webEngineView.page().runJavaScript(\
-            """function getpartlinks(){
-              var list=[];
-              var req=document.querySelectorAll('a[href]');
-              for(const e of req) if(list.includes(e.href)==false && e.href.includes('prt0')) list.push(e.href);
-              return list;
+            self.qwebchannel_js+"""
+            function get_sig_links_details_parse(file_links,details_links,partitions,partition,section,data){
+                var parser=new DOMParser();
+                var doc=parser.parseFromString(data,'text/html');
+                var req=doc.querySelectorAll('a[href*=\"GetFile\"]');
+                for(const e of req){
+                    if(e.text.includes('.sig')){
+                        file_links.push([partition,section,e.text,e.href]);
+                        progress(file_links);
+                    };
+                };
+                if(details_links.length) get_sig_links_details(file_links,details_links,partitions);
+                else get_file_links(file_links,details_links,partitions);
             };
-            getpartlinks();""",self.getallfileslist_js_callback)
+            async function get_sig_links_details(file_links,details_links,partitions){
+                if(details_links.length){
+                    var d=details_links.pop();
+                    return await fetch(d[2])
+                                .then(async (response) => {
+                                    const j=await response.text();
+                                    get_sig_links_details_parse(file_links,details_links,partitions,d[0],d[1],j);
+                                }).catch((error) => { errlog(error); });
+                };
+            };
+            function get_pd_links_details_parse(links,file_links,details_links,partitions,partition,section,data){
+                for(const d of data.Data){
+                    file_links.push([partition,section,d['Nazvanie'],''.concat('https://lk.spbexp.ru/File/GetFile/',
+                        d['IDRow']),d['sDateTo'],d['sMD5'],d['Number']]);
+                    progress(file_links);
+                    details_links.push([partition,section,''.concat('https://lk.spbexp.ru/SF/FileCspViewer/',d['IDRow'])]);
+                };
+                if(links.length) get_pd_links_details(links,file_links,details_links,partitions);
+                else get_sig_links_details(file_links,details_links,partitions);
+            };
+            async function get_pd_links_details(links,file_links,details_links,partitions){
+                if(links.length){
+                    var d=links.pop();
+                    return await fetch(d[2])
+                                .then(async (response) => {
+                                    const j=await response.json();
+                                    get_pd_links_details_parse(links,file_links,details_links,partitions,d[0],d[1],j);
+                                }).catch((error) => { errlog(error); });
+                };
+            };
+            function get_pd_links_parse(path,file_links,details_links,partitions,data){
+                var links=[];
+                for(const d of data.Data){
+                    if(d['NumberOfFiles']){
+                        var href=''.concat('https://lk.spbexp.ru/Grid/',path,'FilesRead/own',d['IDRow']);
+                        if(path.includes('IrdDocuments')) links.push([path,d['Content'],href]);
+                        else links.push([path,d['Nazvanie'],href]);
+                    };
+                };
+                if(links.length) get_pd_links_details(links,file_links,details_links,partitions);
+            };
+            async function get_pd_links(path,file_links,details_links,partitions){
+                var href=''.concat('https://lk.spbexp.ru/Grid/',path,'Read/own',
+                    window.location.href.toString().split('\/').pop());
+                return await fetch(href)
+                            .then(async (response) => {
+                            const j=await response.json();
+                            get_pd_links_parse(path,file_links,details_links,partitions,j);
+                            }).catch((error) => { errlog(error); });
+            };
+            function get_file_links(file_links,details_links,partitions){
+                if(partitions.length) get_pd_links(partitions.pop(),file_links,details_links,partitions);
+                else success(file_links);
+            };
+            function errlog(error){
+                window.qtwebchannel.backrun_error();
+            };
+            function success(file_links){
+                window.qtwebchannel.backrun_success(file_links);
+            };
+            function progress(file_links){
+                window.qtwebchannel.backrun_progress(file_links.length);
+            };
+            function start_parser(){
+                var file_links=[];
+                var details_links=[];
+                var partitions=['ProjectDocuments','RIIDocuments','SmetaDocuments','IrdDocuments'];
+                new QWebChannel(qt.webChannelTransport,(channel)=>{
+                    window.qtwebchannel=channel.objects.backend;
+                });
+                get_file_links(file_links,details_links,partitions);
+            };
+            start_parser();
+            """,lambda x: None)
 
     def __init__(self):
         super().__init__()
@@ -397,18 +376,15 @@ class MainWindow(QWidget):
         self.webEngineView.loadFinished.connect(self.login)
 
         self.file_list=[]
-        self.parts_list=[]
-        self.div_list=[]
-        self.links=[]
+        self.file_number=0
         self.lock=False
-        self.url=''
-        self.basepath='out'
-        try: mkdir(self.basepath)
+        self.alllock=False
+        self.basepath=realpath('out')
+        try: makedirs(self.basepath,exist_ok=True)
         except: pass
-        self.selectors=['ProjectDocuments','RIIDocuments','SmetaDocuments','IrdDocuments']
 
         self.reload_button.clicked.connect(self.reload)
-        self.get_data_button.clicked.connect(self.getfilelist)
+        self.get_data_button.clicked.connect(self.getfileslist)
         self.get_all_data_button.clicked.connect(self.getallfileslist)
 
     def goto_projects(self):
@@ -448,10 +424,6 @@ class MainWindow(QWidget):
                 return '';
             };
             find_login_form();"""%(l,p),self.login_callback)
-
-    def load(self):
-        if url.isValid():
-            self.webEngineView.load(url)
 
 if __name__ == '__main__':
     app=QApplication(sys.argv)
