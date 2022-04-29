@@ -151,7 +151,7 @@ class MainWindow(QWidget):
         self.label.setText('Статус: получение списка файлов для скачивания...')
         self.webEngineView.page().runJavaScript(\
             self.qwebchannel_js+self.busy+"""
-            function get_sig_links_details_parse(file_links,details_links,partition,section,data){
+            function get_sig_links_details_parse(file_links,details_links,partitions,partition,section,data){
                 var parser=new DOMParser();
                 var doc=parser.parseFromString(data,'text/html');
                 var req=doc.querySelectorAll('a[href*=\"GetFile\"]');
@@ -161,46 +161,8 @@ class MainWindow(QWidget):
                         progress(file_links);
                     };
                 };
-                if(details_links.length) get_sig_links_details(file_links,details_links);
+                if(details_links.length) get_sig_links_details(file_links,details_links,partitions);
                 else success(file_links);
-            };
-            async function get_sig_links_details(file_links,details_links){
-                if(details_links.length){
-                    var d=details_links.pop();
-                    return await fetch(d[2])
-                                .then(async (response) => {
-                                    const j=await response.text();
-                                    get_sig_links_details_parse(file_links,details_links,d[0],d[1],j);
-                                }).catch((error) => { errlog(error); });
-                };
-            };
-            function get_pd_links_details_parse(links,file_links,details_links,partition,section,data){
-                for(const d of data.Data){
-                    file_links.push([partition,section,d['Nazvanie'],''.concat('https://lk.spbexp.ru/File/GetFile/',
-                        d['IDRow']),d['sDateTo'],d['sMD5'],d['Number']]);
-                    progress(file_links);
-                    details_links.push([partition,section,''.concat('https://lk.spbexp.ru/SF/FileCspViewer/',d['IDRow'])]);
-                };
-                get_sig_links_details(file_links,details_links);
-            };
-            async function get_pd_links_details(links,file_links,details_links){
-                if(links.length){
-                    var d=links.pop();
-                    return await fetch(d[2])
-                                .then(async (response) => {
-                                    const j=await response.json();
-                                    get_pd_links_details_parse(links,file_links,details_links,d[0],d[1],j);
-                                }).catch((error) => { errlog(error); });
-                };
-            };
-            function errlog(error){
-                window.qtwebchannel.backrun_error(error);
-            };
-            function success(file_links){
-                window.qtwebchannel.backrun_success(file_links);
-            };
-            function progress(file_links){
-                window.qtwebchannel.backrun_progress(file_links.length);
             };
             function start_parser(){
                 var file_links=[];
@@ -220,7 +182,7 @@ class MainWindow(QWidget):
                 new QWebChannel(qt.webChannelTransport,(channel)=>{
                     window.qtwebchannel=channel.objects.backend;
                 });
-                get_pd_links_details(links,file_links,details_links);
+                get_pd_links_details(links,file_links,details_links,[]);
             };
             start_parser();
             """,lambda x: None)
@@ -249,6 +211,58 @@ class MainWindow(QWidget):
                 };
                 if(details_links.length) get_sig_links_details(file_links,details_links,partitions);
                 else get_file_links(file_links,details_links,partitions);
+            };
+            function get_pd_links_parse(path,file_links,details_links,partitions,data){
+                var links=[];
+                for(const d of data.Data){
+                    if(d['NumberOfFiles']){
+                        var href=''.concat('https://lk.spbexp.ru/Grid/',path,'FilesRead/own',d['IDRow']);
+                        if(path.includes('IrdDocuments')) links.push([path,d['Content'],href]);
+                        else links.push([path,d['Nazvanie'],href]);
+                    };
+                };
+                if(links.length) get_pd_links_details(links,file_links,details_links,partitions);
+            };
+            async function get_pd_links(path,file_links,details_links,partitions){
+                var req=document.querySelector('a[href*="/Zeg/Zegmain1"]');
+                if(req){
+                    var href=''.concat('https://lk.spbexp.ru/Grid/',path,'Read/own',req.pathname.split('\/').pop());
+                    return await fetch(href)
+                                .then(async (response) => {
+                                const j=await response.json();
+                                get_pd_links_parse(path,file_links,details_links,partitions,j);
+                                }).catch((error) => { errlog(error); });
+                };
+            };
+            function get_file_links(file_links,details_links,partitions){
+                if(partitions.length) get_pd_links(partitions.pop(),file_links,details_links,partitions);
+                else success(file_links);
+            };
+            function start_parser(){
+                var file_links=[];
+                var details_links=[];
+                var partitions=['ProjectDocuments','RIIDocuments','SmetaDocuments','IrdDocuments'];
+                new QWebChannel(qt.webChannelTransport,(channel)=>{
+                    window.qtwebchannel=channel.objects.backend;
+                });
+                get_file_links(file_links,details_links,partitions);
+            };
+            start_parser();
+            """,lambda x: None)
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('ExpGet')
+
+        self.busy="""
+            function errlog(error){
+                window.qtwebchannel.backrun_error(error);
+            };
+            function success(file_links){
+                window.qtwebchannel.backrun_success(file_links);
+            };
+            function progress(file_links){
+                window.qtwebchannel.backrun_progress(file_links.length);
             };
             async function get_sig_links_details(file_links,details_links,partitions){
                 if(details_links.length){
@@ -280,58 +294,6 @@ class MainWindow(QWidget):
                                 }).catch((error) => { errlog(error); });
                 };
             };
-            function get_pd_links_parse(path,file_links,details_links,partitions,data){
-                var links=[];
-                for(const d of data.Data){
-                    if(d['NumberOfFiles']){
-                        var href=''.concat('https://lk.spbexp.ru/Grid/',path,'FilesRead/own',d['IDRow']);
-                        if(path.includes('IrdDocuments')) links.push([path,d['Content'],href]);
-                        else links.push([path,d['Nazvanie'],href]);
-                    };
-                };
-                if(links.length) get_pd_links_details(links,file_links,details_links,partitions);
-            };
-            async function get_pd_links(path,file_links,details_links,partitions){
-                var req=document.querySelector('a[href*="/Zeg/Zegmain1"]');
-                if(req){
-                    var href=''.concat('https://lk.spbexp.ru/Grid/',path,'Read/own',req.pathname.split('\/').pop());
-                    return await fetch(href)
-                                .then(async (response) => {
-                                const j=await response.json();
-                                get_pd_links_parse(path,file_links,details_links,partitions,j);
-                                }).catch((error) => { errlog(error); });
-                };
-            };
-            function get_file_links(file_links,details_links,partitions){
-                if(partitions.length) get_pd_links(partitions.pop(),file_links,details_links,partitions);
-                else success(file_links);
-            };
-            function errlog(error){
-                window.qtwebchannel.backrun_error(error);
-            };
-            function success(file_links){
-                window.qtwebchannel.backrun_success(file_links);
-            };
-            function progress(file_links){
-                window.qtwebchannel.backrun_progress(file_links.length);
-            };
-            function start_parser(){
-                var file_links=[];
-                var details_links=[];
-                var partitions=['ProjectDocuments','RIIDocuments','SmetaDocuments','IrdDocuments'];
-                new QWebChannel(qt.webChannelTransport,(channel)=>{
-                    window.qtwebchannel=channel.objects.backend;
-                });
-                get_file_links(file_links,details_links,partitions);
-            };
-            start_parser();
-            """,lambda x: None)
-
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle('ExpGet')
-
-        self.busy="""
             class ProgressRing extends HTMLElement{
                 constructor(){
                     super();
@@ -341,10 +303,7 @@ class MainWindow(QWidget):
                     this._circumference=normalizedRadius*2*Math.PI;
                     this._root=this.attachShadow({mode:'open'});
                     this._root.innerHTML=`
-                        <svg
-                            height="${radius*2}"
-                            width="${radius*2}"
-                        >
+                        <svg height="${radius*2}" width="${radius*2}">
                             <circle
                                 stroke="#c8c5c3"
                                 stroke-dasharray="${this._circumference} ${this._circumference}"
@@ -358,7 +317,6 @@ class MainWindow(QWidget):
                         </svg>
                         <style>
                             circle {
-                                transition: stroke-dashoffset 0.35s;
                                 transform: rotate(-90deg);
                                 transform-origin: 50% 50%;
                             }
@@ -375,7 +333,6 @@ class MainWindow(QWidget):
                     if(name==='progress') this.setProgress(newValue);
                 }
             }
-
             function overlay() {
                 [].forEach.call(document.querySelectorAll('nav'), function (el) {
                     el.style.visibility = 'hidden';
@@ -401,16 +358,16 @@ class MainWindow(QWidget):
                 circle.style.marginTop='-60px'
                 circle.style.marginLeft='-60px'
                 circle.style.zIndex='2000';
-                circle.style.position = 'absolute';
+                circle.style.position='absolute';
                 window.cprogress=0;
                 document.body.appendChild(circle);
+                document.body.style.overflow='hidden';
             };
             overlay();
             const interval=setInterval(()=>{
                 const el=document.querySelector('progress-ring');
-                window.cprogress+=2;
+                window.cprogress=(window.cprogress+2)%200;
                 el.setAttribute('progress',window.cprogress);
-                if(window.cprogress==1000) window.cprogress=0;
             },100);
         """
 
