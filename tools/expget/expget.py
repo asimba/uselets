@@ -36,8 +36,8 @@ class CallHandler(QObject):
     def set_parent(self,parent):
         self.parent=parent
 
-    @pyqtSlot(name="backrun_error")
-    def backrun_error(self):
+    @pyqtSlot(QVariant,result=QVariant,name="backrun_error")
+    def backrun_error(self,error):
         self.parent.getfilelist_error_callback()
 
     @pyqtSlot(QVariant,result=QVariant,name="backrun_success")
@@ -57,7 +57,7 @@ class MainWindow(QWidget):
         if not len(self.file_list):
             self.alllock=False
             self.label.setText('Статус:...')
-            self.webEngineView.page().setVisible(True)
+            self.reload()
             try: self.setEnabled(True)
             except: pass
             return
@@ -81,7 +81,7 @@ class MainWindow(QWidget):
                 print('Error. ("%s") - %i'%(self.file_list[-1][-1],event.value))
                 self.label.setText('Статус: ошибка скачивания файла ("%s", код ошибки: %i)!'%(self.file_list[-1][-1],event.value))
                 self.alllock=False
-                self.webEngineView.page().setVisible(True)
+                self.reload()
                 try: self.setEnabled(True)
                 except: pass
 
@@ -107,7 +107,7 @@ class MainWindow(QWidget):
             self.webEngineView.page().profile().downloadRequested.disconnect()
             self.label.setText('Статус:...')
             self.alllock=False
-            self.webEngineView.page().setVisible(True)
+            self.reload()
             try: self.setEnabled(True)
             except: pass
 
@@ -116,7 +116,7 @@ class MainWindow(QWidget):
         self.alllock=False
         self.file_list=[]
         self.file_number=0
-        self.webEngineView.page().setVisible(True)
+        self.reload()
         try: self.setEnabled(True)
         except: pass
 
@@ -146,12 +146,11 @@ class MainWindow(QWidget):
         if not('Files/prt0' in self.url): return
         self.file_list=[]
         self.file_number=0
-        self.webEngineView.page().setVisible(False)
         try: self.setEnabled(False)
         except: pass
         self.label.setText('Статус: получение списка файлов для скачивания...')
         self.webEngineView.page().runJavaScript(\
-            self.qwebchannel_js+"""
+            self.qwebchannel_js+self.busy+"""
             function get_sig_links_details_parse(file_links,details_links,partition,section,data){
                 var parser=new DOMParser();
                 var doc=parser.parseFromString(data,'text/html');
@@ -195,7 +194,7 @@ class MainWindow(QWidget):
                 };
             };
             function errlog(error){
-                window.qtwebchannel.backrun_error();
+                window.qtwebchannel.backrun_error(error);
             };
             function success(file_links){
                 window.qtwebchannel.backrun_success(file_links);
@@ -233,12 +232,11 @@ class MainWindow(QWidget):
                ('lk.spbexp.ru/SF/' in self.url and '/prt0/' in self.url)): return
         self.file_list=[]
         self.file_number=0
-        self.webEngineView.page().setVisible(False)
         try: self.setEnabled(False)
         except: pass
         self.label.setText('Статус: получение списка файлов для скачивания...')
         self.webEngineView.page().runJavaScript(\
-            self.qwebchannel_js+"""
+            self.qwebchannel_js+self.busy+"""
             function get_sig_links_details_parse(file_links,details_links,partitions,partition,section,data){
                 var parser=new DOMParser();
                 var doc=parser.parseFromString(data,'text/html');
@@ -294,20 +292,22 @@ class MainWindow(QWidget):
                 if(links.length) get_pd_links_details(links,file_links,details_links,partitions);
             };
             async function get_pd_links(path,file_links,details_links,partitions){
-                var href=''.concat('https://lk.spbexp.ru/Grid/',path,'Read/own',
-                    window.location.href.toString().split('\/').pop());
-                return await fetch(href)
-                            .then(async (response) => {
-                            const j=await response.json();
-                            get_pd_links_parse(path,file_links,details_links,partitions,j);
-                            }).catch((error) => { errlog(error); });
+                var req=document.querySelector('a[href*="/Zeg/Zegmain1"]');
+                if(req){
+                    var href=''.concat('https://lk.spbexp.ru/Grid/',path,'Read/own',req.pathname.split('\/').pop());
+                    return await fetch(href)
+                                .then(async (response) => {
+                                const j=await response.json();
+                                get_pd_links_parse(path,file_links,details_links,partitions,j);
+                                }).catch((error) => { errlog(error); });
+                };
             };
             function get_file_links(file_links,details_links,partitions){
                 if(partitions.length) get_pd_links(partitions.pop(),file_links,details_links,partitions);
                 else success(file_links);
             };
             function errlog(error){
-                window.qtwebchannel.backrun_error();
+                window.qtwebchannel.backrun_error(error);
             };
             function success(file_links){
                 window.qtwebchannel.backrun_success(file_links);
@@ -330,6 +330,89 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('ExpGet')
+
+        self.busy="""
+            class ProgressRing extends HTMLElement{
+                constructor(){
+                    super();
+                    const stroke=this.getAttribute('stroke');
+                    const radius=this.getAttribute('radius');
+                    const normalizedRadius=radius-stroke*2;
+                    this._circumference=normalizedRadius*2*Math.PI;
+                    this._root=this.attachShadow({mode:'open'});
+                    this._root.innerHTML=`
+                        <svg
+                            height="${radius*2}"
+                            width="${radius*2}"
+                        >
+                            <circle
+                                stroke="#c8c5c3"
+                                stroke-dasharray="${this._circumference} ${this._circumference}"
+                                style="stroke-dashoffset:${this._circumference}"
+                                stroke-width="${stroke}"
+                                fill="transparent"
+                                r="${normalizedRadius}"
+                                cx="${radius}"
+                                cy="${radius}"
+                            />
+                        </svg>
+                        <style>
+                            circle {
+                                transition: stroke-dashoffset 0.35s;
+                                transform: rotate(-90deg);
+                                transform-origin: 50% 50%;
+                            }
+                        </style>
+                    `;
+                }
+                setProgress(percent){
+                    const offset=this._circumference-(percent/100*this._circumference);
+                    const circle=this._root.querySelector('circle');
+                    circle.style.strokeDashoffset=offset;
+                }
+                static get observedAttributes(){ return ['progress']; }
+                attributeChangedCallback(name,oldValue,newValue){
+                    if(name==='progress') this.setProgress(newValue);
+                }
+            }
+
+            function overlay() {
+                [].forEach.call(document.querySelectorAll('nav'), function (el) {
+                    el.style.visibility = 'hidden';
+                });
+                [].forEach.call(document.querySelectorAll('*[class*=popover]'), function (el) {
+                    el.style.visibility = 'hidden';
+                });
+                var overlay=document.createElement("div");
+                overlay.style.opacity=0.9;
+                overlay.style.width='100%';
+                overlay.style.height='100%';
+                overlay.style.top='0px';
+                overlay.style.left='0px';
+                overlay.style.backgroundColor='#666666';
+                overlay.style.zIndex='1000';
+                overlay.style.position = 'absolute';
+                document.getElementsByTagName('body')[0].appendChild(overlay);
+                window.customElements.define('progress-ring',ProgressRing);
+                const circle=document.createElement("div");
+                circle.innerHTML=`<progress-ring stroke="8" radius="60" progress="0"></progress-ring>`
+                circle.style.top='50%';
+                circle.style.left='50%';
+                circle.style.marginTop='-60px'
+                circle.style.marginLeft='-60px'
+                circle.style.zIndex='2000';
+                circle.style.position = 'absolute';
+                window.cprogress=0;
+                document.body.appendChild(circle);
+            };
+            overlay();
+            const interval=setInterval(()=>{
+                const el=document.querySelector('progress-ring');
+                window.cprogress+=2;
+                el.setAttribute('progress',window.cprogress);
+                if(window.cprogress==1000) window.cprogress=0;
+            },100);
+        """
 
         self.webEngineView=QWebEngineView()
         ws=self.webEngineView.page().profile().defaultProfile()
