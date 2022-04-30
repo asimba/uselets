@@ -1,4 +1,4 @@
-$fc=$host.UI.RawUI.ForegroundColor
+﻿$fc=$host.UI.RawUI.ForegroundColor
 
 function write-header($text) {
   $host.UI.RawUI.ForegroundColor="green"
@@ -23,7 +23,7 @@ function Set-Registry-ReadOnly($regpath) {
    Catch {}
   }
   Try{
-    Set-Acl -ErrorAction SilentlyContinue $regpath $acl | Out-Null;
+    Set-Acl -ErrorAction SilentlyContinue $regpath $acl | Out-Null
   }
   Catch {}
 }
@@ -261,8 +261,10 @@ $cleanflags=@(
 function remove-app($app) {
   Write-Output "Trying to remove $app"
   Try{
-    (Get-AppxPackage -Name "$app" -AllUsers -ErrorAction SilentlyContinue | Remove-AppxPackage -ErrorAction SilentlyContinue) | Out-Null;
-    (Get-AppXProvisionedPackage -Online -ErrorAction SilentlyContinue | Where-Object DisplayName -EQ "$app" | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue) | Out-Null;
+    Start-Job -Name remappx -ScriptBlock {(Get-AppxPackage -Name "$using:app" -AllUsers -ErrorAction SilentlyContinue | Remove-AppxPackage -ErrorAction SilentlyContinue) | Out-Null} | Out-Null
+    (Get-Job | Wait-Job) | Out-Null
+    Start-Job -Name remappxp -ScriptBlock {(Get-AppXProvisionedPackage -Online -ErrorAction SilentlyContinue | Where-Object DisplayName -EQ "$using:app" | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue) | Out-Null} | Out-Null
+    (Get-Job | Wait-Job) | Out-Null
   }
   Catch {}
 }
@@ -270,7 +272,8 @@ function remove-app($app) {
 function remove-cap($app) {
   Write-Output "Trying to remove $app"
   Try{
-    (Get-WindowsCapability -Online -Name "$app" -ErrorAction SilentlyContinue | Where-Object State -EQ "Installed" | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue) | Out-Null;
+    Start-Job -Name remcap -ScriptBlock {(Get-WindowsCapability -Online -Name "$using:app" -ErrorAction SilentlyContinue | Where-Object State -EQ "Installed" | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue) | Out-Null} | Out-Null
+    (Get-Job | Wait-Job) | Out-Null
   }
   Catch {}
 }
@@ -281,14 +284,18 @@ function remove-apps() {
   foreach ($app in $apps) {
     remove-app $app
   }
-  Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction SilentlyContinue | Out-Null
-  Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Deprecation -NoRestart -ErrorAction SilentlyContinue | Out-Null
-  Disable-WindowsOptionalFeature -Online -FeatureName WorkFolders-Client -NoRestart  -ErrorAction SilentlyContinue | Out-Null
-  Disable-WindowsOptionalFeature -Online -FeatureName WindowsMediaPlayer -NoRestart  -ErrorAction SilentlyContinue | Out-Null
+  Start-Job -Name feature -ScriptBlock {Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction SilentlyContinue | Out-Null} | Out-Null
+  (Get-Job | Wait-Job) | Out-Null
+  Start-Job -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Deprecation -NoRestart -ErrorAction SilentlyContinue | Out-Null} | Out-Null
+  (Get-Job | Wait-Job) | Out-Null
+  Start-Job -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName WorkFolders-Client -NoRestart  -ErrorAction SilentlyContinue | Out-Null} | Out-Null
+  (Get-Job | Wait-Job) | Out-Null
+  Start-Job -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName WindowsMediaPlayer -NoRestart  -ErrorAction SilentlyContinue | Out-Null} | Out-Null
+  (Get-Job | Wait-Job) | Out-Null
   foreach ($app in $caps) {
     remove-cap $app
   }
-  Get-Job | Wait-Job
+  (Get-Job | Wait-Job) | Out-Null
 }
 
 function remove-onedrive(){
@@ -333,7 +340,7 @@ function fix-tasks(){
     $parts=$task.split('\')
     $name=$parts[-1]
     $path=$parts[0..($parts.length-2)] -join '\'
-    Disable-ScheduledTask -TaskName "$name" -TaskPath "$path" -ErrorAction SilentlyContinue
+    Disable-ScheduledTask -TaskName "$name" -TaskPath "$path" -ErrorAction SilentlyContinue | Out-Null
   }
 }
 
@@ -342,7 +349,7 @@ function fix-root-tasks(){
   foreach ($task in $root_tasks) {
     $parts=$task.split('\')
     $name=$parts[-1]
-    Disable-ScheduledTask -TaskName "$name" -TaskPath "\" -ErrorAction SilentlyContinue
+    Disable-ScheduledTask -TaskName "$name" -TaskPath "\" -ErrorAction SilentlyContinue | Out-Null
   }
 }
 
@@ -621,21 +628,21 @@ function cleanup(){
   if (test-path $env:systemdrive\PerfLogs) {Remove-Item -Path $env:systemdrive\PerfLogs -Force -Recurse}
   if (test-path $env:windir\memory.dmp) {Remove-Item $env:windir\memory.dmp -Force}
   write-header "Deleting Windows error reporting files"
-  if (test-path $env:systemdrive\ProgramData\Microsoft\Windows\WER) {Get-ChildItem -ErrorAction SilentlyContinue -Path $env:systemdrive\ProgramData\Microsoft\Windows\WER -Recurse | Remove-Item -ErrorAction SilentlyContinue -Force -Recurse}
+  if (test-path $env:systemdrive\ProgramData\Microsoft\Windows\WER) {Get-ChildItem -ErrorAction SilentlyContinue -Path $env:systemdrive\ProgramData\Microsoft\Windows\WER -Recurse | Remove-Item -ErrorAction SilentlyContinue -Force -Recurse 2>&1 | Out-Null}
   write-header "Removing system and user temporary Files"
   Get-ChildItem $env:systemdrive\ -Include @("*.log","*.tmp","*.dmp") -Recurse -File -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue | Out-Null
-  Remove-Item -Path "$env:windir\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:windir\minidump\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:windir\Prefetch\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\WER\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\Temporary Internet Files\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatCache\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatUaCache\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IEDownloadHistory\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCache\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCookies\*" -Force -Recurse -ErrorAction SilentlyContinue
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Terminal Server Client\Cache\*" -Force -Recurse -ErrorAction SilentlyContinue
+  Remove-Item -Path "$env:windir\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:windir\minidump\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:windir\Prefetch\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\WER\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\Temporary Internet Files\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatUaCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IEDownloadHistory\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCookies\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Terminal Server Client\Cache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   write-header "Removing Windows updates downloads..."
   Stop-Service wuauserv -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Stop-Service TrustedInstaller -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
@@ -646,7 +653,8 @@ function cleanup(){
   $StateRun=$StateFlags.Substring($StateFlags.get_Length()-4)
   $StateRun='/sagerun:' + $StateRun 
   foreach ($cleanflag in $cleanflags) {
-    Set-ItemProperty -path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\$cleanflag" -name $StateFlags -type DWORD -Value 2  -ErrorAction SilentlyContinue
+    Start-Job -Name regprop -ScriptBlock {Set-ItemProperty -path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\$using:cleanflag" -name $using:StateFlags -type DWORD -Value 2 -ErrorAction SilentlyContinue} | Out-Null
+    (Get-Job | Wait-Job) | Out-Null
   }
   Start-Process -FilePath CleanMgr.exe -ArgumentList $StateRun  -WindowStyle Hidden -Wait
   write-header "Clearing all event logs..."
