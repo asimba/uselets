@@ -68,18 +68,18 @@ class MainWindow(QWidget):
             return
         if event.value>1:
             if event.value==2:
-                if len(self.file_list[-1])>3:
-                    h0=self.file_list[-1][3]
+                if len(self.file_list[-1])>5:
+                    h0=self.file_list[-1][6]
                     h1=gethash(self.file_list[-1][-1])
                     if h0==h1:
                         try:
-                            tm=mktime(datetime.strptime(self.file_list[-1][2],"%d.%m.%Y %H:%M").timetuple())
-                            tm+=(int(self.file_list[-1][1])%60)
+                            tm=mktime(datetime.strptime(self.file_list[-1][4],"%d.%m.%Y %H:%M").timetuple())
+                            tm+=(int(self.file_list[-1][5])%60)
                             utime(self.file_list[-1][-1],(tm,tm))
                         except: pass
                     else:
                         print('Error. ("%s") - %i'%(self.file_list[-1][-1],event.value))
-                        self.label.setText('Статус: ошибка скачивания файла ("'+tmp[0]+'")')
+                        self.label.setText('Статус: ошибка скачивания файла ("'+self.file_list[-1][-1]+'")')
                 self.file_list.pop()
                 self.download_files()
             else:
@@ -117,9 +117,8 @@ class MainWindow(QWidget):
             self.webEngineView.page().profile().downloadRequested.connect(lambda event:\
                 self.on_downloadRequested(event))
             self.label.setText('Статус: скачивание файла "%s" ( %i из %i )'%\
-                               (tmp[0],self.file_number-len(self.file_list)-1,self.file_number))
-            if len(tmp)>3: self.webEngineView.page().download(QUrl(tmp[4]),tmp[-1])
-            else: self.webEngineView.page().download(QUrl(tmp[1]),tmp[-1])
+                               (tmp[2],self.file_number-len(self.file_list)-1,self.file_number))
+            self.webEngineView.page().download(QUrl(tmp[3]),tmp[-1])
         else:
             self.webEngineView.page().profile().downloadRequested.disconnect()
             self.label.setText('Статус:...')
@@ -151,17 +150,11 @@ class MainWindow(QWidget):
 
     def getfilelist_success_callback(self,links):
         for link in links:
-            if link[0]=='ProjectDocuments': link[0]='ПД'
-            elif link[0]=='RIIDocuments': link[0]='РИИ'
-            elif link[0]=='SmetaDocuments': link[0]='СД'
-            elif link[0]=='IrdDocuments': link[0]='ИРД'
-            link[1]=link[1].strip().rstrip().replace('"','_')[:64]
             path=join(self.basepath,link[0],link[1])
             try: makedirs(path,exist_ok=True)
             except: return
-            if len(link)>4:
-                self.file_list.append([link[2],link[6],link[4],link[5],link[3],realpath(join(path,link[2]))])
-            else: self.file_list.append([link[2],link[3],realpath(join(path,link[2]))])
+            link.append(realpath(join(path,link[2])))
+            self.file_list.append(link)
         if len(self.file_list):
             self.alllock=False
             self.download_files()
@@ -191,7 +184,7 @@ class MainWindow(QWidget):
                 var req=doc.querySelectorAll('a[href*=\"GetFile\"]');
                 for(const e of req){
                     if(e.text.includes('.sig')){
-                        file_links.push([partition,section,e.text,e.href]);
+                        file_links.push([pd_replace(partition),sec_replace(section),e.text,e.href]);
                         progress(file_links);
                     };
                 };
@@ -244,7 +237,7 @@ class MainWindow(QWidget):
                 var req=doc.querySelectorAll('a[href*=\"GetFile\"]');
                 for(const e of req){
                     if(e.text.includes('.sig')){
-                        file_links.push([partition,section,e.text,e.href]);
+                        file_links.push([pd_replace(partition),sec_replace(section),e.text,e.href]);
                         progress(file_links);
                     };
                 };
@@ -318,6 +311,17 @@ class MainWindow(QWidget):
             async function cancel(){
                 window.qtwebchannel.backrun_cancel();
             };
+            function pd_replace(partition){
+                switch(partition){
+                    case 'ProjectDocuments': return 'ПД';
+                    case 'RIIDocuments': return 'РИИ';
+                    case 'SmetaDocuments': return 'СД';
+                    case 'IrdDocuments': return 'ИРД';
+                };
+            };
+            function sec_replace(section){
+                return section.trim().replaceAll('"','_').slice(0,64).trim();
+            };
             async function get_sig_links_details(file_links,details_links,partitions){
                 if(window.process_canceled){
                     cancel();
@@ -338,8 +342,8 @@ class MainWindow(QWidget):
                     return;
                 };
                 for(const d of data.Data){
-                    file_links.push([partition,section,d['Nazvanie'],''.concat('https://lk.spbexp.ru/File/GetFile/',
-                        d['IDRow']),d['sDateTo'],d['sMD5'],d['Number']]);
+                    file_links.push([pd_replace(partition),sec_replace(section),d['Nazvanie'],
+                        ''.concat('https://lk.spbexp.ru/File/GetFile/',d['IDRow']),d['sDateTo'],d['Number'],d['sMD5']]);
                     progress(file_links);
                     details_links.push([partition,section,''.concat('https://lk.spbexp.ru/SF/FileCspViewer/',d['IDRow'])]);
                 };
@@ -391,7 +395,7 @@ class MainWindow(QWidget):
                                 style="stroke-dashoffset:${this._circumference}"
                                 stroke-width="${stroke}"
                                 fill="transparent"
-                                r="${normalizedRadius-2}"
+                                r="${normalizedRadius}"
                                 cx="${radius}"
                                 cy="${radius}"
                                 shape-rendering="geometricPrecision"
@@ -402,19 +406,31 @@ class MainWindow(QWidget):
                                 stroke-width="4"
                                 stroke-opacity="0.5"
                                 fill="#f44336"
-                                r="${normalizedRadius-stroke-2}"
+                                r="${normalizedRadius-stroke}"
                                 cx="${radius}"
                                 cy="${radius}"
                                 shape-rendering="geometricPrecision"
                                 onclick="button_click()"
                             />
                             <text class="txt" x="50%" y="52%" text-rendering="geometricPrecision">STOP</text>
+                            <circle
+                                class="ring"
+                                stroke="#000000"
+                                stroke-width="1"
+                                stroke-opacity="0.5"
+                                fill="transparent"
+                                r="${normalizedRadius+8}"
+                                cx="${radius}"
+                                cy="${radius}"
+                                shape-rendering="geometricPrecision"
+                            />
                         </svg>
                         <style>
                             .ring {
                                 transition: stroke-dashoffset 0.35s;
                                 transform: rotate(-90deg);
                                 transform-origin: 50% 50%;
+                                pointer-events: none;
                             }
                             .button:hover {
                                 fill: #ce000f;
