@@ -59,7 +59,6 @@ class MainWindow(QWidget):
 
     def on_downloadRequestState(self,event):
         if not len(self.file_list):
-            self.alllock=False
             self.label.setText('Статус:...')
             self.reload()
             try:
@@ -85,7 +84,6 @@ class MainWindow(QWidget):
             else:
                 print('Error. ("%s") - %i'%(self.file_list[-1][-1],event.value))
                 self.label.setText('Статус: ошибка скачивания файла ("%s", код ошибки: %i)!'%(self.file_list[-1][-1],event.value))
-                self.alllock=False
                 self.reload()
                 try:
                     for b in self.buttons: b.setEnabled(True)
@@ -117,12 +115,11 @@ class MainWindow(QWidget):
             self.webEngineView.page().profile().downloadRequested.connect(lambda event:\
                 self.on_downloadRequested(event))
             self.label.setText('Статус: скачивание файла "%s" ( %i из %i )'%\
-                               (tmp[2],self.file_number-len(self.file_list)-1,self.file_number))
+                               (tmp[2],self.file_number-len(self.file_list)+1,self.file_number))
             self.webEngineView.page().download(QUrl(tmp[3]),tmp[-1])
         else:
             self.webEngineView.page().profile().downloadRequested.disconnect()
             self.label.setText('Статус:...')
-            self.alllock=False
             self.reload()
             try:
                 for b in self.buttons: b.setEnabled(True)
@@ -130,7 +127,6 @@ class MainWindow(QWidget):
 
     def canceled_callback(self):
         self.label.setText('Статус: операция отменена!')
-        self.alllock=False
         self.file_list=[]
         self.file_number=0
         self.reload()
@@ -140,7 +136,6 @@ class MainWindow(QWidget):
 
     def getfilelist_error_callback(self):
         self.label.setText('Статус: ошибка при получении списка файлов для скачивания!')
-        self.alllock=False
         self.file_list=[]
         self.file_number=0
         self.reload()
@@ -156,14 +151,13 @@ class MainWindow(QWidget):
             link.append(realpath(join(path,link[2])))
             self.file_list.append(link)
         if len(self.file_list):
-            self.alllock=False
             self.download_files()
 
     def progress_callback(self,counter):
         self.label.setText('Статус: получение списка файлов для скачивания (получено %d ссылок)...'%counter)
 
     def getfileslist(self):
-        if self.alllock or len(self.file_list): return
+        if len(self.file_list): return
         self.url=self.webEngineView.url().toString()
         if not('Files/prt0' in self.url): return
         self.file_list=[]
@@ -215,7 +209,7 @@ class MainWindow(QWidget):
             """,lambda x: None)
 
     def getallfileslist(self):
-        if self.alllock or len(self.file_list): return
+        if len(self.file_list): return
         self.url=self.webEngineView.url().toString()
         if not('lk.spbexp.ru/Zeg/Zegmain' in self.url or\
                ('lk.spbexp.ru/SF/' in self.url and '/prt0/' in self.url)): return
@@ -403,8 +397,7 @@ class MainWindow(QWidget):
                             <circle
                                 class="button"
                                 stroke="#191919"
-                                stroke-width="4"
-                                stroke-opacity="0.5"
+                                stroke-width="1"
                                 fill="#f44336"
                                 r="${normalizedRadius-stroke}"
                                 cx="${radius}"
@@ -557,7 +550,6 @@ class MainWindow(QWidget):
         self.file_list=[]
         self.file_number=0
         self.lock=False
-        self.alllock=False
         self.basepath=realpath('out')
         try: makedirs(self.basepath,exist_ok=True)
         except: pass
