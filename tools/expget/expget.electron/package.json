@@ -1,0 +1,14 @@
+{
+  "name": "expget",
+  "version": "1.0.0",
+  "description": "ExpGet",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "ExpGet",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^18.2.0"
+  }
+}

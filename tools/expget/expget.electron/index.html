@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  <body style="margin:0;padding:0;background-color:#f2f2f2">
+    <div style="width:100%;height:40px;display:flex;">
+      <button type="button" style="width:calc(100%/3);" onclick="window.electron.sendMessage({ message: ['reload-page',''] })"><span style="margin: auto;">Обновить страницу</span></button>
+      <button type="button" style="width:calc(100%/3);" onclick="window.electron.sendMessage({ message: ['getfileslist',''] })"><span style="margin: auto;">Получить данные</span></button>
+      <button type="button" style="width:calc(100%/3);" onclick="window.electron.sendMessage({ message: ['getallfileslist',''] })"><span style="margin: auto;">Скачать данные проекта</span></button>
+    </div>
+    <div id='status-bar' style="width:100%;height:17px;margin:0;font-size:12px;text-align:left;border:1px solid black;">Статус...</div>
+  </body>
+</html>
