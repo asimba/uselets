@@ -1,4 +1,4 @@
-﻿$fc=$host.UI.RawUI.ForegroundColor
+$fc=$host.UI.RawUI.ForegroundColor
 
 function write-header($text) {
   $host.UI.RawUI.ForegroundColor="green"
@@ -78,6 +78,7 @@ $apps=@(
 "Microsoft.WindowsReadingList"
 "Microsoft.GetHelp"
 "Microsoft.Wallet"
+"Microsoft.Paint"
 "Microsoft.Print3D"
 "Microsoft.MSPaint"
 "Microsoft.XboxSpeechToTextOverlay"
@@ -630,7 +631,9 @@ function cleanup(){
   write-header "Deleting Windows error reporting files"
   if (test-path $env:systemdrive\ProgramData\Microsoft\Windows\WER) {Get-ChildItem -ErrorAction SilentlyContinue -Path $env:systemdrive\ProgramData\Microsoft\Windows\WER -Recurse | Remove-Item -ErrorAction SilentlyContinue -Force -Recurse 2>&1 | Out-Null}
   write-header "Removing system and user temporary Files"
-  Get-ChildItem $env:systemdrive\ -Include @("*.log","*.tmp","*.dmp") -Recurse -File -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue | Out-Null
+  try{
+    Get-ChildItem $env:systemdrive\ -Include @("*.log","*.tmp","*.dmp") -Recurse -File -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue | Out-Null
+  }catch{}
   Remove-Item -Path "$env:windir\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:windir\minidump\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:windir\Prefetch\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
@@ -640,7 +643,9 @@ function cleanup(){
   Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatUaCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IEDownloadHistory\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  try{
+    Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  }catch{}
   Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCookies\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Terminal Server Client\Cache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   write-header "Removing Windows updates downloads..."
@@ -691,6 +696,11 @@ function fix-view(){
   Catch {}
 }
 
+function fix-tiles(){
+  Import-StartLayout -LayoutPath "$env:systemdrive\fixes\base\layout.xml" -MountPath "$env:systemdrive\" -ErrorAction SilentlyContinue | Out-Null
+  Remove-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+}
+
 fix-view
 remove-apps
 remove-onedrive
@@ -701,4 +711,5 @@ fix-services
 fix-bservices
 fix-registry
 fix-network
+fix-tiles
 cleanup
