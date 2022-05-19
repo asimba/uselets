@@ -1,4 +1,5 @@
 @echo off
+start %SYSTEMDRIVE%\fixes\banner.exe /b
 cd /d "%~dp0"
 timeout 20
 powershell -ExecutionPolicy Bypass -command "&`%~dp0\fix.ps1" >nul 2>&1

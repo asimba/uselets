@@ -1,4 +1,5 @@
 @echo off
+start %SYSTEMDRIVE%\fixes\banner.exe /b
 cd /d "%~dp0"
 powershell -ExecutionPolicy Bypass -command "&`%~dp0\fix.ps1"
 reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "app-fix" /f >nul 2>&1

