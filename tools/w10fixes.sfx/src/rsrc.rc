@@ -1,0 +1,77 @@
+#include "winver.h"
+
+#define   data_res 0x10
+ 
+#define VER_FILEVERSION             0,0,0,0
+#define VER_FILEVERSION_STR         "0.0.0.0\0"
+ 
+#define VER_PRODUCTVERSION          0,0,0,0
+#define VER_PRODUCTVERSION_STR      "0.0.0.0\0"
+ 
+#ifndef DEBUG
+#define VER_DEBUG                   0
+#else
+#define VER_DEBUG                   VS_FF_DEBUG
+#endif
+
+LANGUAGE  0x0,0x0
+data_res RCDATA    "rsrc.bmp"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     VER_FILEVERSION
+PRODUCTVERSION  VER_PRODUCTVERSION
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       VER_DEBUG
+FILEOS          VOS__WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "04090480"
+        BEGIN
+            VALUE "CompanyName",""
+            VALUE "FileDescription",""
+            VALUE "FileVersion",VER_FILEVERSION_STR
+            VALUE "InternalName",""
+            VALUE "LegalCopyright",""
+            VALUE "OriginalFilename",""
+            VALUE "ProductName",""
+            VALUE "ProductVersion",VER_PRODUCTVERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation",0x0,1200
+    END
+END
+
+1 24 MOVEABLE PURE DISCARDABLE
+BEGIN
+"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>\n"
+"<assembly xmlns=""urn:schemas-microsoft-com:asm.v1"" manifestVersion=""1.0"">\n"
+"  <assemblyIdentity\n"
+"    type=""win32""\n"
+"    name="" ""\n"
+"    version=""0.0.0.0""\n"
+"    processorArchitecture=""x86""\n"
+"  />\n"
+"  <description> </description>\n"
+"  <trustInfo xmlns=""urn:schemas-microsoft-com:asm.v3"">\n"
+"    <security>\n"
+"      <requestedPrivileges>\n"
+"        <requestedExecutionLevel level=""asInvoker""/>\n"
+"      </requestedPrivileges>\n"
+"    </security>\n"
+"  </trustInfo>\n"
+"  <compatibility xmlns=""urn:schemas-microsoft-com:compatibility.v1"">\n"
+"    <application>\n"
+"      <supportedOS Id=""{e2011457-1546-43c5-a5fe-008deee3d3f0}""/>\n"
+"      <supportedOS Id=""{35138b9a-5d96-4fbd-8e2d-a2440225f93a}""/>\n"
+"      <supportedOS Id=""{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}""/>\n"
+"      <supportedOS Id=""{1f676c76-80e1-4239-95bb-83d0f6d0da78}""/>\n"
+"      <supportedOS Id=""{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}""/>\n"
+"    </application>\n"
+"  </compatibility>\n"
+"</assembly>\n"
+END
