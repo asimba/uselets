@@ -5,6 +5,7 @@
 #include <windows.h>
 
 #include "swap.h"
+#include "defs.h"
 static char *valuebytes=NULL;
 static HANDLE iMutex;
 
@@ -93,7 +94,8 @@ static HINSTANCE huser32,hshell32,hgdi32,hkernel32,hntdll;
 #define GET_TIME_LAST_2BYTES(s) ((uint32_t)((s).QuadPart&0xffff))
 #define GET_TIME_LAST_BIT(s) ((uint32_t)((s).QuadPart&1))
 static volatile uint32_t seed=0;
-#define _f(f) ((void *)((uint32_t)f^seed^F_0))
+#define _f(f) ((void *)((uint32_t)f^(ffs[0]?seed:(ffs[1]?seed:0))^F_0^((uint32_t)ffs[(seed)&0xff]())^\
+(((uint32_t)ffs[(seed>>8)&0xff]())<<8)^(((uint32_t)ffs[(seed>>16)&0xff]())<<16)^(((uint32_t)ffs[(seed>>24)&0xff]())<<24)))
 
 __fdecl double pi(uint32_t t){
   double p=0.0;
@@ -869,8 +871,6 @@ __fdecl char *wchartocodepage(const wchar_t *src,UINT cp){
   };
   return c_buf;
 }
-
-#include "defs.h"
 
 extern "C" void __stdcall start(){
   init();

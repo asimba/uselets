@@ -80,15 +80,28 @@ void gen_h(const char *f){
   char src[10],dst[13];
   src[9]=0;
   dst[12]=0;
+  fprintf(ofile,"typedef uint8_t (__stdcall *ffn)();\n");
   for(bytes=0;bytes<256;bytes++){
     sprintf(src,"%02x%02x%02x%02x",swapbytes[bytes],swapbytes[(uint8_t)(bytes+1)],
             swapbytes[(uint8_t)(bytes+2)],swapbytes[(uint8_t)(bytes+3)]);
     src[8]=swapbytes[(uint8_t)(bytes+4)];
     base64(src,dst);
-    fprintf(ofile,"extern const uint32_t __%s=0x%02X;\n",dst,swapbytes[bytes]);
-    fprintf(ofile,"extern \"C\" uint32_t  __stdcall __%s_g(){return __%s;};\n",dst,dst);
+    fprintf(ofile,"extern const uint8_t __%s=0x%02X;\n",dst,swapbytes[bytes]);
+    fprintf(ofile,"extern \"C\" uint8_t __stdcall __%s_g(){ return __%s; };\n",dst,dst);
+    fprintf(ofile,"#define FF%03u (ffn)__%s_g\n",bytes,dst);
     symbol++;
   };
+  fprintf(ofile,"static ffn ffs[]={\n");
+  uint8_t c=0;
+  for(bytes=0;bytes<256;bytes++){
+    if(c==10){
+      c=0;
+      fprintf(ofile,"\n");
+    };
+    fprintf(ofile,"FF%03u,",bytes);
+    c++;
+  }
+  fprintf(ofile,"0\n};\n");
   fprintf(ofile,"#endif\n");
   fclose(ofile);
 }
