@@ -115,11 +115,11 @@ namespace obfs {
     enum { value=LinearCongruentialEngine<22695477,N,RandomSeed(),Limit>::value };
   };
 
-	template <typename Indexes, int n,int id> class MetaString;
-	template <size_t... I, int n,int id> class MetaString<std::index_sequence<I...>,n,id> {
+  template <typename Indexes, int n,int id> class MetaString;
+  template <size_t... I, int n,int id> class MetaString<std::index_sequence<I...>,n,id> {
     public:
       constexpr MetaString(char const *str)
-        : encrypted_buffer{ encrypt(str[I])... } {};
+      : encrypted_buffer{ encrypt(str[I])... } {};
     public:
       char* decrypt(void){
         for (size_t i=0;i<sizeof...(I);i++){
@@ -134,7 +134,7 @@ namespace obfs {
     private:
       char buffer[sizeof...(I) + 1] {};
       char encrypted_buffer[sizeof...(I)] {};
-	};
+  };
 };
 
 #define o(str) (obfs::MetaString<std::make_index_sequence<sizeof(str)>,obfs::MetaRandom<__COUNTER__,256>::value,__COUNTER__>(str).decrypt())

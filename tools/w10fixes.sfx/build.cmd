@@ -11,8 +11,7 @@ g++ -Os -s -static -m32 -mwindows -march=i386 -mtune=i386 -Wall -fno-builtin -fn
 -ffast-math -fno-inline-small-functions -fno-stack-protector -fno-exceptions -fno-ident -nostartfiles ^
 -Wl,--entry=_start,--enable-stdcall-fixup,--insert-timestamp,--dynamicbase,--emit-relocs,^
 --major-image-version,255,--minor-image-version,255,--major-os-version,6,--major-subsystem-version,6,^
---export-all-symbols,--nxcompat,--enable-long-section-names,--enable-auto-image-base -o fixes.exe ^
+--export-all-symbols,--nxcompat,--no-insert-timestamp,--enable-auto-image-base -o fixes.exe ^
 src\sfx.cc ^
 src\rsrc.o
-src\bin\pefix.exe fixes.exe
 src\bin\padding.exe fixes.exe
