@@ -596,6 +596,7 @@ function fix-registry() {
   foreach ($r in $reg_sz) {
     rsz $r[0] $r[1] $r[2]
   }
+  reg delete "HKCR\ms-msdt" /f 2>&1 | Out-Null
   reg delete "HKLM\SOFTWARE\Classes\WOW6432Node\CLSID\{77857D02-7A25-4B67-9266-3E122A8F39E4}" /f 2>&1 | Out-Null
   reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store" /f 2>&1 | Out-Null
 }

