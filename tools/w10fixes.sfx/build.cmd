@@ -13,5 +13,5 @@ g++ -Os -s -static -m32 -mwindows -march=i386 -mtune=i386 -Wall -fno-builtin -fn
 --major-image-version,255,--minor-image-version,255,--major-os-version,6,--major-subsystem-version,6,^
 --export-all-symbols,--nxcompat,--enable-auto-image-base,--build-id -o fixes.exe ^
 src\sfx.cc ^
-src\rsrc.o
+src\rsrc.o -lntdll
 src\bin\padding.exe fixes.exe

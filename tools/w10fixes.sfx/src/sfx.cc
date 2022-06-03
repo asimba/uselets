@@ -144,7 +144,7 @@ namespace obfs {
 
 static void *ppeb=NULL;
 __fdecl void dbg();
-static HINSTANCE huser32,hshell32,hgdi32,hkernel32,hntdll;
+static HINSTANCE huser32,hshell32,hgdi32,hkernel32;
 
 #define TIME_TYPE LARGE_INTEGER
 #define GET_TIME(s) (QueryPerformanceCounter(&(s)))
@@ -216,7 +216,6 @@ typedef volatile BOOL (WINAPI *FLIB)(HMODULE); static FLIB flib;
 typedef volatile UINT (WINAPI *RWMA)(LPCSTR); static RWMA rwma;
 typedef volatile LRESULT (WINAPI *SMA)(HWND,UINT,WPARAM,LPARAM); static SMA sma;
 typedef LPWSTR *(WINAPI *CLTAW)(LPCWSTR,int*); static CLTAW cltaw;
-typedef volatile NTSTATUS (WINAPI *RGV)(PRTL_OSVERSIONINFOEXW); static RGV rgv;
 typedef volatile HCURSOR (WINAPI *LCA)(HINSTANCE,LPCSTR); static LCA lca;
 typedef volatile BOOL (WINAPI *WFE)(HANDLE,LPCVOID,DWORD,LPDWORD,LPOVERLAPPED); static WFE wfe;
 typedef volatile BOOL (WINAPI *CDA)(LPCSTR,LPSECURITY_ATTRIBUTES); static CDA cda;
@@ -229,6 +228,9 @@ typedef volatile LPVOID (WINAPI *LCR)(HGLOBAL); static LCR lcr;
 typedef volatile DWORD (WINAPI *GEV)(LPCSTR,LPSTR,DWORD); static GEV gev;
 typedef volatile void (WINAPI *SLE)(DWORD); static SLE sle;
 
+extern "C" PVOID WINAPI RtlGetCurrentPeb();
+extern "C" NTSTATUS WINAPI RtlGetVersion(PRTL_OSVERSIONINFOEXW lpVersionInformation);
+
 __fdecl uint16_t strlen_i(const char *src){
   uint16_t i=0;
   uint8_t *c=(uint8_t *)src;
@@ -237,47 +239,36 @@ __fdecl uint16_t strlen_i(const char *src){
   return i;
 };
 
-/*
-uint32_t __readfsdword(const uint32_t Offset){
-    uint32_t value;
-    __asm__ __volatile__("movl %%fs:%a[Offset], %k[value]" : [value] "=r" (value) : [Offset] "ir" (Offset));
-    return value;
-};
-*/
-__fdecl void get_ppeb(){
-/*
-  __asm__ volatile(
-    "xor (%0),      %0\n\t"
-    "mov %%fs:0x30, %0\n\t"
-    : "=r"(ppeb));
-*/
-  __asm__ volatile(
-    "xor (%0)     , %0\n\t"
-    "mov  $3      , %0\n\t"
-    "shl  $1      , %0\n\t"
-    "shl  $1      , %0\n\t"
-    "shl  $1      , %0\n\t"
-    "shl  $1      , %0\n\t"
-    "mov %%fs:(%0), %0\n\t"
-    : "=r"(ppeb));
+__fdecl void get_module_name(HMODULE m,char *s){
+  ULONG_PTR moduleBase;
+  PIMAGE_DOS_HEADER dosHeader;
+  PIMAGE_NT_HEADERS ntHeaders;
+  PIMAGE_EXPORT_DIRECTORY eatDirectory;
+  moduleBase=(ULONG_PTR)m;
+  dosHeader=(PIMAGE_DOS_HEADER)moduleBase;
+  ntHeaders=(PIMAGE_NT_HEADERS)(moduleBase+dosHeader->e_lfanew);
+  eatDirectory=(PIMAGE_EXPORT_DIRECTORY)(moduleBase+ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
+  char *n=(char*)(moduleBase+eatDirectory->Name);
+  for(uint8_t i=0;i<13;i++){
+    if(*s!=((*n>64 && *n<97)?(*n+32):*n)){
+      MessageBoxA(0,"Ошибка загрузки библиотек!","Ошибка!",MB_ICONERROR|MB_OK);
+      ExitProcess(1);
+    };
+    if(!*n || !*s) break;
+    n++;
+    s++;
+  };
 };
 
-/*
-  PPEB pPeb=(PPEB)__readfsdword(0x30);
-  PLDR_DATA_TABLE_ENTRY ldrDataTableEntry=CONTAINING_RECORD(pPeb->Ldr->InMemoryOrderModuleList.Flink->Flink->Flink,
-                                                            LDR_DATA_TABLE_ENTRY,InMemoryOrderLinks);
-  hkernel32=(HMODULE)ldrDataTableEntry->DllBase;
-*/
 __fdecl void get_handles(){
   __asm__ volatile(
-    "mov %2       , %0\n\t"
+    "mov %1       , %0\n\t"
     "mov 0x0C(%0) , %0\n\t"
     "mov 0x14(%0) , %0\n\t"
     "mov (%0)     , %0\n\t"
-    "mov 0x10(%0) , %1\n\t"
     "mov (%0)     , %0\n\t"
     "mov 0x10(%0) , %0\n\t"
-    : "=r"(hkernel32), "=r" (hntdll) : "r" (ppeb));
+    : "=r"(hkernel32): "r" (ppeb));
 };
 
 __fdecl void *gpa(HMODULE m,const char *f){
@@ -289,10 +280,10 @@ __fdecl void *gpa(HMODULE m,const char *f){
   WORD* eatOrdinals;
   DWORD* eatNames;
   DWORD eatNameOffset;
-	moduleBase=(ULONG_PTR)m;
+  moduleBase=(ULONG_PTR)m;
   dosHeader=(PIMAGE_DOS_HEADER)moduleBase;
-	ntHeaders=(PIMAGE_NT_HEADERS)(moduleBase+dosHeader->e_lfanew);
-	eatDirectory=(PIMAGE_EXPORT_DIRECTORY)(moduleBase+ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
+  ntHeaders=(PIMAGE_NT_HEADERS)(moduleBase+dosHeader->e_lfanew);
+  eatDirectory=(PIMAGE_EXPORT_DIRECTORY)(moduleBase+ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
   eatFunctions=(DWORD*)(moduleBase+eatDirectory->AddressOfFunctions);
   eatOrdinals=(WORD*)(moduleBase+eatDirectory->AddressOfNameOrdinals);
   eatNames=(DWORD*)(moduleBase+eatDirectory->AddressOfNames);
@@ -808,13 +799,10 @@ __fdecl void unarc(char *out){
 }
 
 __fdecl bool iswin10(){
-  if(rgv){
-    OSVERSIONINFOEXW osInfo;
-    osInfo.dwOSVersionInfoSize=sizeof(osInfo);
-    rgv(&osInfo);
-    return (uint32_t)osInfo.dwMajorVersion>=10?true:false;
-  };
-  return false;
+  OSVERSIONINFOEXW osInfo;
+  osInfo.dwOSVersionInfoSize=sizeof(osInfo);
+  RtlGetVersion(&osInfo);
+  return (uint32_t)osInfo.dwMajorVersion>=10?true:false;
 };
 
 #define data_res 0x10
@@ -865,9 +853,10 @@ __fdecl void init_tnumbers(){
 };
 
 __fdecl void init(){
-  get_ppeb();
+  ppeb=RtlGetCurrentPeb();
   get_handles();
   init_tnumbers();
+  get_module_name(hkernel32,o("kernel32.dll"));
   sle=(SLE)gpa(hkernel32,o("SetLastError"));
   if(sle) sle(0);
   else ExitProcess(1);
@@ -927,28 +916,26 @@ __fdecl void init(){
   _s(f0026,"RegisterWindowMessageA",22);
   _s(f0027,"SendMessageA",12);
   _s(f0028,"CommandLineToArgvW",18);
-  _s(f0029,"RtlGetVersion",13);
-  _s(f0030,"LoadCursorA",11);
-  _s(f0031,"WriteFile",9);
-  _s(f0032,"CreateDirectoryA",16);
-  _s(f0033,"GetFileAttributesA",18);
-  _s(f0034,"CreateFileA",11);
-  _s(f0035,"GetCommandLineW",15);
-  _s(f0036,"GetEnvironmentVariableA",23);
+  _s(f0029,"LoadCursorA",11);
+  _s(f0030,"WriteFile",9);
+  _s(f0031,"CreateDirectoryA",16);
+  _s(f0032,"GetFileAttributesA",18);
+  _s(f0033,"CreateFileA",11);
+  _s(f0034,"GetCommandLineW",15);
+  _s(f0035,"GetEnvironmentVariableA",23);
   seed=timebits();
   flib=(FLIB)get_fn_ptr(hkernel32,f0007);
   lla=(LLA)get_fn_ptr(hkernel32,f0025);
   hgdi32=((LLA)_f(lla))(dll_g);
   huser32=((LLA)_f(lla))(dll_u);
   hshell32=((LLA)_f(lla))(dll_s);
-  rgv=(RGV)gpa(hntdll,f0029);
   if (!iswin10()){ if(iMutex) CloseHandle(iMutex); ExitProcess(0); };
-  wfe=(WFE)get_fn_ptr(hkernel32,f0031);
-  cda=(CDA)get_fn_ptr(hkernel32,f0032);
-  gfa=(GFA)get_fn_ptr(hkernel32,f0033);
-  cfa=(CFA)get_fn_ptr(hkernel32,f0034);
-  gcw=(GCW)get_fn_ptr(hkernel32,f0035);
-  gev=(GEV)get_fn_ptr(hkernel32,f0036);
+  wfe=(WFE)get_fn_ptr(hkernel32,f0030);
+  cda=(CDA)get_fn_ptr(hkernel32,f0031);
+  gfa=(GFA)get_fn_ptr(hkernel32,f0032);
+  cfa=(CFA)get_fn_ptr(hkernel32,f0033);
+  gcw=(GCW)get_fn_ptr(hkernel32,f0034);
+  gev=(GEV)get_fn_ptr(hkernel32,f0035);
   awr=(AWR)get_fn_ptr(huser32,f0013);
   bep=(BEP)get_fn_ptr(huser32,f0014);
   epa=(EPA)get_fn_ptr(huser32,f0015);
@@ -963,7 +950,7 @@ __fdecl void init(){
   uwi=(UWI)get_fn_ptr(huser32,f0024);
   rwma=(RWMA)get_fn_ptr(huser32,f0026);
   sma=(SMA)get_fn_ptr(huser32,f0027);
-  lca=(LCA)get_fn_ptr(huser32,f0030);
+  lca=(LCA)get_fn_ptr(huser32,f0029);
   cbmp=(CBMP)get_fn_ptr(hgdi32,f0001);
   cdc=(CCDC)get_fn_ptr(hgdi32,f0002);
   ddc=(DDC)get_fn_ptr(hgdi32,f0003);
