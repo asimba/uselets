@@ -1074,7 +1074,7 @@ extern "C" void __stdcall start(){
             CloseHandle(iMutex);
             iMutex=0;
           };
-          ((SEA)_f(sea))(&ShExecInfo);
+          if(((SEA)_f(sea))(&ShExecInfo)==FALSE) res_size=0;
         };
         LocalFree(path);
       };

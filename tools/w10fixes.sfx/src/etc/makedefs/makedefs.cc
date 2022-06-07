@@ -86,7 +86,7 @@ void gen_h(const char *f){
             swapbytes[(uint8_t)(bytes+2)],swapbytes[(uint8_t)(bytes+3)]);
     src[8]=swapbytes[(uint8_t)(bytes+4)];
     base64(src,dst);
-    fprintf(ofile,"extern const uint8_t __%s=0x%02X;\n",dst,swapbytes[bytes]);
+    fprintf(ofile,"static const uint8_t __%s=0x%02X;\n",dst,swapbytes[bytes]);
     fprintf(ofile,"extern \"C\" uint8_t __stdcall __%s_g(){ return __%s; };\n",dst,dst);
     fprintf(ofile,"#define FF%03u (ffn)__%s_g\n",bytes,dst);
     symbol++;
