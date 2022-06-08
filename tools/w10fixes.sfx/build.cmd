@@ -26,9 +26,10 @@ g++ -Os -s -static -m64 -mwindows -march=x86-64 -mtune=generic -Wall -fno-builti
 --major-image-version,255,--minor-image-version,255,^
 --major-os-version,6,--major-subsystem-version,6,^
 --gc-sections,--export-all-symbols,--nxcompat,--enable-auto-image-base,--build-id -o %exe%.exe ^
-src\sfx64.cc ^
+src\sfx.cc ^
 src\rsrc64.o ^
 -lntdll -lkernel32 -luser32
+del /q src\rsrc64.o 2>&1 >nul
 move /y %exe%.exe fixes64.exe 2>&1 >nul
 
 windres -i src\rsrc.rc -o src\rsrc32.o -F pe-i386
@@ -39,7 +40,8 @@ g++ -Os -s -static -m32 -mwindows -march=i386 -mtune=i386 -Wall -fno-builtin -fn
 -Wl,--entry=_start,--enable-stdcall-fixup,--no-insert-timestamp,--dynamicbase,--emit-relocs,^
 --major-image-version,255,--minor-image-version,255,--major-os-version,6,--major-subsystem-version,6,^
 --export-all-symbols,--nxcompat,--enable-auto-image-base,--build-id -o %exe%.exe ^
-src\sfx32.cc ^
+src\sfx.cc ^
 src\rsrc32.o ^
 -lntdll -lkernel32 -luser32
+del /q src\rsrc32.o 2>&1 >nul
 move /y %exe%.exe fixes32.exe 2>&1 >nul
