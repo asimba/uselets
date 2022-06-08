@@ -1,2 +1,0 @@
-tcc -impdef shell32.dll -o shell32.def
-tcc -impdef advapi32.dll -o advapi32.def
