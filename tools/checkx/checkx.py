@@ -15,13 +15,14 @@ import re
 
 stopmask=re.compile('(\.(ade|adp|bas|bat|chm|cmd|com|cpl|crt|exe|hlp|hta|inf|\
 ins|isp|jse|js|lnk|mde|msc|msi|msp|pcd|reg|scr|sct|url|vbs|vbe|wsf|wsh|wsc|\
-wmv|wma|mp3|avi|mpg|hta|ppsx)|incorrect|password|not\ supported)',re.IGNORECASE)
+wmv|wma|mp3|avi|mpg|hta|ppsx|diagcab)|incorrect|password|not\ supported)',re.IGNORECASE)
 
 stopmask_arc=re.compile('(\.rar|7z|zip|zipx|arj|ace|daa)',re.IGNORECASE)
 
 allowmask=re.compile('(7-Zip|p7zip|Scanning|Testing\ archive|Path|Type|Listing)',re.IGNORECASE)
 
-file_types=re.compile('^.*\.(docx|doc|xlsx|xls|rar|7z|zip|gz|ace|ods|odt|odp|pkpass|ls|os|cdw|frw|[0-9]{3}|r[0-9]{2})$',re.IGNORECASE)
+file_types=re.compile('^.*\.(docx|doc|xlsx|xls|rar|7z|zip|gz|ace|ods|odt|odp|pkpass|ls|pr|os|cdw|frw|gsfx|[0-9]{3})$',re.IGNORECASE)
+#file_types=re.compile('^.*\.(docx|doc|xlsx|xls|rar|7z|zip|gz|ace|ods|odt|odp|pkpass|ls|os|cdw|frw|[0-9]{3}|r[0-9]{2})$',re.IGNORECASE)
 
 up='/usr/bin/'
 bp='/bin/'
