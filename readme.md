@@ -417,10 +417,14 @@ if $h_X-SS-Suspicious-Flag: contains "YES" then
 endif
 </code></pre></details>  
 
+#### Отключение/включение всех сетевых интерфейсов (Windows 10/11).  
+_Требования (зависимости):_ Windows PowerShell  
+```Get-NetAdapter|Disable-NetAdapter -Confirm:$false``` отключение сетевых интерфейсов  
+```Get-NetAdapter|Enable-NetAdapter -Confirm:$false``` включение сетевых интерфейсов  
 #### Изменение профиля локальной сети (частная, общественная) (Windows 10).  
 _Требования (зависимости):_ Windows PowerShell  
 ```Get-NetConnectionProfile``` используется для перечисления текущих профилей  
-```Set-NetConnectionProfile -Name "<Название Вашей сети>" -NetworkCategory <Private|Public>``` изпользуется для смены профиля  
+```Set-NetConnectionProfile -Name "<Название Вашей сети>" -NetworkCategory <Private|Public>``` используется для смены профиля  
 #### Синхронизация времени с удалённым сервером из командной строки (Windows).  
 ```net time \\<сервер> /set /y```  
 _Пример:_ ```net time \\192.168.0.1 /set /y```  
@@ -849,6 +853,11 @@ _Требования (зависимости):_ PowerShell
 ```wevtutil el | Foreach-Object {wevtutil cl "$_"}```  
 #### Получение информации о материнской плате из командной строки (Windows).  
 ```wmic baseboard get product,Manufacturer,version,serialnumber```  
+
+#### Отключение Windows Defender ("Защитник Windows") (Windows 10/11).  
+_Требования (зависимости):_ PowerShell, [ddef-binary-x86_64](https://github.com/asimba/uselets/raw/main/tools/w10fixes.sfx/bin/ddef64.zip)  
+<p align="justify">Потребуется выполнить <b>на свой страх и риск</b> <i>ddef64.exe</i> из прилагающегося архива.</p>  
+
 #### Комплексное решение: отключение (снижение активности) Windows Defender (Windows 10/11), удаление bloatware, отключение телеметрии и автообновлений Windows 10.  
 _Требования (зависимости):_ PowerShell, [w11fixes-binary-x86](https://github.com/asimba/uselets/raw/main/tools/w10fixes.sfx/bin/fixes32.zip) или [w11fixes-binary-x86_64](https://github.com/asimba/uselets/raw/main/tools/w10fixes.sfx/bin/fixes64.zip)  
 <p align="justify">Потребуется выполнить <b>на свой страх и риск</b> <i>fixes32.exe</i> (или <i>fixes64.exe</i>) из прилагающегося архива, предварительно, <b>если потребуется</b>, отключив антивирусную проверку всех типов в "Защитнике Windows" и подтвердив выполнение в открывшемся окне защиты SmartScreen ("Подробнее"->"Выполнить в любом случае"). После утвердительного ответа на запрос об очистке будет выдан запрос "Контроля учётных записей", требуется также ответить утвердительно. После этого система будет трижды перезагружена (причём первый раз в безопасном режиме). Между перезагрузками следует воздержаться от совершения каких-либо действий с компьютером. Рекомендуется после завершения работы программы проверить настройки конфиденциальности. В случае необходимости скачивания обновлений Windows потребуется перевести в автоматический режим запуска и включить следующие службы: Служба оркестратора обновлений (UsoSvc), Фоновая интеллектуальная служба передачи (BITS), Центр обновления Windows (wuauserv).</p>  
