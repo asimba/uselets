@@ -974,6 +974,10 @@ _Пример:_```pdftk source.pdf burst```
 _Требования (зависимости):_ [qpdf](https://github.com/qpdf/qpdf/releases)  
 ```qpdf --split-pages=1-z <имя_файла> <префикс_имён_файлов_результата>.pdf```  
 _Пример:_```qpdf --split-pages=1-z source.pdf page.pdf```  
+_Требования (зависимости):_ [ghostscript](https://www.ghostscript.com/download.html)  
+Linux: ```gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r200 -sOutputFile="page-%d.png" <имя_исходного_файла>```  
+Windows: ```gswin64c -dNOPAUSE -dBATCH -sDEVICE=png16m -r200 -sOutputFile="page-%d.png" <имя_исходного_файла>```  
+_<p align="justify">Примечание: значение параметра "-r" ("разрешение") стоит варьировать в диапазоне от 72 до 600; в результате данной операции отдельные страницы сохранаются в формате PNG.</p>_  
 #### Склеивание PDF-файла из отдельных файлов страниц в текущей директории (Windows).  
 _Требования (зависимости):_ [qpdf](https://github.com/qpdf/qpdf/releases)  
 ```qpdf --empty <имя_файла_результата> --pages *.pdf 1-z --```  
