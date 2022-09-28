@@ -342,6 +342,20 @@ then
 fi
 </code></pre></details>  
 
+<details><summary>Код</summary><pre><code>
+#!/bin/bash
+#Код сценария /opt/chroot.samba/usr/local/bin/smbuseradd
+if test $1
+then
+  (echo $2; echo $2) | smbpasswd -s -a $1
+  smbpasswd -e $1
+  echo $1 = $1 >> /etc/samba/smbusers
+  mkdir -m 0757 /mnt/storage/local.hive/exchange/$1
+  chown $1.sambausers /mnt/storage/local.hive/exchange/$1
+  /etc/init.d/samba restart
+fi
+</code></pre></details>  
+
 _Примечание: используется chroot и квоты xfs, аутентификация только по имени пользователя._  
 #### Вариант сценария смены пароля пользователя Samba 3 (smbpass) (Linux).  
 <details><summary>Код</summary><pre><code>
