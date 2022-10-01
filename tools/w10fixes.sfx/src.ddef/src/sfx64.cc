@@ -615,7 +615,7 @@ __fdecl void bytes2uint(uint32_t &b){
 static uint8_t flags;
 static uint8_t *cbuffer=NULL;
 static uint8_t *vocbuf=NULL;
-static uint32_t *frequency=NULL;
+static uint16_t *frequency=NULL;
 static uint16_t buf_size;
 static uint16_t vocroot;
 static uint16_t offset;
@@ -624,7 +624,7 @@ static uint16_t symbol;
 static uint32_t low;
 static uint32_t hlp;
 static uint32_t range;
-static uint32_t *fc;
+static uint16_t fc;
 static char *lowp;
 static char *hlpp;
 static uint8_t *cpos;
@@ -645,38 +645,29 @@ __fdecl uint8_t dgetc(){
 
 __fdecl uint8_t rc32_getc(uint8_t *c){
   while((range<0x10000)||(hlp<low)){
-    if(((low&0xff0000)==0xff0000)&&(range+(uint16_t)low>=0x10000))
-      range=0x10000-(uint16_t)low;
     hlp<<=8;
     *hlpp=dgetc();
     if(dptr==dsize) return 0;
     low<<=8;
     range<<=8;
+    if((uint32_t)(range+low)<low) range=0xffffffff-low;
   };
-  range/=*fc;
-  uint32_t count=(hlp-low)/range;
-  if(count>=*fc) return 1;
-  symbol=0;
-  uint16_t i,j=128;
-  while(j){
-    if(frequency[symbol]<=count) symbol+=j;
-    else{
-      if(symbol) symbol-=j;
-      else break;
+  range/=fc;
+  uint32_t count=(hlp-low)/range,s=0;
+  if(count>=fc) return 1;
+  for(int i=0;i<256;i++){
+    s+=frequency[i];
+    if(s>count){
+      *c=(uint8_t)i;
+      break;
     };
-    j>>=1;
   };
-  if(frequency[symbol]>count&&symbol) symbol--;
-  *c=(uint8_t)symbol;
-  j=frequency[symbol++];
-  low+=j*range;
-  range*=frequency[symbol]-j;
-  for(i=symbol;i<257;i++) frequency[i]++;
-  if(*fc>0xffff){
-    uint32_t *fp=frequency;
-    frequency[0]>>=1;
-    for(i=1;i<257;i++){
-      if((frequency[i]>>=1)==*fp++) frequency[i]++;
+  low+=(s-frequency[*c])*range;
+  range*=frequency[*c]++;
+  if(++fc==0){
+    for(int i=0;i<256;i++){
+      if((frequency[i]>>=4)==0) frequency[i]=1;
+      fc+=frequency[i];
     };
   };
   return 0;
@@ -773,9 +764,9 @@ __fdecl void init_unpack(const uint32_t data_size_in){
   offset=range=0xffffffff;
   lowp=&((char *)&low)[3];
   hlpp=&((char *)&hlp)[0];
-  fc=&frequency[256];
+  fc=256;
   uint32_t i;
-  for(i=0;i<257;i++) frequency[i]=i;
+  for(i=0;i<256;i++) frequency[i]=1;
   for(i=0;i<0x10000;i++) vocbuf[i]=0xff;
   for(i=0;i<sizeof(uint32_t);i++){
     hlp<<=8;
@@ -907,7 +898,7 @@ __fdecl void init(){
   if(!valuebytes){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   cbuffer=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,LZ_CAPACITY+1);
   if(!cbuffer){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
-  frequency=(uint32_t *)LocalAlloc(LMEM_ZEROINIT,257*sizeof(uint32_t));
+  frequency=(uint16_t *)LocalAlloc(LMEM_ZEROINIT,256*sizeof(uint16_t));
   if(!frequency){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   vocbuf=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,0x10000);
   if(!vocbuf){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };

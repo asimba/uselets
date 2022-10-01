@@ -22,6 +22,11 @@ $bservices=@(
 "SecurityHealthService*" #Windows Security Health Servce
 "WinDefend*" #Windows Defender Service
 "WdNisSvc"
+"WdNisDrv"
+"WdBoot"
+"WdFilter"
+"webthreatdefsvc"
+"webthreatdefusersvc*"
 "Sense"
 )
 
@@ -49,6 +54,12 @@ function fix-registry() {
   reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /v SmartScreenEnabled /t REG_SZ /d "Off" /f| Out-Null
   reg add "HKLM\SOFTWARE\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f| Out-Null
   reg add "HKLM\SOFTWARE\Microsoft\Windows Defender" /v DisableAntiVirus /t REG_DWORD /d 1 /f| Out-Null
+  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender" /v ServiceStartStates /t REG_DWORD /d 1 /f| Out-Null
+  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Features" /v TamperProtection /t REG_DWORD /d 0 /f| Out-Null
+  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection" /v DpaDisabled /t REG_DWORD /d 1 /f| Out-Null
+  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection" /v DisableBehaviorMonitoring /t REG_DWORD /d 1 /f| Out-Null
+  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection" /v DisableOnAccessProtection /t REG_DWORD /d 1 /f| Out-Null
+  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection" /v DisableScanOnRealtimeEnable /t REG_DWORD /d 1 /f| Out-Null
   reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost\EnableWebContentEvaluation" /v Enabled /t REG_DWORD /d 0 /f| Out-Null
   reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost\EnableWebContentEvaluation" /v PreventOverride /t REG_DWORD /d 0 /f| Out-Null
   reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v SecurityHealth /f| Out-Null

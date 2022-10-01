@@ -23,17 +23,17 @@ uint8_t vocbuf[0x10000];
 uint16_t vocarea[0x10000];
 uint16_t hashes[0x10000];
 vocpntr vocindx[0x10000];
-uint32_t frequency[257];
+uint16_t frequency[256];
 uint16_t buf_size;
 uint16_t voclast;
 uint16_t vocroot;
 uint16_t offset;
-uint16_t lenght;
+uint16_t length;
 uint16_t symbol;
 uint32_t low;
 uint32_t hlp;
 uint32_t range;
-uint32_t *fc;
+uint16_t fc;
 char *lowp;
 char *hlpp;
 
@@ -41,11 +41,11 @@ void pack_initialize(){
   buf_size=flags=vocroot=*cbuffer=low=hlp=0;
   voclast=0xfffd;
   range=0xffffffff;
-  lowp=&((uint8_t *)&low)[3];
-  hlpp=&((uint8_t *)&hlp)[0];
-  fc=&frequency[256];
+  lowp=&((char *)&low)[3];
+  hlpp=&((char *)&hlp)[0];
   uint32_t i;
-  for(i=0;i<257;i++) frequency[i]=i;
+  for(i=0;i<256;i++) frequency[i]=1;
+  fc=256;
   for(i=0;i<0x10000;i++){
     vocbuf[i]=0xff;
     hashes[i]=0;
@@ -61,16 +61,13 @@ void pack_initialize(){
   vocarea[0xffff]=0xffff;
 }
 
-void rc32_rescale(){
-  uint32_t i,j=frequency[symbol++];
-  low+=j*range;
-  range*=frequency[symbol]-j;
-  for(i=symbol;i<257;i++) frequency[i]++;
-  if(*fc>0xffff){
-    uint32_t *fp=frequency;
-    frequency[0]>>=1;
-    for(i=1;i<257;i++){
-      if((frequency[i]>>=1)==*fp++) frequency[i]++;
+void rc32_rescale(uint32_t s){
+  low+=s*range;
+  range*=frequency[symbol]++;
+  if(++fc==0){
+    for(uint16_t i=0;i<256;i++){
+      if((frequency[i]>>=4)==0) frequency[i]=1;
+      fc+=frequency[i];
     };
   };
 }
@@ -78,16 +75,17 @@ void rc32_rescale(){
 int rc32_write(uint8_t *buf,int l,FILE *ofile){
   while(l--){
     while(range<0x10000){
-      if(((low&0xff0000)==0xff0000)&&(range+(uint16_t)low>=0x10000))
-        range=0x10000-(uint16_t)low;
       fputc(*lowp,ofile);
       if(ferror(ofile)) return -1;
       low<<=8;
       range<<=8;
+      if((uint32_t)(range+low)<low) range=0xffffffff-low;
     };
     symbol=*buf;
-    range/=*fc;
-    rc32_rescale();
+    range/=fc;
+    uint32_t s=0;
+    for(uint16_t i=0;i<symbol;i++) s+=frequency[i];
+    rc32_rescale(s);
     buf++;
   };
   return 1;
@@ -103,7 +101,7 @@ uint16_t hash(uint16_t s){
 }
 
 void pack_file(FILE *ifile,FILE *ofile){
-  uint16_t i,rle,rle_shift,cnode,h;
+  uint16_t i,rle,rle_shift,cnode;
   char eoff=0,eofs=0;
   vocpntr *indx;
   uint8_t *cpos=&cbuffer[1];
@@ -141,16 +139,16 @@ void pack_file(FILE *ifile,FILE *ofile){
         if(vocbuf[symbol]==vocbuf[(uint16_t)(symbol+rle)]) rle++;
         else break;
       };
-      lenght=LZ_MIN_MATCH;
+      length=LZ_MIN_MATCH;
       if(buf_size>LZ_MIN_MATCH){
         cnode=vocindx[hashes[symbol]].in;
         rle_shift=(uint16_t)(vocroot+LZ_BUF_SIZE-buf_size);
         while(cnode!=symbol){
-          if(vocbuf[(uint16_t)(symbol+lenght)]==vocbuf[(uint16_t)(cnode+lenght)]){
+          if(vocbuf[(uint16_t)(symbol+length)]==vocbuf[(uint16_t)(cnode+length)]){
             i=0;
             uint16_t j=symbol,k=cnode;
             while(vocbuf[j++]==vocbuf[k]&&k++!=symbol) i++;
-            if(i>=lenght){
+            if(i>=length){
               //while buf_size==LZ_BUF_SIZE: minimal offset > 0x0104;
               if(buf_size<LZ_BUF_SIZE){
                 if((uint16_t)(cnode-rle_shift)>0xfeff){
@@ -160,25 +158,25 @@ void pack_file(FILE *ifile,FILE *ofile){
               };
               offset=cnode;
               if(i>=buf_size){
-                lenght=buf_size;
+                length=buf_size;
                 break;
               }
-              else lenght=i;
+              else length=i;
             };
           };
           cnode=vocarea[cnode];
         };
       };
-      if(rle>lenght){
+      if(rle>length){
         *cpos++=rle-LZ_MIN_MATCH-1;
         *(uint16_t*)cpos++=((uint16_t)(vocbuf[symbol]));
         buf_size-=rle;
       }
       else{
-        if(lenght>LZ_MIN_MATCH){
-          *cpos++=lenght-LZ_MIN_MATCH-1;
+        if(length>LZ_MIN_MATCH){
+          *cpos++=length-LZ_MIN_MATCH-1;
           *(uint16_t*)cpos++=0xffff-(uint16_t)(offset-rle_shift);
-          buf_size-=lenght;
+          buf_size-=length;
         }
         else{
           *cbuffer|=0x01;

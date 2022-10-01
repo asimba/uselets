@@ -101,6 +101,9 @@ $apps=@(
 "Microsoft.Windows.CapturePicker"
 "MicrosoftTeams"
 "Windows.MiracastView"
+"Clipchamp.Clipchamp"
+"MicrosoftCorporationII.QuickAssist"
+"MicrosoftCorporationII.MicrosoftFamily"
 "*yandex*"
 "*netflix*"
 "*sodasaga*"
@@ -509,6 +512,9 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection","DisableOneSettingsDownloads",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection","DoNotShowFeedbackNotifications",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization","DODownloadMode",99),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","EnableVirtualizationBasedSecurity",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","RequirePlatformSecurityFeatures",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","LsaCfgFlags",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\EnhancedStorageDevices","TCGSecurityActivationDisabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer","DisableSearchBoxSuggestions",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\FindMyDevice","AllowFindMyDevice",0),
@@ -542,6 +548,7 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\WindowsUpdate","AutoDownload",2),
 @("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","EnableVirtualizationBasedSecurity",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","RequirePlatformSecurityFeatures",0),
+@("HKLM\SYSTEM\CurrentControlSet\Control\Lsa","LsaCfgFlags",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity","Enabled",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener","Start",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\WMI\AutoLogger\SQMLogger","Start",0),
@@ -682,13 +689,18 @@ function cleanup(){
 function fix-view(){
   write-header "Fixing view..."
   rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" ShowTaskViewButton 0
+  rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" Start_Layout 1
+  rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" Start_TrackDocs 0
+  rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" Start_TrackProgs 0
   rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView" AllUpView 0
   rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" HideSCAMeetNow 1
   rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" SearchboxTaskbarMode 0
   rdw "HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer" HideRecentlyAddedApps 1
+  rdw "HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer" HideRecommendedSection 1
   rdw "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" HideSCAMeetNow 1
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Dsh" AllowNewsAndInterests 0
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" HideRecentlyAddedApps 1
+  rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" HideRecommendedSection 1
   Try{
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" 2>&1 | Out-Null
   }
