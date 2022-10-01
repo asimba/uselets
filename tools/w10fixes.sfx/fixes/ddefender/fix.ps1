@@ -37,32 +37,76 @@ function fix-services() {
   }
 }
 
+function rdw($path,$key,$val) {
+  reg add $path /v $key /t REG_DWORD /d $val /f | Out-Null
+}
+
+function rsz($path,$key,$val) {
+  reg add $path /v $key /t REG_SZ /d $val /f | Out-Null
+}
+
+$tasks=@(
+"\Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance"
+"\Microsoft\Windows\Windows Defender\Windows Defender Cleanup"
+"\Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan"
+"\Microsoft\Windows\Windows Defender\Windows Defender Verification"
+)
+
+$reg_dw=@(
+@("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","EnableVirtualizationBasedSecurity",0),
+@("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","RequirePlatformSecurityFeatures",0),
+@("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity","Enabled",0),
+@("HKLM\SYSTEM\CurrentControlSet\Control\CI\Policy","VerifiedAndReputablePolicyState",0),
+@("HKLM\SYSTEM\CurrentControlSet\Control\Lsa","LsaCfgFlags",0),
+@("HKCU\SOFTWARE\Microsoft\Edge","SmartScreenEnabled",0),
+@("HKCU\SOFTWARE\Microsoft\Edge","SmartScreenPuaEnabled",0),
+@("HKCU\SOFTWARE\Microsoft\Windows Defender","DisableAntiSpyware",1),
+@("HKCU\SOFTWARE\Microsoft\Windows Defender","DisableAntiVirus",1),
+@("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost","EnableWebContentEvaluation",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion","EnableWebContentEvaluation",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","EnableVirtualizationBasedSecurity",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","RequirePlatformSecurityFeatures",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","LsaCfgFlags",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet","SpyNetReporting",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet","SubmitSamplesConsent",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting","DisableEnhancedNotifications",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection","DisableRealtimeMonitoring",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender","DisableRealtimeMonitoring",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender","DisableAntiSpyware",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\Appx","AllowDevelopmentWithoutDevLicense",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","EnableSmartScreen",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\SmartScreen","ConfigureAppInstallControlEnabled",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Edge","SmartScreenEnabled",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Internet Explorer\PhishingFilter","EnabledV9",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter","EnabledV9",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\MRT","DontReportInfectionInformation",1),
+@("HKLM\SOFTWARE\Microsoft\Windows Defender","DisableAntiSpyware",1),
+@("HKLM\SOFTWARE\Microsoft\Windows Defender","DisableAntiVirus",1),
+@("HKLM\SOFTWARE\Microsoft\Windows Defender","ServiceStartStates",1),
+@("HKLM\SOFTWARE\Microsoft\Windows Defender\Features","TamperProtection",0),
+@("HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection","DpaDisabled",1),
+@("HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection","DisableBehaviorMonitoring",1),
+@("HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection","DisableOnAccessProtection",1),
+@("HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection","DisableScanOnRealtimeEnable",1),
+@("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost\EnableWebContentEvaluation","Enabled",0),
+@("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost\EnableWebContentEvaluation","PreventOverride",0),
+@("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock","AllowDevelopmentWithoutDevLicense",1)
+)
+
 function fix-registry() {
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet" /v SpyNetReporting /t REG_DWORD /d 0 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet" /v SubmitSamplesConsent /t REG_DWORD /d 0 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\MRT" /v DontReportInfectionInformation /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting" /v DisableEnhancedNotifications /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" /v DisableRealtimeMonitoring /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableRealtimeMonitoring /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v EnableSmartScreen /t REG_DWORD /d 0 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\SmartScreen" /v ConfigureAppInstallControlEnabled /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\SmartScreen" /v ConfigureAppInstallControl /t REG_SZ /d "Anywhere" /f| Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v SmartScreenEnabled /t REG_DWORD /d 0 /f | Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Internet Explorer\PhishingFilter" /v EnabledV9 /t REG_DWORD /d 0 /f | Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" /v EnabledV9 /t REG_DWORD /d 0 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /v SmartScreenEnabled /t REG_SZ /d "Off" /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender" /v DisableAntiVirus /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender" /v ServiceStartStates /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Features" /v TamperProtection /t REG_DWORD /d 0 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection" /v DpaDisabled /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection" /v DisableBehaviorMonitoring /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection" /v DisableOnAccessProtection /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection" /v DisableScanOnRealtimeEnable /t REG_DWORD /d 1 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost\EnableWebContentEvaluation" /v Enabled /t REG_DWORD /d 0 /f| Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost\EnableWebContentEvaluation" /v PreventOverride /t REG_DWORD /d 0 /f| Out-Null
+  foreach ($r in $reg_dw) {
+    rdw $r[0] $r[1] $r[2]
+  }
+  foreach ($task in $tasks) {
+    $parts=$task.split('\')
+    $name=$parts[-1]
+    $path=$parts[0..($parts.length-2)] -join '\'
+    Disable-ScheduledTask -TaskName "$name" -TaskPath "$path" -ErrorAction SilentlyContinue | Out-Null
+  }
+  rsz "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\SmartScreen" "ConfigureAppInstallControl" "Anywhere"
+  rsz "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" "SmartScreenEnabled" "Off"
   reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v SecurityHealth /f| Out-Null
+  Remove-Item "C:\ProgramData\Microsoft\Windows Defender\Scans\mpenginedb.db" -ErrorAction SilentlyContinue
 }
 
 fix-services

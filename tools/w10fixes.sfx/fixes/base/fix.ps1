@@ -222,7 +222,6 @@ $services=@(
 $bservices=@(
 "xbgm*"
 "OneSyncSvc*"
-"SecurityHealthService*"
 )
 
 $cleanflags=@(
@@ -402,8 +401,6 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter","PreventOverride",0),
 @("HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge.stable_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter","EnabledV9",0),
 @("HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge.stable_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter","PreventOverride",0),
-@("HKCU\SOFTWARE\Microsoft\Edge","SmartScreenEnabled",0),
-@("HKCU\SOFTWARE\Microsoft\Edge","SmartScreenPuaEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\InputPersonalization","RestrictImplicitInkCollection",1),
 @("HKCU\SOFTWARE\Microsoft\InputPersonalization","RestrictImplicitTextCollection",1),
 @("HKCU\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore","HarvestContacts",0),
@@ -415,7 +412,6 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Preferences","ModelDownloadAllowed",0),
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Settings\VoiceActivation\UserPreferenceForAllApps","AgentActivationEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Settings\VoiceActivation\UserPreferenceForAllApps","AgentActivationOnLockScreenEnabled",0),
-@("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost","EnableWebContentEvaluation",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications","GlobalUserDisabled",1),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager","ContentDeliveryAllowed",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager","RotatingLockScreenEnabled",0),
@@ -425,8 +421,6 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager","SystemPaneSuggestionsEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People","PeopleBand",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","ShowSyncProviderNotifications",0),
-@("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","Start_TrackDocs",0),
-@("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","Start_TrackProgs",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","TaskbarAl",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","TaskbarMn",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer","ShowFrequent",0),
@@ -446,8 +440,6 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings","SafeSearchMode",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\StartupNotify","EnableStartupAppNotification",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\UserProfileEngagement","ScoobeSystemSettingEnabled",0),
-@("HKCU\SOFTWARE\Microsoft\Windows Defender","DisableAntiSpyware",1),
-@("HKCU\SOFTWARE\Microsoft\Windows Defender","DisableAntiVirus",1),
 @("HKCU\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Permissions\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}","SensorPermissionState",0),
 @("HKCU\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Permissions\{E6AD100E-5F4E-44CD-BE0F-2265D88D14F5}","SensorPermissionState",0),
 @("HKCU\SOFTWARE\Policies\Microsoft\InputPersonalization","RestrictImplicitInkCollection",1),
@@ -512,9 +504,6 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection","DisableOneSettingsDownloads",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection","DoNotShowFeedbackNotifications",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization","DODownloadMode",99),
-@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","EnableVirtualizationBasedSecurity",0),
-@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","RequirePlatformSecurityFeatures",0),
-@("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","LsaCfgFlags",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\EnhancedStorageDevices","TCGSecurityActivationDisabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer","DisableSearchBoxSuggestions",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\FindMyDevice","AllowFindMyDevice",0),
@@ -546,10 +535,6 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","SafeSearchMode",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\WindowsStore","AutoDownload",2),
 @("HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\WindowsUpdate","AutoDownload",2),
-@("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","EnableVirtualizationBasedSecurity",0),
-@("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","RequirePlatformSecurityFeatures",0),
-@("HKLM\SYSTEM\CurrentControlSet\Control\Lsa","LsaCfgFlags",0),
-@("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity","Enabled",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener","Start",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\WMI\AutoLogger\SQMLogger","Start",0),
 @("HKLM\SYSTEM\CurrentControlSet\Services\NlaSvc\Parameters\Internet","EnableActiveProbing",0)
