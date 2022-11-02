@@ -663,14 +663,13 @@ __fdecl uint8_t rc32_getc(uint8_t *c){
     if(dptr==dsize) return 0;
     low<<=8;
     range<<=8;
-    if((uint32_t)(range+low)<low) range=0xffffffff-low;
+    if((uint32_t)(range+low)<low) range=~low;
   };
   range/=fc;
   uint32_t count=(hlp-low)/range,s=0;
   if(count>=fc) return 1;
   for(int i=0;i<256;i++){
-    s+=frequency[i];
-    if(s>count){
+    if((s+=frequency[i])>count){
       *c=(uint8_t)i;
       break;
     };

@@ -79,7 +79,7 @@ int rc32_write(uint8_t *buf,int l,FILE *ofile){
       if(ferror(ofile)) return -1;
       low<<=8;
       range<<=8;
-      if((uint32_t)(range+low)<low) range=0xffffffff-low;
+      if((uint32_t)(range+low)<low) range=~low;
     };
     symbol=*buf;
     range/=fc;
@@ -135,12 +135,13 @@ void pack_file(FILE *ifile,FILE *ofile){
     symbol=vocroot-buf_size;
     if(buf_size){
       rle=1;
+      cnode=symbol+1;
       while(rle<buf_size){
-        if(vocbuf[symbol]==vocbuf[(uint16_t)(symbol+rle)]) rle++;
+        if(vocbuf[symbol]==vocbuf[cnode++]) rle++;
         else break;
       };
       length=LZ_MIN_MATCH;
-      if(buf_size>LZ_MIN_MATCH){
+      if(buf_size>LZ_MIN_MATCH&&rle<buf_size){
         cnode=vocindx[hashes[symbol]].in;
         rle_shift=(uint16_t)(vocroot+LZ_BUF_SIZE-buf_size);
         while(cnode!=symbol){
@@ -175,7 +176,7 @@ void pack_file(FILE *ifile,FILE *ofile){
       else{
         if(length>LZ_MIN_MATCH){
           *cpos++=length-LZ_MIN_MATCH-1;
-          *(uint16_t*)cpos++=0xffff-(uint16_t)(offset-rle_shift);
+          *(uint16_t*)cpos++=~(uint16_t)(offset-rle_shift);
           buf_size-=length;
         }
         else{
