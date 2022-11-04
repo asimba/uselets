@@ -100,6 +100,7 @@ $apps=@(
 "Microsoft.Whiteboard"
 "Microsoft.Windows.CapturePicker"
 "MicrosoftTeams"
+"MicrosoftWindows.Client.WebExperience"
 "Windows.MiracastView"
 "Clipchamp.Clipchamp"
 "MicrosoftCorporationII.QuickAssist"
@@ -397,6 +398,8 @@ function rsz($path,$key,$val) {
 
 $reg_dw=@(
 @("HKCU\Control Panel\International\User Profile","HttpAcceptLanguageOptOut",1),
+@("HKCU\Control Panel\UnsupportedHardwareNotificationCache","SV1",0),
+@("HKCU\Control Panel\UnsupportedHardwareNotificationCache","SV2",0),
 @("HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter","EnabledV9",0),
 @("HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter","PreventOverride",0),
 @("HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge.stable_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter","EnabledV9",0),
@@ -436,6 +439,7 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search","CortanaEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings","IsAADCloudSearchEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings","IsDeviceSearchHistoryEnabled",0),
+@("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings","IsDynamicSearchBoxEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings","IsMSACloudSearchEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings","SafeSearchMode",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\StartupNotify","EnableStartupAppNotification",0),
@@ -488,6 +492,7 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy","LetAppsAccessPhone",2),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy","LetAppsActivateWithVoice",2),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy","LetAppsGetDiagnosticInfo",2),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy","LetAppsRunInBackground",2),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent","DisableSoftLanding",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent","DisableWindowsConsumerFeatures",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent","DisableWindowsSpotlightFeatures",1),
@@ -515,6 +520,7 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\SettingSync","DisableSettingSync",2),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\SettingSync","DisableSettingSyncUserOverride",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","EnableActivityFeed",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","EnableCdp",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","PublishUserActivities",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","UploadUserActivities",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","AllowCrossDeviceClipboard",0),
@@ -686,11 +692,14 @@ function fix-view(){
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Dsh" AllowNewsAndInterests 0
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" HideRecentlyAddedApps 1
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" HideRecommendedSection 1
-  $Bags="HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags"
-  $DLID="{885A186E-A440-4ADA-812B-DB871B942259}"
-  (Get-ChildItem $bags -recurse | ? PSChildName -eq $DLID ) | Remove-Item -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  rdw "HKLM\SOFTWARE\Microsoft\Windows\Shell\Bags\AllFolders\Shell\{885A186E-A440-4ADA-812B-DB871B942259}" Mode 4
-  rdw "HKLM\SOFTWARE\Microsoft\Windows\Shell\Bags\AllFolders\Shell\{885A186E-A440-4ADA-812B-DB871B942259}" GroupView 0
+  if(((Get-WmiObject Win32_OperatingSystem).Caption).Contains("11")){
+    $Bags="HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags"
+    $DLID="{885A186E-A440-4ADA-812B-DB871B942259}"
+    (Get-ChildItem $bags -recurse | ? PSChildName -eq $DLID ) | Remove-Item -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
+    rdw "HKLM\SOFTWARE\Microsoft\Windows\Shell\Bags\AllFolders\Shell\{885A186E-A440-4ADA-812B-DB871B942259}" Mode 4
+    rdw "HKLM\SOFTWARE\Microsoft\Windows\Shell\Bags\AllFolders\Shell\{885A186E-A440-4ADA-812B-DB871B942259}" GroupView 0
+    reg add "HKCU\SOFTWARE\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve /t REG_SZ /d "" /f | Out-Null
+  }
   Try{
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" 2>&1 | Out-Null
   }
