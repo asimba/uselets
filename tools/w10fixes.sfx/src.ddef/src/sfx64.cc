@@ -615,7 +615,8 @@ __fdecl void bytes2uint(uint32_t &b){
 static uint8_t flags;
 static uint8_t *cbuffer=NULL;
 static uint8_t *vocbuf=NULL;
-static uint16_t *frequency=NULL;
+static uint16_t **frequency=NULL;
+static uint16_t *fcs=NULL;
 static uint16_t buf_size;
 static uint16_t vocroot;
 static uint16_t offset;
@@ -624,7 +625,7 @@ static uint16_t symbol;
 static uint32_t low;
 static uint32_t hlp;
 static uint32_t range;
-static uint16_t fc;
+static uint8_t cstate;
 static char *lowp;
 static char *hlpp;
 static uint8_t *cpos;
@@ -644,7 +645,9 @@ __fdecl uint8_t dgetc(){
 }
 
 __fdecl uint8_t rc32_getc(uint8_t *c){
-  while((range<0x10000)||(hlp<low)){
+  uint16_t *f=frequency[cstate],fc=fcs[cstate];
+  uint32_t count,s=0;
+  while((low^(low+range))<0x1000000||range<0x10000||hlp<low){
     hlp<<=8;
     *hlpp=dgetc();
     if(dptr==dsize) return 0;
@@ -652,23 +655,20 @@ __fdecl uint8_t rc32_getc(uint8_t *c){
     range<<=8;
     if((uint32_t)(range+low)<low) range=~low;
   };
-  range/=fc;
-  uint32_t count=(hlp-low)/range,s=0;
-  if(count>=fc) return 1;
-  for(int i=0;i<256;i++){
-    if((s+=frequency[i])>count){
-      *c=(uint8_t)i;
-      break;
-    };
-  };
-  low+=(s-frequency[*c])*range;
-  range*=frequency[*c]++;
+  if((count=(hlp-low)/(range/=fc))>=fc) return 1;
+  while((s+=*f++)<=count);
+  *c=(uint8_t)(--f-frequency[cstate]);
+  low+=(s-*f)*range;
+  range*=(*f)++;
   if(++fc==0){
-    for(int i=0;i<256;i++){
-      if((frequency[i]>>=4)==0) frequency[i]=1;
-      fc+=frequency[i];
+    f=frequency[cstate];
+    for(s=0;s<256;s++){
+      *f=((*f)>>1)|1;
+      fc+=*f++;
     };
   };
+  fcs[cstate]=fc;
+  cstate=*c;
   return 0;
 }
 
@@ -759,13 +759,15 @@ __fdecl uint8_t read_packed_value(void *p,uint16_t s){
 
 __fdecl void init_unpack(const uint32_t data_size_in){
   dsize=data_size_in;
-  dptr=buf_size=flags=vocroot=low=hlp=lenght=rle_flag=0;
+  dptr=buf_size=flags=vocroot=low=hlp=lenght=rle_flag=cstate=0;
   offset=range=0xffffffff;
   lowp=&((char *)&low)[3];
   hlpp=&((char *)&hlp)[0];
-  fc=256;
   uint32_t i;
-  for(i=0;i<256;i++) frequency[i]=1;
+  for(i=0;i<256;i++){
+    for(int j=0;j<256;j++) frequency[i][j]=1;
+    fcs[i]=256;
+  };
   for(i=0;i<0x10000;i++) vocbuf[i]=0xff;
   for(i=0;i<sizeof(uint32_t);i++){
     hlp<<=8;
@@ -838,7 +840,13 @@ __fdecl uint8_t *load_res(uint32_t id){
 
 __fdecl void free_mem(){
   if(cbuffer) LocalFree(cbuffer);
-  if(frequency) LocalFree(frequency);
+  if(frequency){
+    for(int i=0;i<256;i++){
+      if(frequency[i]) LocalFree(frequency[i]);
+    };
+    LocalFree(frequency);
+  };
+  if(fcs) LocalFree(fcs);
   if(vocbuf) LocalFree(vocbuf);
   if(valuebytes) LocalFree(valuebytes);
 };
@@ -897,8 +905,14 @@ __fdecl void init(){
   if(!valuebytes){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   cbuffer=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,LZ_CAPACITY+1);
   if(!cbuffer){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
-  frequency=(uint16_t *)LocalAlloc(LMEM_ZEROINIT,256*sizeof(uint16_t));
+  frequency=(uint16_t **)LocalAlloc(LMEM_ZEROINIT,256*sizeof(uint16_t*));
   if(!frequency){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
+  for(int i=0;i<256;i++){
+    frequency[i]=(uint16_t *)LocalAlloc(LMEM_ZEROINIT,256*sizeof(uint16_t));
+    if(!frequency[i]){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
+  };
+  fcs=(uint16_t *)LocalAlloc(LMEM_ZEROINIT,256*sizeof(uint16_t));
+  if(!fcs){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   vocbuf=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,0x10000);
   if(!vocbuf){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   for(uint16_t i=0;i<c;i++) valuebytes[i]=bytes2byte();
