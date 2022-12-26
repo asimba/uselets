@@ -1023,7 +1023,7 @@ _Требования (зависимости):_ [ImageMagick](https://imagemagi
 ```for %f in (*.pdf) do magick convert -density 300 -fuzz 10%% -fill white -opaque white -units pixelsperinch -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf.jpg"```  
 ```for %f in (*.jpg) do img2pdf.py -d 300 -o "%~pnf.pdf" "%~pnxf"```  
 _Примечание: для аналогичной операции с переводом всех страниц в градации серого следует использовать:_  
-```for %f in (*.pdf) do convert -density 300 -fuzz 10% -fill white -opaque white +dither -fx "(r+g+b)/3" -colorspace Gray -separate -average -strip +profile "*" "%~nxf" ppm:- | cjpeg-static -dct int -optimize -grayscale -quality 65 -outfile "%~pnf.jpg"```  
+```for %f in (*.pdf) do magick convert -density 300 -fuzz 10% -fill white -opaque white +dither -fx "(r+g+b)/3" -colorspace Gray -separate -average -strip +profile "*" "%~nxf" ppm:- | cjpeg-static -dct int -optimize -grayscale -quality 65 -outfile "%~pnf.jpg"```  
 _Примечание: значение параметра "fuzz" соответствует уровню "фонового шума"._  
 #### Удаление аннотаций из PDF-файлов (Linux).  
 _Требования (зависимости):_ pdftk
