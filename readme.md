@@ -997,6 +997,7 @@ _Пример:_```qpdf --split-pages=1-z source.pdf page.pdf```
 _Требования (зависимости):_ [ghostscript](https://www.ghostscript.com/download.html)  
 Linux: ```gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r200 -sOutputFile="page-%d.png" <имя_исходного_файла>```  
 Windows: ```gswin64c -dNOPAUSE -dBATCH -sDEVICE=png16m -r200 -sOutputFile="page-%d.png" <имя_исходного_файла>```  
+Windows (со сглаживанием): ```gswin64c -dNOPAUSE -dBATCH -sDEVICE=png16m -r200 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dDOINTERPOLATE -sOutputFile="page-%d.png" <имя_исходного_файла>```  
 _<p align="justify">Примечание: значение параметра "-r" ("разрешение") стоит варьировать в диапазоне от 72 до 600; в результате данной операции отдельные страницы сохранаются в формате PNG.</p>_  
 #### Склеивание PDF-файла из отдельных файлов страниц в текущей директории (Windows).  
 _Требования (зависимости):_ [qpdf](https://github.com/qpdf/qpdf/releases)  
@@ -1004,11 +1005,11 @@ _Требования (зависимости):_ [qpdf](https://github.com/qpdf/
 _Пример:_```qpdf --empty destination.pdf --pages *.pdf 1-z --```  
 #### Пакетное преобразование (сжатие) PDF-файлов (отдельных файлов страниц!) в текущей директории в чёрно-белые с установкой разрешения 200DPI (Windows).  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [python](https://www.python.org/), [img2pdf](https://pypi.org/project/img2pdf/)  
-```for %f in (*.pdf) do convert.exe -density 200 -colorspace Gray -normalize -compress group4 "%~nxf" "%~nf.tif"```  
+```for %f in (*.pdf) do magick convert -density 200 -colorspace Gray -normalize -compress group4 "%~nxf" "%~nf.tif"```  
 ```for %f in (*.tif) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
 #### Пакетное преобразование (сжатие) PDF-файлов (отдельных файлов страниц!) в текущей директории с установкой разрешения 200DPI (Windows).  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [python](https://www.python.org/), [img2pdf](https://pypi.org/project/img2pdf/), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
-```for %f in (*.pdf) do convert -density 200 -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 75 -outfile "%~pnf.jpg"```  
+```for %f in (*.pdf) do magick convert -density 200 -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 75 -outfile "%~pnf.jpg"```  
 ```for %f in (*.jpg) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
 _<p align="justify">Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90; хорошо подходит для больших сканированных изображений (размер файлов может быть уменьшен в несколько раз, но с векторными файлами ситуация обратная).</p>_  
 #### Пакетное преобразование DOCX-файлов в текущей директории в формат PDF (Windows).  
@@ -1019,7 +1020,7 @@ _Требования (зависимости):_ [Microsoft Office 2013 или �
 ```for %f in (*.rtf) do cscript //nologo "rtf2pdf.js" "%~nxf"``` или ```rtf2pdf.cmd```  
 #### Пакетное удаление фона в PDF-файлах (отдельных файлах страниц!) в текущей директории с установкой разрешения 300DPI (Windows).  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [python](https://www.python.org/), [img2pdf](https://pypi.org/project/img2pdf/), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
-```for %f in (*.pdf) do convert -density 300 -fuzz 10%% -fill white -opaque white -units pixelsperinch -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf.jpg"```  
+```for %f in (*.pdf) do magick convert -density 300 -fuzz 10%% -fill white -opaque white -units pixelsperinch -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf.jpg"```  
 ```for %f in (*.jpg) do img2pdf.py -d 300 -o "%~pnf.pdf" "%~pnxf"```  
 _Примечание: для аналогичной операции с переводом всех страниц в градации серого следует использовать:_  
 ```for %f in (*.pdf) do convert -density 300 -fuzz 10% -fill white -opaque white +dither -fx "(r+g+b)/3" -colorspace Gray -separate -average -strip +profile "*" "%~nxf" ppm:- | cjpeg-static -dct int -optimize -grayscale -quality 65 -outfile "%~pnf.jpg"```  
@@ -1041,16 +1042,16 @@ Windows: ```gswin64c.exe -o <имя_результирующего_файла> -
 _Пример:_```gswin64c.exe -o output.pdf -sDEVICE=pdfwrite -dFILTERTEXT input.pdf```  
 #### Пакетное изменение размеров файлов изображений в текущей директории (Windows).  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
-```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "<ширина>>" -distort Resize ">x<высота>" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
-_Пример:_```for %f in (*.jpg) do convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "1280>" -distort Resize ">x960" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
+```for %f in (*.jpg) do magick convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "<ширина>>" -distort Resize ">x<высота>" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
+_Пример:_```for %f in (*.jpg) do magick convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "1280>" -distort Resize ">x960" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
 _Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90._  
 #### Пакетное преобразование файлов изображений в формате PNG, находящихся в текущей директории, в формат JPEG (Linux).  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
-```find . -name \*.png  -type f -exec bash -c 'convert -compress none {} ppm:- | cjpeg -sample 2x2 -dct int -optimize -progressive -quality 100 -outfile {}.jpg' \;```  
+```find . -name \*.png  -type f -exec bash -c 'magick convert -compress none {} ppm:- | cjpeg -sample 2x2 -dct int -optimize -progressive -quality 100 -outfile {}.jpg' \;```  
 _Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90._  
 #### Создание страниц с миниатюрами файлов изображений для всех поддиректорий в текущей директории (Windows).  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php)  
-```for /d %d in (*) do montage -limit thread 6 -limit file 64 -limit memory 8192Mib -limit map 16384MiB -define registry:temporary-path=..\temp -pointsize 10 -label "%wx%h\n%t" -tile 10x10 -geometry 164x162+1+0 -density 200 -units pixelsperinch "%~npxd\*.png" "..\thumbs\%~nxd.png"```  
+```for /d %d in (*) do magick montage -limit thread 6 -limit file 64 -limit memory 8192Mib -limit map 16384MiB -define registry:temporary-path=..\temp -pointsize 10 -label "%wx%h\n%t" -tile 10x10 -geometry 164x162+1+0 -density 200 -units pixelsperinch "%~npxd\*.png" "..\thumbs\%~nxd.png"```  
 _<p align="justify">Примечание: параметр "temporary-path" - путь к директории для хранения временных файлов, параметр "tile" - количество миниатюр по горизонтали и вертикали, страницы в данном примере генерируются для "png" файлов, результат размещается в директории "..\thumbs\%~nxd.png"</p>_  
 #### Пакетная генерация файлов скринлистов для всех "mp4" файлов в текущей директории (Windows) (пример).  
 _Требования (зависимости):_ [movie thumbnailer (mtn)](http://moviethumbnail.sourceforge.net/index.en.html)  
