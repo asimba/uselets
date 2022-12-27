@@ -1008,10 +1008,20 @@ _Требования (зависимости):_ [ImageMagick](https://imagemagi
 ```for %f in (*.pdf) do magick convert -density 200 -colorspace Gray -normalize -compress group4 "%~nxf" "%~nf.tif"```  
 ```for %f in (*.tif) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
 #### Пакетное преобразование (сжатие) PDF-файлов (отдельных файлов страниц!) в текущей директории с установкой разрешения 200DPI (Windows).  
-_Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [python](https://www.python.org/), [img2pdf](https://pypi.org/project/img2pdf/), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
+_Требования (зависимости):_ [ghostscript](https://www.ghostscript.com/download.html), [ImageMagick](https://imagemagick.org/script/download.php), [python](https://www.python.org/), [img2pdf](https://pypi.org/project/img2pdf/), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
 ```for %f in (*.pdf) do magick convert -density 200 -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 75 -outfile "%~pnf.jpg"```  
 ```for %f in (*.jpg) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
 _<p align="justify">Примечание: значение параметра "quality" ("качество") стоит варьировать в диапазоне от 70 до 90; хорошо подходит для больших сканированных изображений (размер файлов может быть уменьшен в несколько раз, но с векторными файлами ситуация обратная).</p>_  
+_Примечание: для аналогичной операции с переводом всех страниц к 8-ми битной цветовой палитре следует использовать (дополнительные зависимости: [zopflipng](https://github.com/google/zopfli/releases)):_  
+```for %f in (*.pdf) do gswin64c -dSAFER -dNOPAUSE -dBATCH -sDEVICE=png16m -dDOINTERPOLATE -r200 -sOutputFile="%~pnf.png" "%~pnxf"```  
+```for %f in (*.png) do magick convert %~nxf -density 200 +dither -colors 256 -alpha off PNG8:"%~nf_8bit.png"```  
+```for %f in (*_8bit.png) do do zopflipng --lossy_8bit --lossy_transparent --always_zopflify "%~pnxf" "%~pnf-z.png"```  
+```for %f in (*-z.png) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
+_Примечание: для аналогичной операции с применением формата сжатия JPEG2000 следует использовать (дополнительные зависимости: [ghostscript](https://www.ghostscript.com/download.html), [openjpeg](https://github.com/uclouvain/openjpeg/releases)):_  
+```for %f in (*.pdf) do gswin64c -dSAFER -dNOPAUSE -dBATCH -sDEVICE=png16m -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dDOINTERPOLATE -r200 -sOutputFile="%~pnf.png" "%~pnxf"```  
+```for %f in (*.png) do magick convert -density 200 -fuzz 10%% -alpha off -fill white -opaque white -units pixelsperinch "%~pnxf" "%~pnf-f.png"```  
+```for %f in (*-f.png) do opj_compress -q 40 -i %~pnxf -o %~pnf-jp2.jp2```  
+```for %f in (*.jp2) do img2pdf.py -d 200 -o "%~pnf.pdf" "%~pnxf"```  
 #### Пакетное преобразование DOCX-файлов в текущей директории в формат PDF (Windows).  
 _Требования (зависимости):_ [Microsoft Office 2013 или новее](https://www.office.com/), [docx2pdf.js](https://github.com/asimba/uselets/tree/main/tools/docx2pdf)  
 ```for %f in (*.docx) do cscript //nologo "docx2pdf.js" "%~pnxf"``` или ```docx2pdf.cmd```  
@@ -1038,8 +1048,8 @@ _Примечание: обычно используется для удален
 #### Удаление всего текста из PDF-файлов (Linux/Windows).  
 _Требования (зависимости):_ [ghostscript](https://www.ghostscript.com/download.html)  
 Linux: ```gs -o <имя_результирующего_файла> -sDEVICE=pdfwrite -dFILTERTEXT <имя_исходного_файла>```  
-Windows: ```gswin64c.exe -o <имя_результирующего_файла> -sDEVICE=pdfwrite -dFILTERTEXT <имя_исходного_файла>```  
-_Пример:_```gswin64c.exe -o output.pdf -sDEVICE=pdfwrite -dFILTERTEXT input.pdf```  
+Windows: ```gswin64c -o <имя_результирующего_файла> -sDEVICE=pdfwrite -dFILTERTEXT <имя_исходного_файла>```  
+_Пример:_```gswin64c -o output.pdf -sDEVICE=pdfwrite -dFILTERTEXT input.pdf```  
 #### Пакетное изменение размеров файлов изображений в текущей директории (Windows).  
 _Требования (зависимости):_ [ImageMagick](https://imagemagick.org/script/download.php), [mozjpeg](https://github.com/mozilla/mozjpeg/releases)  
 ```for %f in (*.jpg) do magick convert -strip -colorspace RGB -filter LanczosRadius -distort Resize "<ширина>>" -distort Resize ">x<высота>" -colorspace sRGB -compress none "%~pnxf" ppm:- | cjpeg-static -sample 2x2 -dct int -optimize -progressive -quality 85 -outfile "%~pnf-1.jpg"```  
