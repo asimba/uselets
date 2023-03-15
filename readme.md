@@ -122,6 +122,7 @@ _Примечание: настройка для использования в �
 ```
 easyrsa init-pki
 easyrsa gen-dh
+easyrsa build-ca nopass
 easyrsa gen-req <имя_сервера> nopass
 easyrsa sign-req server <имя_сервера>
 openvpn --genkey --secret ta.key
