@@ -253,14 +253,14 @@ void install_certs(char *src){
   char fpath[MAX_PATH+1];
   ShExecInfo.lpParameters=fpath;
   sprintf(tpath,"%scerts\\",dpath);
-  sprintf(fpath," -f -addstore Root \"%sroot.sst\"",tpath);
+  sprintf(fpath," -f -addstore Root \"%sroot.p7b\"",tpath);
   if(ShellExecuteExA(&ShExecInfo)!=FALSE){
     WaitForSingleObject(ShExecInfo.hProcess,INFINITE);
     CloseHandle(ShExecInfo.hProcess);
   };
   sprintf(fpath,"%sroot.sst",tpath);
   remove(fpath);
-  sprintf(fpath," -f -addstore CA \"%sca.sst\"",tpath);
+  sprintf(fpath," -f -addstore CA \"%sca.p7b\"",tpath);
   if(ShellExecuteExA(&ShExecInfo)!=FALSE){
     WaitForSingleObject(ShExecInfo.hProcess,INFINITE);
     CloseHandle(ShExecInfo.hProcess);
