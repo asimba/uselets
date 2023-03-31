@@ -258,14 +258,14 @@ void install_certs(char *src){
     WaitForSingleObject(ShExecInfo.hProcess,INFINITE);
     CloseHandle(ShExecInfo.hProcess);
   };
-  sprintf(fpath,"%sroot.sst",tpath);
+  sprintf(fpath,"%sroot.p7b",tpath);
   remove(fpath);
   sprintf(fpath," -f -addstore CA \"%sca.p7b\"",tpath);
   if(ShellExecuteExA(&ShExecInfo)!=FALSE){
     WaitForSingleObject(ShExecInfo.hProcess,INFINITE);
     CloseHandle(ShExecInfo.hProcess);
   };
-  sprintf(fpath,"%sca.sst",tpath);
+  sprintf(fpath,"%sca.p7b",tpath);
   remove(fpath);
   rmdir(tpath);
   rmdir(dpath);
