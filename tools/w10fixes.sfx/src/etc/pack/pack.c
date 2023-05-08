@@ -31,6 +31,7 @@ uint16_t vocroot;
 uint16_t offset;
 uint16_t length;
 uint16_t symbol;
+uint16_t hs;
 uint32_t low;
 uint32_t hlp;
 uint32_t range;
@@ -62,6 +63,7 @@ void pack_initialize(){
   vocarea[0xfffd]=0xfffd;
   vocarea[0xfffe]=0xfffe;
   vocarea[0xffff]=0xffff;
+  hs=0x00ff;
 }
 
 int rc32_write(uint8_t *buf,int l,FILE *ofile){
@@ -75,31 +77,22 @@ int rc32_write(uint8_t *buf,int l,FILE *ofile){
       range<<=8;
       if((uint32_t)(range+low)<low) range=~low;
     };
-    symbol=*buf;
-    range/=fc;
-    for(i=0;i<symbol;i++) s+=f[i];
-    low+=s*range;
-    range*=f[i]++;
+    i=*buf;
+    while(i--) s+=*f++;
+    low+=s*(range/=fc);
+    range*=(*f)++;
     if(++fc==0){
-      for(i=0;i<256;i++){
+      f=frequency[cstate];
+      for(s=0;s<256;s++){
         *f=((*f)>>1)|1;
         fc+=*f++;
       };
     };
     fcs[cstate]=fc;
-    cstate=(uint8_t)symbol;
+    cstate=*buf;
     buf++;
   };
   return 1;
-}
-
-uint16_t hash(uint16_t s){
-  uint16_t h=0;
-  for(uint8_t i=0;i<sizeof(uint32_t);i++){
-    h^=vocbuf[s++];
-    h=(h<<4)^(h>>12);
-  };
-  return h;
 }
 
 void pack_file(FILE *ifile,FILE *ofile){
@@ -121,7 +114,10 @@ void pack_file(FILE *ifile,FILE *ofile){
           }
           else vocindx[hashes[vocroot]].in=vocarea[vocroot];
           vocarea[vocroot]=vocroot;
-          hashes[voclast]=hash(voclast);
+          hs^=vocbuf[vocroot];
+          hs=(hs<<4)|(hs>>12);
+          hashes[voclast]=hs;
+          hs^=vocbuf[voclast];
           indx=&vocindx[hashes[voclast]];
           if(indx->in==1&&indx->out==0) indx->in=voclast;
           else vocarea[indx->out]=voclast;

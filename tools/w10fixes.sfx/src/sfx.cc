@@ -659,8 +659,8 @@ __fdecl uint8_t dgetc(){
 
 __fdecl uint8_t rc32_getc(uint8_t *c){
   uint16_t *f=frequency[cstate],fc=fcs[cstate];
-  uint32_t count,s=0;
-  while((low^(low+range))<0x1000000||range<0x10000||hlp<low){
+  uint32_t s=0,i;
+  while(hlp<low||(low^(low+range))<0x1000000||range<0x10000){
     hlp<<=8;
     *hlpp=dgetc();
     if(dptr==dsize) return 0;
@@ -668,21 +668,23 @@ __fdecl uint8_t rc32_getc(uint8_t *c){
     range<<=8;
     if((uint32_t)(range+low)<low) range=~low;
   };
-  if((count=(hlp-low)/(range/=fc))>=fc) return 1;
-  while((s+=*f++)<=count);
-  *c=(uint8_t)(--f-frequency[cstate]);
-  low+=(s-*f)*range;
-  range*=(*f)++;
-  if(++fc==0){
-    f=frequency[cstate];
-    for(s=0;s<256;s++){
-      *f=((*f)>>1)|1;
-      fc+=*f++;
+  if((i=(hlp-low)/(range/=fc))<fc){
+    while((s+=*f)<=i) f++;
+    low+=(s-*f)*range;
+    *c=(uint8_t)(f-frequency[cstate]);
+    range*=(*f)++;
+    if(++fc==0){
+      f=frequency[cstate];
+      for(s=0;s<256;s++){
+        *f=((*f)>>1)|1;
+        fc+=*f++;
+      };
     };
-  };
-  fcs[cstate]=fc;
-  cstate=*c;
-  return 0;
+    fcs[cstate]=fc;
+    cstate=*c;
+    return 0;
+  }
+  else return 1;
 }
 
 __fdecl uint8_t unpack_file(){
