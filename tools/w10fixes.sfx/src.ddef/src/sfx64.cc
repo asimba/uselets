@@ -620,7 +620,7 @@ static uint16_t *fcs=NULL;
 static uint16_t buf_size;
 static uint16_t vocroot;
 static uint16_t offset;
-static uint16_t lenght;
+static uint16_t length;
 static uint16_t symbol;
 static uint32_t low;
 static uint32_t hlp;
@@ -675,56 +675,39 @@ __fdecl uint8_t rc32_getc(uint8_t *c){
 }
 
 __fdecl uint8_t unpack_file(){
-  uint16_t i;
-  if(lenght){
-    if(!rle_flag){
-      symbol=vocbuf[offset++];
+  for(;;){
+    if(length){
+      if(rle_flag==0) symbol=vocbuf[offset++];
       vocbuf[vocroot++]=symbol;
-    };
-    lenght--;
-  }
-  else{
-    if(flags==0){
-      cpos=cbuffer;
-      if(rc32_getc(cpos++)) return 1;
-      flags=8;
-      lenght=0;
-      symbol=*cbuffer;
-      for(i=0;i<flags;i++){
-        if(symbol&0x80) lenght++;
-        else lenght+=3;
-        symbol<<=1;
-      };
-      for(i=lenght;i;i--)
-        if(rc32_getc(cpos++)) return 1;
-      cpos=cbuffer+1;
-    };
-    lenght=0;
-    if(*cbuffer&0x80){
-      symbol=*cpos;
-      vocbuf[vocroot++]=*cpos;
+      length--;
+      return 0;
     }
     else{
-      lenght=*cpos+++LZ_MIN_MATCH+1;
-      offset=*(uint16_t*)cpos++;
-      if(offset==0x0100) return 1;
-      if(offset<0x0100){
-        rle_flag=1;
-        symbol=offset;
-        for(i=0;i<lenght;i++) vocbuf[vocroot++]=symbol;
-        lenght--;
-      }
-      else{
-        rle_flag=0;
-        offset=0xffff+(uint16_t)(vocroot+LZ_BUF_SIZE)-offset;
-        symbol=vocbuf[offset++];
-        vocbuf[vocroot++]=symbol;
-        lenght--;
+      if(flags==0){
+        cpos=cbuffer;
+        if(rc32_getc(cpos++)) return 1;
+        for(uint8_t c=~*cbuffer;c;length++) c&=c-1;
+        length=8+(length<<1);
+        while(length--)
+          if(rc32_getc(cpos++)) return 1;
+        cpos=cbuffer+1;
+        flags=8;
       };
+      length=rle_flag=1;
+      if(*cbuffer&0x80) symbol=*cpos;
+      else{
+        length=LZ_MIN_MATCH+1+*cpos++;
+        if((offset=*(uint16_t*)cpos++)<0x0100) symbol=(uint8_t)(offset);
+        else{
+          if(offset==0x0100) break;
+          offset=~offset+(uint16_t)(vocroot+LZ_BUF_SIZE);
+          rle_flag=0;
+        };
+      };
+      *cbuffer<<=1;
+      cpos++;
+      flags--;
     };
-    *cbuffer<<=1;
-    cpos++;
-    flags--;
   };
   return 0;
 }
@@ -761,7 +744,7 @@ __fdecl uint8_t read_packed_value(void *p,uint16_t s){
 
 __fdecl void init_unpack(const uint32_t data_size_in){
   dsize=data_size_in;
-  dptr=buf_size=flags=vocroot=low=hlp=lenght=rle_flag=cstate=0;
+  dptr=buf_size=flags=vocroot=low=hlp=length=rle_flag=cstate=0;
   offset=range=0xffffffff;
   lowp=&((char *)&low)[3];
   hlpp=&((char *)&hlp)[0];
