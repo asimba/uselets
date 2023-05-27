@@ -95,12 +95,11 @@ $apps=@(
 "Microsoft.Todos"
 "Microsoft.PowerAutomateDesktop"
 "Microsoft.GamingApp"
-"Microsoft.Services.Store.Engagement"
 "Microsoft.Teams"
 "Microsoft.Whiteboard"
 "Microsoft.Windows.CapturePicker"
+"Microsoft.Windows.Photos"
 "MicrosoftTeams"
-"MicrosoftWindows.Client.WebExperience"
 "Windows.MiracastView"
 "Clipchamp.Clipchamp"
 "MicrosoftCorporationII.QuickAssist"
@@ -123,6 +122,8 @@ $apps=@(
 "*polarr*"
 "*minecraft*"
 "*dolbyaccess*"
+"Microsoft.Services.Store.Engagement*"
+"MicrosoftWindows.Client.WebExperience*"
 )
 
 $caps=@(
@@ -150,6 +151,7 @@ $tasks=@(
 "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
 "\Microsoft\Windows\DUSM\dusmtask"
 "\Microsoft\Windows\Feedback\Siuf\DmClient"
+"\Microsoft\Windows\Feedback\Siuf\DmClientOnScenarioDownload"
 "\Microsoft\Windows\LanguageComponentsInstaller\Installation"
 "\Microsoft\Windows\LanguageComponentsInstaller\ReconcileLanguageResources"
 "\Microsoft\Windows\Management\Provisioning\Cellular"
@@ -415,6 +417,8 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Preferences","ModelDownloadAllowed",0),
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Settings\VoiceActivation\UserPreferenceForAllApps","AgentActivationEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Settings\VoiceActivation\UserPreferenceForAllApps","AgentActivationOnLockScreenEnabled",0),
+@("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost","EnableWebContentEvaluation",0),
+@("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost","PreventOverride",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications","GlobalUserDisabled",1),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager","ContentDeliveryAllowed",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager","RotatingLockScreenEnabled",0),
@@ -524,21 +528,26 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","PublishUserActivities",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","UploadUserActivities",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","AllowCrossDeviceClipboard",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","EnableSmartScreen",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\TabletPC","PreventHandwritingDataSharing",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Chat","ChatIcon",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting","Disabled",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting","DontSendAdditionalData",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds","EnableFeeds",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","AllowCortana",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","AllowCloudSearch",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","AllowIndexingEncryptedStoresOrItems",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","AllowSearchToUseLocation",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","AlwaysUseAutoLangDetection",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","ConnectedSearchUseWeb",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","DisableSearch",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","DisableWebSearch",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","FavoriteLocations",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","IsAADCloudSearchEnabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","IsDeviceSearchHistoryEnabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","IsMSACloudSearchEnabled",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","SafeSearchMode",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search","PreventRemoteQueries",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\WindowsStore","AutoDownload",2),
 @("HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\WindowsUpdate","AutoDownload",2),
 @("HKLM\SYSTEM\CurrentControlSet\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener","Start",0),
@@ -584,6 +593,7 @@ $reg_sz=@(
 @("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userDataTasks","Value","Deny"),
 @("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userNotificationListener","Value","Deny"),
 @("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\videosLibrary","Value","Deny"),
+@("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer","SmartScreenEnabled","Off"),
 @("HKLM\SOFTWARE\Policies\Microsoft\Edge","HomepageLocation","about:blank"),
 @("HKLM\SOFTWARE\Policies\Microsoft\Edge","NewTabPageLocation","about:blank"),
 @("HKLM\SOFTWARE\Policies\Microsoft\Edge\RestoreOnStartupURLs","1","about:blank"),
@@ -598,6 +608,7 @@ function fix-registry() {
   foreach ($r in $reg_sz) {
     rsz $r[0] $r[1] $r[2]
   }
+  reg add "HKCU\SOFTWARE\Microsoft\Edge\SmartScreenEnabled" /t REG_DWORD /d 0 /f 2>&1 | Out-Null
   reg delete "HKCR\ms-msdt" /f 2>&1 | Out-Null
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows\ScriptedDiagnostics" EnableDiagnostics 0
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows\ScriptedDiagnostics" DisableQueryRemoteServer 0
@@ -698,7 +709,7 @@ function fix-view(){
     (Get-ChildItem $bags -recurse | ? PSChildName -eq $DLID ) | Remove-Item -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
     rdw "HKLM\SOFTWARE\Microsoft\Windows\Shell\Bags\AllFolders\Shell\{885A186E-A440-4ADA-812B-DB871B942259}" Mode 4
     rdw "HKLM\SOFTWARE\Microsoft\Windows\Shell\Bags\AllFolders\Shell\{885A186E-A440-4ADA-812B-DB871B942259}" GroupView 0
-    reg add "HKCU\SOFTWARE\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve /t REG_SZ /d "" /f | Out-Null
+    reg add "HKCU\SOFTWARE\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve /t REG_SZ /d " " | Out-Null
   }
   Try{
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" 2>&1 | Out-Null
@@ -722,6 +733,15 @@ function fix-tiles(){
   (taskkill.exe /F /IM "StartMenuExperienceHost.exe") 2>&1 | Out-Null
 }
 
+function clear-notifications(){
+  [Windows.UI.Notifications.ToastNotificationManager,Windows.UI.Notifications,ContentType=WindowsRuntime] | Out-Null
+  $notifications=Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings" | Select-Object -ExpandProperty Name
+  foreach ($notification in $notifications){ 
+    $lastRegistryKeyName=($notification -split "\\")[-1] -replace "\\$"
+    [Windows.UI.Notifications.ToastNotificationManager]::History.Clear($lastRegistryKeyName)
+  }
+}
+
 fix-view
 remove-apps
 remove-onedrive
@@ -734,3 +754,4 @@ fix-registry
 fix-network
 fix-tiles
 cleanup
+clear-notifications
