@@ -110,9 +110,10 @@ int dlg_window(HINSTANCE hInstance){
 
 uint8_t flags;
 uint8_t cbuffer[LZ_CAPACITY+1];
+uint8_t cntxs[LZ_CAPACITY];
 uint8_t vocbuf[0x10000];
-uint16_t frequency[256][256];
-uint16_t fcs[256];
+uint16_t frequency[5][256];
+uint16_t fcs[5];
 uint16_t buf_size;
 uint16_t vocroot;
 uint16_t offset;
@@ -125,7 +126,6 @@ char *lowp;
 char *hlpp;
 uint8_t *cpos;
 uint8_t rle_flag;
-uint8_t cstate;
 
 uint32_t dptr;
 uint32_t dsize;
@@ -140,8 +140,8 @@ uint8_t dgetc(){
   return s;
 }
 
-uint8_t rc32_getc(uint8_t *c){
-  uint16_t *f=frequency[cstate],fc=fcs[cstate];
+uint8_t rc32_getc(uint8_t *c,uint8_t cntx){
+  uint16_t *f=frequency[cntx],fc=fcs[cntx];
   uint32_t s=0,i;
   while(hlp<low||(low^(low+range))<0x1000000||range<0x10000){
     hlp<<=8;
@@ -154,17 +154,16 @@ uint8_t rc32_getc(uint8_t *c){
   if((i=(hlp-low)/(range/=fc))<fc){
     while((s+=*f)<=i) f++;
     low+=(s-*f)*range;
-    *c=(uint8_t)(f-frequency[cstate]);
+    *c=(uint8_t)(f-frequency[cntx]);
     range*=(*f)++;
     if(++fc==0){
-      f=frequency[cstate];
+      f=frequency[cntx];
       for(s=0;s<256;s++){
         *f=((*f)>>1)|1;
         fc+=*f++;
       };
     };
-    fcs[cstate]=fc;
-    cstate=*c;
+    fcs[cntx]=fc;
     return 0;
   }
   else return 1;
@@ -181,12 +180,22 @@ uint8_t unpack_file(){
     else{
       if(flags==0){
         cpos=cbuffer;
-        if(rc32_getc(cpos++)) return 1;
-        for(uint8_t c=~*cbuffer;c;length++) c&=c-1;
-        length=8+(length<<1);
-        while(length--)
-          if(rc32_getc(cpos++)) return 1;
-        cpos=cbuffer+1;
+        if(rc32_getc(cpos++,0)) return 1;
+        for(uint8_t c=~*cbuffer;c;flags++) c&=c-1;
+        uint8_t cflags=*cbuffer;
+        flags=8+(flags<<1);
+        for(uint8_t c=0;c<flags;){
+          if(cflags&0x80) cntxs[c++]=4;
+          else{
+            cntxs[c++]=1;
+            cntxs[c++]=2;
+            cntxs[c++]=3;
+          };
+          cflags<<=1;
+        };
+        for(uint8_t c=0;c<flags;c++)
+          if(rc32_getc(cpos++,cntxs[c])) return 1;
+        cpos=&cbuffer[1];
         flags=8;
       };
       length=rle_flag=1;
@@ -211,12 +220,12 @@ uint8_t unpack_file(){
 void init_unpack(const uint8_t *data_ptr,const uint32_t data_size_in){
   pdata=(uint8_t *)data_ptr;
   dsize=data_size_in;
-  dptr=buf_size=flags=vocroot=low=hlp=length=rle_flag=cstate=0;
+  dptr=buf_size=flags=vocroot=low=hlp=length=rle_flag=0;
   offset=range=0xffffffff;
   lowp=&((char *)&low)[3];
   hlpp=&((char *)&hlp)[0];
   uint32_t i;
-  for(i=0;i<256;i++){
+  for(i=0;i<5;i++){
     for(int j=0;j<256;j++) frequency[i][j]=1;
     fcs[i]=256;
   };
