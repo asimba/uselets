@@ -643,6 +643,7 @@ static char *lowp;
 static char *hlpp;
 static uint8_t *cpos;
 static uint8_t rle_flag;
+static uint8_t scntx;
 
 static uint32_t dptr;
 static uint32_t dsize;
@@ -673,12 +674,9 @@ __fdecl uint8_t rc32_getc(uint8_t *c,uint8_t cntx){
     low+=(s-*f)*range;
     *c=(uint8_t)(f-frequency[cntx]);
     range*=(*f)++;
-    if(++fc==0){
+    if(!++fc){
       f=frequency[cntx];
-      for(s=0;s<256;s++){
-        *f=((*f)>>1)|1;
-        fc+=*f++;
-      };
+      for(s=0;s<256;s++) fc+=(*f=((*f)>>1)|(*f&1)),f++;
     };
     fcs[cntx]=fc;
     return 0;
@@ -704,14 +702,20 @@ __fdecl uint8_t unpack_file(){
         for(uint8_t c=0;c<flags;){
           if(cflags&0x80) cntxs[c++]=4;
           else{
-            cntxs[c++]=1;
-            cntxs[c++]=2;
-            cntxs[c++]=3;
+            *(uint32_t*)(cntxs+c)=0x00030201;
+            c+=3;
           };
           cflags<<=1;
         };
-        for(uint8_t c=0;c<flags;c++)
-          if(rc32_getc(cpos++,cntxs[c])) return 1;
+        for(uint8_t c=0;c<flags;c++){
+          if(cntxs[c]==4){
+            if(rc32_getc(cpos,scntx)) return 1;
+            scntx=*cpos++;
+          }
+          else{
+            if(rc32_getc(cpos++,cntxs[c])) return 1;
+          };
+        };
         cpos=&cbuffer[1];
         flags=8;
       };
@@ -770,8 +774,9 @@ __fdecl void init_unpack(const uint32_t data_size_in){
   offset=range=0xffffffff;
   lowp=&((char *)&low)[3];
   hlpp=&((char *)&hlp)[0];
+  scntx=0xff;
   uint32_t i;
-  for(i=0;i<5;i++){
+  for(i=0;i<256;i++){
     for(int j=0;j<256;j++) frequency[i][j]=1;
     fcs[i]=256;
   };
@@ -849,7 +854,7 @@ __fdecl void free_mem(){
   if(cbuffer) LocalFree(cbuffer);
   if(cntxs) LocalFree(cntxs);
   if(frequency){
-    for(int i=0;i<5;i++){
+    for(int i=0;i<256;i++){
       if(frequency[i]) LocalFree(frequency[i]);
     };
     LocalFree(frequency);
@@ -930,15 +935,15 @@ __fdecl void init(){
   if(!valuebytes){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   cbuffer=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,LZ_CAPACITY+1);
   if(!cbuffer){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
-  cntxs=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,LZ_CAPACITY);
+  cntxs=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,LZ_CAPACITY+2);
   if(!cntxs){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
-  frequency=(uint16_t **)LocalAlloc(LMEM_ZEROINIT,5*sizeof(uint16_t*));
+  frequency=(uint16_t **)LocalAlloc(LMEM_ZEROINIT,256*sizeof(uint16_t*));
   if(!frequency){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
-  for(int i=0;i<5;i++){
+  for(int i=0;i<256;i++){
     frequency[i]=(uint16_t *)LocalAlloc(LMEM_ZEROINIT,256*sizeof(uint16_t));
     if(!frequency[i]){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   };
-  fcs=(uint16_t *)LocalAlloc(LMEM_ZEROINIT,5*sizeof(uint16_t));
+  fcs=(uint16_t *)LocalAlloc(LMEM_ZEROINIT,256*sizeof(uint16_t));
   if(!fcs){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
   vocbuf=(uint8_t *)LocalAlloc(LMEM_ZEROINIT,0x10000);
   if(!vocbuf){ free_mem(); if(iMutex) CloseHandle(iMutex); ExitProcess(1); };
