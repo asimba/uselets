@@ -12,6 +12,7 @@
 
 uint8_t flags;
 uint8_t cbuffer[LZ_CAPACITY+1];
+uint8_t cntxs[LZ_CAPACITY+2];
 uint8_t vocbuf[0x10000];
 uint16_t frequency[256][256];
 uint16_t fcs[256];
@@ -27,7 +28,7 @@ char *lowp;
 char *hlpp;
 uint8_t *cpos;
 uint8_t rle_flag;
-uint8_t cstate;
+uint8_t scntx;
 
 typedef struct _SHELLEXECUTEINFOA {
   DWORD     cbSize;
@@ -66,10 +67,10 @@ BOOL is_admin(){
   return result;
 }
 
-uint8_t rc32_getc(uint8_t *c,FILE *ifile){
-  uint16_t *f=frequency[cstate],fc=fcs[cstate];
-  uint32_t count,s=0;
-  while((low^(low+range))<0x1000000||range<0x10000||hlp<low){
+uint8_t rc32_getc(uint8_t *c,FILE *ifile,uint8_t cntx){
+  uint16_t *f=frequency[cntx],fc=fcs[cntx];
+  uint32_t s=0,i;
+  while(hlp<low||(low^(low+range))<0x1000000||range<0x10000){
     hlp<<=8;
     *hlpp=fgetc(ifile);
     if(ferror(ifile)) return 1;
@@ -78,71 +79,71 @@ uint8_t rc32_getc(uint8_t *c,FILE *ifile){
     range<<=8;
     if((uint32_t)(range+low)<low) range=~low;
   };
-  if((count=(hlp-low)/(range/=fc))>=fc) return 1;
-  while((s+=*f++)<=count);
-  *c=(uint8_t)(--f-frequency[cstate]);
-  low+=(s-*f)*range;
-  range*=(*f)++;
-  if(++fc==0){
-    f=frequency[cstate];
-    for(s=0;s<256;s++){
-      *f=((*f)>>1)|1;
-      fc+=*f++;
+  if((i=(hlp-low)/(range/=fc))<fc){
+    while((s+=*f)<=i) f++;
+    low+=(s-*f)*range;
+    *c=(uint8_t)(f-frequency[cntx]);
+    range*=(*f)++;
+    if(!++fc){
+      f=frequency[cntx];
+      for(s=0;s<256;s++) fc+=(*f=((*f)>>1)|(*f&1)),f++;
     };
-  };
-  fcs[cstate]=fc;
-  cstate=*c;
-  return 0;
+    fcs[cntx]=fc;
+    return 0;
+  }
+  else return 1;
 }
 
 uint8_t unpack_file(FILE *ifile){
-  uint16_t i;
-  if(length){
-    if(!rle_flag){
-      symbol=vocbuf[offset++];
+  for(;;){
+    if(length){
+      if(rle_flag==0) symbol=vocbuf[offset++];
       vocbuf[vocroot++]=symbol;
-    };
-    length--;
-  }
-  else{
-    if(flags==0){
-      cpos=cbuffer;
-      if(rc32_getc(cpos++,ifile)) return 1;
-      length=offset=flags=8;
-      symbol=*cbuffer;
-      while(offset--){
-        if((symbol&0x1)==0) length+=2;
-        symbol>>=1;
-      };
-      while(length--)
-        if(rc32_getc(cpos++,ifile)) return 1;
-      cpos=cbuffer+1;
-    };
-    length=0;
-    if(*cbuffer&0x80){
-      symbol=*cpos;
-      vocbuf[vocroot++]=*cpos;
+      length--;
+      return 0;
     }
     else{
-      length=*cpos+++LZ_MIN_MATCH+1;
-      offset=*(uint16_t*)cpos++;
-      if(offset==0x0100) return 1;
-      if(offset<0x0100){
-        rle_flag=1;
-        symbol=offset;
-        for(i=0;i<length;i++) vocbuf[vocroot++]=symbol;
-      }
-      else{
-        rle_flag=0;
-        offset=~offset+(uint16_t)(vocroot+LZ_BUF_SIZE);
-        symbol=vocbuf[offset++];
-        vocbuf[vocroot++]=symbol;
+      if(flags==0){
+        cpos=cbuffer;
+        if(rc32_getc(cpos++,ifile,0)) return 1;
+        for(uint8_t c=~*cbuffer;c;length++) c&=c-1;
+        uint8_t cflags=*cbuffer;
+        uint8_t cntx=8+(length<<1);
+        for(uint8_t c=0;c<cntx;){
+          if(cflags&0x80) cntxs[c++]=4;
+          else{
+            *(uint32_t*)(cntxs+c)=0x00030201;
+            c+=3;
+          };
+          cflags<<=1;
+        };
+        for(uint8_t c=0;c<cntx;c++){
+          if(cntxs[c]==4){
+            if(rc32_getc(cpos,ifile,scntx)) return 1;
+            scntx=*cpos++;
+          }
+          else{
+            if(rc32_getc(cpos++,ifile,cntxs[c])) return 1;
+          };
+        };
+        cpos=&cbuffer[1];
+        flags=8;
       };
-      length--;
+      length=rle_flag=1;
+      if(*cbuffer&0x80) symbol=*cpos;
+      else{
+        length=LZ_MIN_MATCH+1+*cpos++;
+        if((offset=*(uint16_t*)cpos++)<0x0100) symbol=(uint8_t)(offset);
+        else{
+          if(offset==0x0100) break;
+          offset=~offset+(uint16_t)(vocroot+LZ_BUF_SIZE);
+          rle_flag=0;
+        };
+      };
+      *cbuffer<<=1;
+      cpos++;
+      flags--;
     };
-    *cbuffer<<=1;
-    cpos++;
-    flags--;
   };
   return 0;
 }
@@ -196,8 +197,9 @@ void unarc(char *out,char *fn){
   };
   fseek(f,range,SEEK_SET);
   if(feof(f)) return;
-  buf_size=flags=vocroot=low=hlp=length=rle_flag=cstate=0;
+  buf_size=flags=vocroot=low=hlp=length=rle_flag=0;
   offset=range=0xffffffff;
+  scntx=0xff;
   lowp=&((char *)&low)[3];
   hlpp=&((char *)&hlp)[0];
   for(i=0;i<256;i++){
