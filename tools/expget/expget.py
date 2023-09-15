@@ -84,6 +84,8 @@ class MainWindow(QWidget):
             else:
                 print('Error. ("%s") - %i'%(self.file_list[-1][-1],event.value))
                 self.label.setText('Статус: ошибка скачивания файла ("%s", код ошибки: %i)!'%(self.file_list[-1][-1],event.value))
+                self.file_list=[]
+                self.file_number=0
                 self.reload()
                 try:
                     for b in self.buttons: b.setEnabled(True)
@@ -244,6 +246,11 @@ class MainWindow(QWidget):
                     return;
                 };
                 var links=[];
+                if(data.Total===0){
+                    if(partitions.length) get_pd_links(partitions.pop(),file_links,details_links,partitions);
+                    else success(file_links);
+                    return;
+                };
                 for(const d of data.Data){
                     if(d['NumberOfFiles']){
                         var href=''.concat('https://lk.spbexp.ru/Grid/',path,'FilesRead/own',d['IDRow']);
@@ -457,6 +464,7 @@ class MainWindow(QWidget):
                 }
             }
             function overlay() {
+                window.scrollTo(0,0);
                 [].forEach.call(document.querySelectorAll('nav'), function (el) {
                     el.style.visibility = 'hidden';
                 });
@@ -535,10 +543,11 @@ class MainWindow(QWidget):
         self.hbox.addWidget(self.get_data_button,1)
         self.hbox.addWidget(self.get_all_data_button,1)
         self.grid.addLayout(self.hbox,0,0)
+
         self.grid.addWidget(self.webEngineView,1,0)
         self.label=QLabel('Статус:...')
         self.label.setStyleSheet("QLabel {background-color:gray;color:black;}")
-        self.grid.addWidget(self.label,2,0)
+        self.grid.addWidget(self.label,3,0)
         self.grid.setRowStretch(0,0)
         self.grid.setRowStretch(1,1)
         self.grid.setRowStretch(2,0)

@@ -50,7 +50,6 @@ $apps=@(
 "Microsoft.MicrosoftSolitaireCollection"
 "Microsoft.MicrosoftStickyNotes"
 "Microsoft.Office.OneNote"
-"Microsoft.OneConnect"
 "Microsoft.People"
 "Microsoft.SkypeApp"
 "Microsoft.WindowsAlarms"
@@ -733,6 +732,13 @@ function fix-tiles(){
   (taskkill.exe /F /IM "StartMenuExperienceHost.exe") 2>&1 | Out-Null
 }
 
+function fix-misc(){
+  reg add "HKLM\SYSTEM\CurrentControlSet\Services\stornvme\Parameters\Device" /v "ForcedPhysicalSectorSizeInBytes" /t REG_MULTI_SZ /d "* 4095" /f | Out-Null
+  rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" RpcUseNamedPipeProtocol 1
+  rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" RpcAuthentication 0
+  rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" RpcProtocols 0x7
+}
+
 function clear-notifications(){
   [Windows.UI.Notifications.ToastNotificationManager,Windows.UI.Notifications,ContentType=WindowsRuntime] | Out-Null
   $notifications=Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings" | Select-Object -ExpandProperty Name
@@ -753,5 +759,6 @@ fix-bservices
 fix-registry
 fix-network
 fix-tiles
+fix-misc
 cleanup
 clear-notifications

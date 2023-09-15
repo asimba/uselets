@@ -146,7 +146,7 @@ const createWindow = () => {
       };
     };
     function sec_replace(section){
-      return section.trim().replaceAll('"','_').slice(0,64).trim();
+      return section.trim().replaceAll('"','_').trim().replaceAll(':','_').slice(0,64).trim();
     };
     async function get_sig_links_details(file_links,details_links,partitions){
       if(window.process_canceled) return;
@@ -281,6 +281,7 @@ const createWindow = () => {
       }
     }
     function overlay() {
+      window.scrollTo(0,0);
       [].forEach.call(document.querySelectorAll('nav'), function (el) {
         el.style.visibility = 'hidden';
       });
@@ -500,6 +501,11 @@ function getallfileslist(){
     function get_pd_links_parse(path,file_links,details_links,partitions,data){
       if(window.process_canceled) return;
       var links=[];
+      if(data.Total===0){
+        if(partitions.length) get_pd_links(partitions.pop(),file_links,details_links,partitions);
+        else success(file_links);
+        return;
+      };
       for(const d of data.Data){
         if(d['NumberOfFiles']){
           var href=''.concat('https://lk.spbexp.ru/Grid/',path,'FilesRead/own',d['IDRow']);
