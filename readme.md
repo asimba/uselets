@@ -1094,6 +1094,6 @@ del /q tmp\tmp.h264 tmp\mp4-0.log tmp\mp4-0.log.mbtree tmp\out.mp4
 )
 </code></pre></details>  
 
-#### Скачивание комплектов документации завершённых проектов из личного кабинета СПб ГАУ "Центр государственной экспертизы".  
+#### Скачивание комплектов документации завершённых проектов из личного кабинета СПб ГАУ \"Центр государственной экспертизы\".  
 _Требования (зависимости):_ [Python 3.x.x](https://www.python.org/downloads/) и [PyQt 6.x.x](https://www.riverbankcomputing.com/software/pyqt/) или [Node.js 18.x.x](https://nodejs.org/en/download) и [Electron 26.x.x](https://releases.electronjs.org/)  
-Для скачивания комплектов документации завершённых проектов из личного кабинета СПб ГАУ "Центр государственной экспертизы" можно воспользоваться одним из наборов скриптов [expget](https://github.com/asimba/uselets/tree/main/tools/expget).  
+Для скачивания комплектов документации завершённых проектов из личного кабинета СПб ГАУ ЦГЭ можно воспользоваться одним из наборов скриптов [expget](https://github.com/asimba/uselets/tree/main/tools/expget).  
