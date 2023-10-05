@@ -950,7 +950,10 @@ on_crash = 'restart'
 _Требования (зависимости):_ PowerShell  
 ```wevtutil el | Foreach-Object {wevtutil cl "$_"}```  
 #### Получение информации о материнской плате из командной строки (Windows).  
-```wmic baseboard get product,Manufacturer,version,serialnumber```  
+```wmic baseboard get product,Manufacturer,version,serialnumber
+wmic csproduct get name
+wmic bios get serialnumber
+```  
 
 #### Отключение Windows Defender ("Защитник Windows") (Windows 10/11).  
 _Требования (зависимости):_ PowerShell, [ddef-binary-x86_64](https://github.com/asimba/uselets/raw/main/tools/w10fixes.sfx/bin/ddef64.zip)  
