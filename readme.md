@@ -950,7 +950,8 @@ on_crash = 'restart'
 _Требования (зависимости):_ PowerShell  
 ```wevtutil el | Foreach-Object {wevtutil cl "$_"}```  
 #### Получение информации о материнской плате из командной строки (Windows).  
-```wmic baseboard get product,Manufacturer,version,serialnumber
+```
+wmic baseboard get product,Manufacturer,version,serialnumber
 wmic csproduct get name
 wmic bios get serialnumber
 ```  
