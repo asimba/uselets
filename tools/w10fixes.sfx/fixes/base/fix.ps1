@@ -285,6 +285,9 @@ function remove-cap($app) {
 }
 
 function remove-apps() {
+  write-header "Running Windows component cleanup..."
+  foreach($f in (Get-ChildItem -Path "$env:windir\servicing\LCU\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
+  Dism /Online /Cleanup-Image /StartComponentCleanup /ResetBase /NoRestart
   write-header "Uninstalling default apps..."
   Remove-Item $env:windir\Logs\CBS\* -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   foreach ($app in $apps) {
@@ -298,9 +301,9 @@ function remove-apps() {
   (Get-Job | Wait-Job) | Out-Null
   Start-Job -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName WindowsMediaPlayer -NoRestart  -ErrorAction SilentlyContinue | Out-Null} | Out-Null
   (Get-Job | Wait-Job) | Out-Null
-  $pkgs=(dism /online /get-packages | select-string -pattern 'package' | %{ $_.tostring(); } | %{ $_ -split ' : '; } )
+  $pkgs=(Dism /Online /Get-Packages | select-string -pattern 'package' | %{ $_.tostring(); } | %{ $_ -split ' : '; } )
   $pkgs=($pkgs | select-string -pattern 'package' | %{ $_.tostring(); } )
-  $pkgs | select-string -pattern 'hello-face' | %{ $_.tostring(); } | %{(dism /online /remove-package /packagename:$_ /quiet /norestart 2>&1)|out-null ;}
+  $pkgs | select-string -pattern 'hello-face' | %{ $_.tostring(); } | %{(Dism /Online /Remove-Package /PackageName:$_ /Quiet /NoRestart 2>&1)|out-null ;}
   foreach ($app in $caps) {
     remove-cap $app
   }
@@ -456,6 +459,7 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Policies\Microsoft\Internet Explorer\Main","DisableFirstRunCustomize",1),
 @("HKCU\SOFTWARE\Policies\Microsoft\Internet Explorer\TabbedBrowsing","NewTabPageShow",0),
 @("HKCU\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\PushNotifications","NoTileApplicationNotification",1),
+@("HKCU\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot","TurnOffWindowsCopilot",1),
 @("HKLM\SOFTWARE\Microsoft\InputPersonalization","RestrictImplicitInkCollection",1),
 @("HKLM\SOFTWARE\Microsoft\InputPersonalization","RestrictImplicitTextCollection",1),
 @("HKLM\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore","HarvestContacts",0),
@@ -529,6 +533,7 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","AllowCrossDeviceClipboard",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","EnableSmartScreen",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\TabletPC","PreventHandwritingDataSharing",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot","TurnOffWindowsCopilot",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Chat","ChatIcon",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting","Disabled",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting","DontSendAdditionalData",1),
@@ -650,7 +655,7 @@ function cleanup(){
   try{
     Get-ChildItem $env:systemdrive\ -Include @("*.log","*.tmp","*.dmp") -Recurse -File -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue | Out-Null
   }catch{}
-  Remove-Item -Path "$env:windir\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  foreach($f in (Get-ChildItem -Path "$env:windir\Temp\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
   Remove-Item -Path "$env:windir\minidump\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:windir\Prefetch\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
@@ -734,6 +739,8 @@ function fix-tiles(){
 
 function fix-misc(){
   reg add "HKLM\SYSTEM\CurrentControlSet\Services\stornvme\Parameters\Device" /v "ForcedPhysicalSectorSizeInBytes" /t REG_MULTI_SZ /d "* 4095" /f | Out-Null
+  rdw "HKLM\SYSTEM\CurrentControlSet\Control\Print" RpcAuthnLevelPrivacyEnabled 0
+  rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" RestrictDriverInstallationToAdministrators 0
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" RpcUseNamedPipeProtocol 1
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" RpcAuthentication 0
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" RpcProtocols 0x7

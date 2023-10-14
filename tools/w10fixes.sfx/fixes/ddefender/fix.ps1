@@ -45,13 +45,6 @@ function rsz($path,$key,$val) {
   reg add $path /v $key /t REG_SZ /d $val /f | Out-Null
 }
 
-$tasks=@(
-"\Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance"
-"\Microsoft\Windows\Windows Defender\Windows Defender Cleanup"
-"\Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan"
-"\Microsoft\Windows\Windows Defender\Windows Defender Verification"
-)
-
 $reg_dw=@(
 @("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","EnableVirtualizationBasedSecurity",0),
 @("HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard","RequirePlatformSecurityFeatures",0),
@@ -67,6 +60,8 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","EnableVirtualizationBasedSecurity",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","RequirePlatformSecurityFeatures",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard","LsaCfgFlags",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Notifications","DisableNotifications",1),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Notifications","DisableEnhancedNotifications",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet","SpyNetReporting",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet","SubmitSamplesConsent",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting","DisableEnhancedNotifications",1),
@@ -96,12 +91,6 @@ $reg_dw=@(
 function fix-registry() {
   foreach ($r in $reg_dw) {
     rdw $r[0] $r[1] $r[2]
-  }
-  foreach ($task in $tasks) {
-    $parts=$task.split('\')
-    $name=$parts[-1]
-    $path=$parts[0..($parts.length-2)] -join '\'
-    Disable-ScheduledTask -TaskName "$name" -TaskPath "$path" -ErrorAction SilentlyContinue | Out-Null
   }
   rsz "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\SmartScreen" "ConfigureAppInstallControl" "Anywhere"
   rsz "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" "SmartScreenEnabled" "Off"
