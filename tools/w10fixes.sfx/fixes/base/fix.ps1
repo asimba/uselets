@@ -143,6 +143,8 @@ $tasks=@(
 "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
 "\Microsoft\Windows\Application Experience\ProgramDataUpdater"
 "\Microsoft\Windows\CloudExperienceHost\CreateObjectTask"
+"\Microsoft\Windows\CloudRestore\Backup"
+"\Microsoft\Windows\CloudRestore\Restore"
 "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator"
 "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask"
 "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
@@ -167,6 +169,7 @@ $tasks=@(
 "\Microsoft\Windows\Windows Defender\Windows Defender Verification"
 "\Microsoft\Windows\Windows Error Reporting\QueueReporting"
 "\Microsoft\Windows\WindowsUpdate\Scheduled Start"
+"\Microsoft\Windows\WindowsUpdate\RUXIM\PLUGScheduler"
 "\Microsoft\XblGameSave\XblGameSaveTask"
 )
 
@@ -184,6 +187,7 @@ $tpaths=@(
 "\System32\Tasks\Microsoft\Windows\Setup"
 "\System32\Tasks\Microsoft\Windows\SyncCenter"
 "\System32\Tasks\Microsoft\Windows\UNP"
+"\System32\Tasks\Microsoft\Windows\WindowsUpdate\Scheduled Start"
 "\System32\Tasks\Microsoft\Windows\Windows Error Reporting"
 "\System32\Tasks_Migrated\Microsoft\Windows\InstallService"
 "\System32\Tasks_Migrated\Microsoft\Windows\Setup"
