@@ -31,6 +31,7 @@ src\rsrc64.o ^
 -lntdll -lkernel32 -luser32
 del /q src\rsrc64.o 2>&1 >nul
 move /y %exe%.exe fixes64.exe 2>&1 >nul
+objdump.exe -x fixes64.exe > fixes64.txt
 
 windres -i src\rsrc.rc -o src\rsrc32.o -F pe-i386
 g++ -Os -s -static -m32 -mwindows -march=i386 -mtune=i386 -Wall -fno-builtin -fno-rtti -ftoplevel-reorder ^
@@ -45,8 +46,10 @@ src\rsrc32.o ^
 -lntdll -lkernel32 -luser32
 del /q src\rsrc32.o 2>&1 >nul
 move /y %exe%.exe fixes32.exe 2>&1 >nul
+objdump.exe -x fixes32.exe > fixes32.txt
 
 cd src.ddef
 call build.cmd
 move /y ddef64.exe ../ddef64.exe 2>&1 >nul
 cd ..
+objdump.exe -x ddef64.exe > ddef64.txt

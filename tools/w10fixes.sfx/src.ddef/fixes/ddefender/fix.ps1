@@ -18,12 +18,12 @@ function Set-Registry-ReadOnly($regpath) {
 }
 
 $bservices=@(
-"wscsvc*" #WSCSVC (Windows Security Center)
 "SecurityHealthService*" #Windows Security Health Servce
 "WinDefend*" #Windows Defender Service
 "WdNisSvc"
 "WdNisDrv"
 "WdBoot"
+"MDCoreSvc"
 "WdFilter"
 "webthreatdefsvc"
 "webthreatdefusersvc*"

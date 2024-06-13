@@ -142,6 +142,7 @@ $tasks=@(
 "\Microsoft\Office\Office Automatic Updates"
 "\Microsoft\Office\Office ClickToRun Service Monitor"
 "\Microsoft\Windows\AppID\SmartScreenSpecific"
+"\Microsoft\Windows\Application Experience\MareBackup"
 "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
 "\Microsoft\Windows\Application Experience\ProgramDataUpdater"
 "\Microsoft\Windows\Autochk\Proxy"
@@ -220,8 +221,8 @@ $services=@(
 "SSDPSRV"
 "WerSvc"
 "BITS"
-"wuauserv"
 "UsoSvc"
+"wuauserv"
 "MicrosoftEdgeElevationService"
 "MixedRealityOpenXRSvc"
 "edgeupdate"
@@ -231,6 +232,7 @@ $services=@(
 $bservices=@(
 "xbgm*"
 "OneSyncSvc*"
+"WaaSMedicSvc"
 )
 
 $cleanflags=@(
@@ -738,7 +740,10 @@ function fix-view(){
 }
 
 function fix-tiles(){
-  Import-StartLayout -LayoutPath "$env:systemdrive\fixes\base\layout.xml" -MountPath "$env:systemdrive\" -ErrorAction SilentlyContinue | Out-Null
+  Try{
+    Import-StartLayout -LayoutPath "$env:systemdrive\fixes\base\layout.xml" -MountPath "$env:systemdrive\" -ErrorAction SilentlyContinue | Out-Null
+  }
+  Catch {}
   reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" /f 2>&1 | Out-Null
   rdw "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\StoreInit" HasStoreCacheInitialized 0
   (taskkill.exe /F /IM "StartMenuExperienceHost.exe") 2>&1 | Out-Null
