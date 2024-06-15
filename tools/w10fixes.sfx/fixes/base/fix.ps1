@@ -167,10 +167,6 @@ $tasks=@(
 "\Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem"
 "\Microsoft\Windows\Ras\MobilityManager"
 "\Microsoft\Windows\Speech\SpeechModelDownloadTask"
-"\Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance"
-"\Microsoft\Windows\Windows Defender\Windows Defender Cleanup"
-"\Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan"
-"\Microsoft\Windows\Windows Defender\Windows Defender Verification"
 "\Microsoft\Windows\Windows Error Reporting\QueueReporting"
 "\Microsoft\Windows\WindowsUpdate\Scheduled Start"
 "\Microsoft\Windows\WindowsUpdate\RUXIM\PLUGScheduler"
@@ -297,6 +293,7 @@ function remove-apps() {
   write-header "Running Windows component cleanup..."
   foreach($f in (Get-ChildItem -Path "$env:windir\servicing\LCU\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
   Dism /Online /Cleanup-Image /StartComponentCleanup /ResetBase /NoRestart
+  Dism /Online /Set-ReservedStorageState /State:Disabled /NoRestart
   write-header "Uninstalling default apps..."
   Remove-Item $env:windir\Logs\CBS\* -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   foreach ($app in $apps) {
