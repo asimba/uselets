@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <windows.h>
 
+#include "defs.h"
 #include "banner.h"
 
 HBITMAP hBitmap,hOldBitmap;
@@ -65,7 +66,7 @@ LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam){
   return DefWindowProcA(hWnd,msg,wParam,lParam);
 }
 
-extern void __stdcall start(){
+extern "C" void __stdcall start(){
   WNDCLASS wc;
   wc.style=0;
   wc.lpfnWndProc=dlg_wndproc;
