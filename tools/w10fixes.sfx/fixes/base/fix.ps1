@@ -291,6 +291,10 @@ function remove-cap($app) {
 
 function remove-apps() {
   write-header "Running Windows component cleanup..."
+  foreach($f in (Get-ChildItem -Path "$env:systemdrive\`$SysReset\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
+  cmd.exe /c "rmdir /q /s $env:systemdrive\`$SysReset >nul 2>&1" | Out-Null
+  foreach($f in (Get-ChildItem -Path "$env:systemdrive\`$WinREAgent\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
+  cmd.exe /c "rmdir /q /s $env:systemdrive\`$WinREAgent >nul 2>&1" | Out-Null
   foreach($f in (Get-ChildItem -Path "$env:windir\servicing\LCU\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
   Dism /Online /Cleanup-Image /StartComponentCleanup /ResetBase /NoRestart
   Dism /Online /Set-ReservedStorageState /State:Disabled /NoRestart
