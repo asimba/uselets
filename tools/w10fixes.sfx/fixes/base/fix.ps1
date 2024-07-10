@@ -153,6 +153,8 @@ $tasks=@(
 "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask"
 "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
 "\Microsoft\Windows\Defrag\ScheduledDefrag"
+"\Microsoft\Windows\Device Information\Device"
+"\Microsoft\Windows\Device Information\Device User"
 "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
 "\Microsoft\Windows\DUSM\dusmtask"
 "\Microsoft\Windows\Feedback\Siuf\DmClient"
@@ -318,6 +320,10 @@ function remove-apps() {
     remove-cap $app
   }
   (Get-Job | Wait-Job) | Out-Null
+  (taskkill.exe /F /IM "SnippingTool.exe") 2>&1 | Out-Null
+  Start-Job -Name remsnipp -ScriptBlock {(cmd.exe /c "$env:systemroot\System32\SnippingTool.exe /uninstall >nul 2>&1") | Out-Null} | Out-Null
+  Start-Sleep -Seconds 15
+  (taskkill.exe /F /IM "SnippingTool.exe") 2>&1 | Out-Null
 }
 
 function remove-onedrive(){
@@ -469,6 +475,7 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Policies\Microsoft\Internet Explorer\Main","DisableFirstRunCustomize",1),
 @("HKCU\SOFTWARE\Policies\Microsoft\Internet Explorer\TabbedBrowsing","NewTabPageShow",0),
 @("HKCU\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\PushNotifications","NoTileApplicationNotification",1),
+@("HKCU\SOFTWARE\Policies\Microsoft\Windows\TabletPC","DisableSnippingTool",1),
 @("HKCU\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot","TurnOffWindowsCopilot",1),
 @("HKLM\SOFTWARE\Microsoft\InputPersonalization","RestrictImplicitInkCollection",1),
 @("HKLM\SOFTWARE\Microsoft\InputPersonalization","RestrictImplicitTextCollection",1),
@@ -542,6 +549,7 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","UploadUserActivities",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","AllowCrossDeviceClipboard",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\System","EnableSmartScreen",0),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\TabletPC","DisableSnippingTool",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\TabletPC","PreventHandwritingDataSharing",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot","TurnOffWindowsCopilot",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Chat","ChatIcon",0),
@@ -668,6 +676,13 @@ function cleanup(){
   foreach($f in (Get-ChildItem -Path "$env:windir\Temp\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
   Remove-Item -Path "$env:windir\minidump\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:windir\Prefetch\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:windir\Logs\CBS\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:windir\Logs\DISM\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:windir\Logs\PLUG\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:windir\Logs\SIH\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:windir\Logs\waasmedic\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:windir\Logs\waasmediccapsule\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  Remove-Item -Path "$env:windir\Logs\WindowsUpdate\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\WER\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
   Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\Temporary Internet Files\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
