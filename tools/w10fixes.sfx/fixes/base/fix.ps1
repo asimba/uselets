@@ -1,43 +1,3 @@
-$fc=$host.UI.RawUI.ForegroundColor
-
-function write-header($text) {
-  $host.UI.RawUI.ForegroundColor="green"
-  Write-Output $text
-  $host.UI.RawUI.ForegroundColor=$fc
-}
-
-function Set-Registry-ReadOnly($regpath) {
-  Try{
-    $acl=Get-Acl $regpath
-    $acl.SetAccessRuleProtection($True,$True)
-  }
-  Catch { return }
-  foreach ($a in $acl.Access) {
-    Try{
-      $u=$a.IdentityReference
-      $propagation=$a.PropagationFlags
-      $rule=New-Object System.Security.AccessControl.RegistryAccessRule($u,"ReadKey",@("ObjectInherit","ContainerInherit"),"None","Allow")
-      $acl.PurgeAccessRules($u)
-      $acl.SetAccessRule($rule)
-    }
-   Catch {}
-  }
-  Try{
-    Set-Acl -ErrorAction SilentlyContinue $regpath $acl | Out-Null
-  }
-  Catch {}
-}
-
-function Takeown-File($path) {
-  takeown.exe /A /F $path
-  $acl=Get-Acl $path
-  $admins=New-Object System.Security.Principal.SecurityIdentifier("S-1-5-32-544")
-  $admins=$admins.Translate([System.Security.Principal.NTAccount])
-  $rule=New-Object System.Security.AccessControl.FileSystemAccessRule($admins,"FullControl","None","None", "Allow")
-  $acl.AddAccessRule($rule)
-  Set-Acl -Path $path -AclObject $acl
-}
-
 $apps=@(
 "Microsoft.3DBuilder"
 "Microsoft.Appconnector"
@@ -233,6 +193,16 @@ $bservices=@(
 "WaaSMedicSvc"
 )
 
+$prg_list=@(
+"%SystemRoot%\System32\SIHClient.exe"
+"%SystemRoot%\System32\mousocoreworker.exe"
+"%SystemRoot%\UUS\amd64\MoUsoCoreWorker.exe"
+"%SystemRoot%\System32\Speech_OneCore\common\SpeechRuntime.exe"
+"%SystemRoot%\System32\OneDriveSetup.exe"
+"%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe"
+"%SystemRoot%\explorer.exe"
+)
+
 $cleanflags=@(
 "Active Setup Temp Folders"
 "BranchCache"
@@ -271,150 +241,44 @@ $cleanflags=@(
 "Windows Upgrade Log Files"
 )
 
-function remove-app($app) {
-  Write-Output "Trying to remove $app"
-  Try{
-    Start-Job -Name remappx -ScriptBlock {(Get-AppxPackage -Name "$using:app" -AllUsers -ErrorAction SilentlyContinue | Remove-AppxPackage -ErrorAction SilentlyContinue) | Out-Null} | Out-Null
-    (Get-Job | Wait-Job) | Out-Null
-    Start-Job -Name remappxp -ScriptBlock {(Get-AppXProvisionedPackage -Online -ErrorAction SilentlyContinue | Where-Object DisplayName -EQ "$using:app" | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue) | Out-Null} | Out-Null
-    (Get-Job | Wait-Job) | Out-Null
-  }
-  Catch {}
-}
+$temp_dirs=@(
+"$env:windir\SoftwareDistribution\*"
+"$env:windir\servicing\LCU\*"
+"$env:windir\Temp\*"
+"$env:windir\memory.dmp"
+"$env:windir\minidump\*"
+"$env:windir\Prefetch\*"
+"$env:windir\Logs\CBS\*"
+"$env:windir\Logs\DISM\*"
+"$env:windir\Logs\PLUG\*"
+"$env:windir\Logs\SIH\*"
+"$env:windir\Logs\waasmedic\*"
+"$env:windir\Logs\waasmediccapsule\*"
+"$env:windir\Logs\WindowsUpdate\*"
+"$env:systemdrive\Users\*\AppData\Local\Temp\*"
+"$env:systemdrive\ProgramData\Microsoft\Windows\WER\*"
+"$env:systemdrive\ProgramData\Microsoft\Windows Defender\Platform\*"
+"$env:systemdrive\ProgramData\Microsoft\Windows Defender\Definition Updates\Backup\*"
+"$env:systemdrive\ProgramData\Microsoft\Windows Defender\Support\*"
+"$env:systemdrive\ProgramData\Microsoft\Windows Defender\Scans\mpcache*.bin"
+"$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\WER\*"
+"$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCache\*"
+"$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatCache\*"
+"$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatUaCache\*"
+"$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IEDownloadHistory\*"
+"$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCookies\*"
+"$env:systemdrive\Users\*\AppData\Local\Microsoft\Terminal Server Client\Cache\*"
+"$env:systemdrive\`$SysReset"
+"$env:systemdrive\`$WinREAgent"
+"$env:systemdrive\Config.Msi"
+"$env:systemdrive\Intel"
+"$env:systemdrive\PerfLogs"
+"$env:systemdrive\ProgramData\Microsoft\Windows Defender\Scans\mpenginedb.db"
+)
 
-function remove-cap($app) {
-  Write-Output "Trying to remove $app"
-  Try{
-    Start-Job -Name remcap -ScriptBlock {(Get-WindowsCapability -Online -Name "$using:app" -ErrorAction SilentlyContinue | Where-Object State -EQ "Installed" | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue) | Out-Null} | Out-Null
-    (Get-Job | Wait-Job) | Out-Null
-  }
-  Catch {}
-}
-
-function remove-apps() {
-  write-header "Running Windows component cleanup..."
-  foreach($f in (Get-ChildItem -Path "$env:systemdrive\`$SysReset\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
-  cmd.exe /c "rmdir /q /s $env:systemdrive\`$SysReset >nul 2>&1" | Out-Null
-  foreach($f in (Get-ChildItem -Path "$env:systemdrive\`$WinREAgent\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
-  cmd.exe /c "rmdir /q /s $env:systemdrive\`$WinREAgent >nul 2>&1" | Out-Null
-  foreach($f in (Get-ChildItem -Path "$env:windir\servicing\LCU\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
-  Dism /Online /Cleanup-Image /StartComponentCleanup /ResetBase /NoRestart
-  Dism /Online /Set-ReservedStorageState /State:Disabled /NoRestart
-  write-header "Uninstalling default apps..."
-  Remove-Item $env:windir\Logs\CBS\* -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  foreach ($app in $apps) {
-    remove-app $app
-  }
-  Start-Job -Name feature -ScriptBlock {Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction SilentlyContinue | Out-Null} | Out-Null
-  (Get-Job | Wait-Job) | Out-Null
-  Start-Job -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Deprecation -NoRestart -ErrorAction SilentlyContinue | Out-Null} | Out-Null
-  (Get-Job | Wait-Job) | Out-Null
-  Start-Job -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName WorkFolders-Client -NoRestart  -ErrorAction SilentlyContinue | Out-Null} | Out-Null
-  (Get-Job | Wait-Job) | Out-Null
-  Start-Job -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName WindowsMediaPlayer -NoRestart  -ErrorAction SilentlyContinue | Out-Null} | Out-Null
-  (Get-Job | Wait-Job) | Out-Null
-  $pkgs=(Dism /Online /Get-Packages | select-string -pattern 'package' | %{ $_.tostring(); } | %{ $_ -split ' : '; } )
-  $pkgs=($pkgs | select-string -pattern 'package' | %{ $_.tostring(); } )
-  $pkgs | select-string -pattern 'hello-face' | %{ $_.tostring(); } | %{(Dism /Online /Remove-Package /PackageName:$_ /Quiet /NoRestart 2>&1)|out-null ;}
-  foreach ($app in $caps) {
-    remove-cap $app
-  }
-  (Get-Job | Wait-Job) | Out-Null
-  (taskkill.exe /F /IM "SnippingTool.exe") 2>&1 | Out-Null
-  Start-Job -Name remsnipp -ScriptBlock {(cmd.exe /c "$env:systemroot\System32\SnippingTool.exe /uninstall >nul 2>&1") | Out-Null} | Out-Null
-  Start-Sleep -Seconds 15
-  (taskkill.exe /F /IM "SnippingTool.exe") 2>&1 | Out-Null
-}
-
-function remove-onedrive(){
-  write-header "Removing OneDrive..."
-  Write-Output "Kill OneDrive process"
-  (taskkill.exe /F /IM "OneDrive.exe") 2>&1 | Out-Null
-  Write-Output "Remove OneDrive"
-  if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
-    & "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
-  }
-  if (Test-Path "$env:systemroot\SysWOW64\OneDriveSetup.exe") {
-    & "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
-  }
-  Write-Output "Removing OneDrive leftovers"
-  Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
-  Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
-  Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:systemdrive\OneDriveTemp"
-  If ((Get-ChildItem "$env:userprofile\OneDrive" -Recurse | Measure-Object).Count -eq 0) {
-    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:userprofile\OneDrive"
-  }
-  Write-Output "Remove Onedrive from explorer sidebar"
-  (New-PSDrive -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" -Name "HKCR") | Out-Null
-  (mkdir -Force "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}") | Out-Null
-  (Set-ItemProperty "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0) | Out-Null
-  (mkdir -Force "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}") | Out-Null
-  (Set-ItemProperty "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0) | Out-Null
-  (Remove-PSDrive "HKCR") | Out-Null
-  Write-Output "Removing run hook for new users"
-  reg load "hku\Default" "C:\Users\Default\NTUSER.DAT" | Out-Null
-  reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v OneDriveSetup /f 2>&1 | Out-Null
-  reg unload "hku\Default" | Out-Null
-  reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v OneDriveSetup /f 2>&1 | Out-Null
-  Write-Output "Removing startmenu entry"
-  Remove-Item -Force -ErrorAction SilentlyContinue "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
-  Write-Output "Removing scheduled task"
-  Get-ScheduledTask -TaskPath '\' -TaskName 'OneDrive*' -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
-}
-
-function fix-tasks(){
-  write-header "Disabling some scheduled tasks..."
-  foreach ($task in $tasks) {
-    $parts=$task.split('\')
-    $name=$parts[-1]
-    $path=$parts[0..($parts.length-2)] -join '\'
-    Disable-ScheduledTask -TaskName "$name" -TaskPath "$path" -ErrorAction SilentlyContinue | Out-Null
-  }
-}
-
-function fix-root-tasks(){
-  write-header "Disabling some scheduled root tasks..."
-  foreach ($task in $root_tasks) {
-    $parts=$task.split('\')
-    $name=$parts[-1]
-    Disable-ScheduledTask -TaskName "$name" -TaskPath "\" -ErrorAction SilentlyContinue | Out-Null
-  }
-}
-
-function fix-tasks-files(){
-  write-header "Removing some scheduled tasks..."
-  foreach ($tpath in $tpaths) {
-    Get-ChildItem -ErrorAction SilentlyContinue -Path "$env:systemroot$tpath" * | foreach {
-      Takeown-File $_.FullName | Out-Null
-      Remove-Item -ErrorAction SilentlyContinue -Path $_.FullName | Out-Null
-    }
-  }
-}
-
-function fix-services(){
-  write-header "Disabling some services..."
-  foreach ($service in $services) {
-    Write-Output "Trying to disable $service"
-    Get-Service -Name $service -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-  }
-}
-
-function fix-bservices() {
-  write-header "Disabling some bad services..."
-  foreach ($bservice in $bservices) {
-    Write-Output "Trying to disable $bservice"
-    Set-ItemProperty -ErrorAction SilentlyContinue "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice" "Start" 4
-    Set-Registry-ReadOnly "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice"
-  }
-}
-
-function rdw($path,$key,$val) {
-  reg add $path /v $key /t REG_DWORD /d $val /f | Out-Null
-}
-
-function rsz($path,$key,$val) {
-  reg add $path /v $key /t REG_SZ /d $val /f | Out-Null
-}
+$acl_reset_dirs=@(
+"$env:windir\Logs\waasmedic"
+)
 
 $reg_dw=@(
 @("HKCU\Control Panel\International\User Profile","HttpAcceptLanguageOptOut",1),
@@ -622,6 +486,182 @@ $reg_sz=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Internet Settings","ProvisionedHomePages","about:blank")
 )
 
+$fc=$host.UI.RawUI.ForegroundColor
+
+function write-header($text) {
+  $host.UI.RawUI.ForegroundColor="green"
+  write $text
+  $host.UI.RawUI.ForegroundColor=$fc
+}
+
+function Set-Registry-ReadOnly($regpath) {
+  Try{
+    $acl=Get-Acl $regpath
+    $acl.SetAccessRuleProtection($True,$True)
+  }
+  Catch { return }
+  foreach ($a in $acl.Access) {
+    Try{
+      $u=$a.IdentityReference
+      $propagation=$a.PropagationFlags
+      $rule=New-Object System.Security.AccessControl.RegistryAccessRule($u,"ReadKey",@("ObjectInherit","ContainerInherit"),"None","Allow")
+      $acl.PurgeAccessRules($u)
+      $acl.SetAccessRule($rule)
+    }
+   Catch {}
+  }
+  Try{
+    Set-Acl -ea 0 $regpath $acl | Out-Null
+  }
+  Catch {}
+}
+
+function Takeown-File($path) {
+  takeown.exe /A /F $path
+  $acl=Get-Acl $path
+  $admins=New-Object System.Security.Principal.SecurityIdentifier("S-1-5-32-544")
+  $admins=$admins.Translate([System.Security.Principal.NTAccount])
+  $rule=New-Object System.Security.AccessControl.FileSystemAccessRule($admins,"FullControl","None","None", "Allow")
+  $acl.AddAccessRule($rule)
+  Set-Acl -Path $path -AclObject $acl
+}
+
+function remove-app($app) {
+  write "Trying to remove $app"
+  Try{
+    sajb -Name remappx -ScriptBlock {(Get-AppxPackage -Name "$using:app" -AllUsers -ea 0 | Remove-AppxPackage -ea 0) | Out-Null} | Out-Null
+    (gjb | wjb) | Out-Null
+    sajb -Name remappxp -ScriptBlock {(Get-AppXProvisionedPackage -Online -ea 0 | Where-Object DisplayName -EQ "$using:app" | Remove-AppxProvisionedPackage -Online -ea 0) | Out-Null} | Out-Null
+    (gjb | wjb) | Out-Null
+  }
+  Catch {}
+}
+
+function remove-cap($app) {
+  write "Trying to remove $app"
+  Try{
+    sajb -Name remcap -ScriptBlock {(Get-WindowsCapability -Online -Name "$using:app" -ea 0 | Where-Object State -EQ "Installed" | Remove-WindowsCapability -Online -ea 0) | Out-Null} | Out-Null
+    (gjb | wjb) | Out-Null
+  }
+  Catch {}
+}
+
+function remove-apps() {
+  write-header "Uninstalling default apps..."
+  foreach ($app in $apps) {
+    remove-app $app
+  }
+  sajb -Name feature -ScriptBlock {Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ea 0 | Out-Null} | Out-Null
+  (gjb | wjb) | Out-Null
+  sajb -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Deprecation -NoRestart -ea 0 | Out-Null} | Out-Null
+  (gjb | wjb) | Out-Null
+  sajb -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName WorkFolders-Client -NoRestart  -ea 0 | Out-Null} | Out-Null
+  (gjb | wjb) | Out-Null
+  sajb -Name feature -ScriptBlock {Disable-WindowsOptionalFeature -Online -FeatureName WindowsMediaPlayer -NoRestart  -ea 0 | Out-Null} | Out-Null
+  (gjb | wjb) | Out-Null
+  $pkgs=(Dism /Online /Get-Packages | select-string -pattern 'package' | %{ $_.tostring(); } | %{ $_ -split ' : '; } )
+  $pkgs=($pkgs | select-string -pattern 'package' | %{ $_.tostring(); } )
+  $pkgs | select-string -pattern 'hello-face' | %{ $_.tostring(); } | %{(Dism /Online /Remove-Package /PackageName:$_ /Quiet /NoRestart 2>&1)|out-null ;}
+  foreach ($app in $caps) {
+    remove-cap $app
+  }
+  (gjb | wjb) | Out-Null
+  (taskkill.exe /F /IM "SnippingTool.exe") 2>&1 | Out-Null
+  sajb -Name remsnipp -ScriptBlock {(cmd.exe /c "$env:systemroot\System32\SnippingTool.exe /uninstall >nul 2>&1") | Out-Null} | Out-Null
+  sleep -Seconds 15
+  (taskkill.exe /F /IM "SnippingTool.exe") 2>&1 | Out-Null
+}
+
+function remove-onedrive(){
+  write-header "Removing OneDrive..."
+  write "Kill OneDrive process"
+  (taskkill.exe /F /IM "OneDrive.exe") 2>&1 | Out-Null
+  write "Remove OneDrive"
+  if (Test-Path "$env:systemroot\System32\OneDriveSetup.exe") {
+    & "$env:systemroot\System32\OneDriveSetup.exe" /uninstall
+  }
+  if (Test-Path "$env:systemroot\SysWOW64\OneDriveSetup.exe") {
+    & "$env:systemroot\SysWOW64\OneDriveSetup.exe" /uninstall
+  }
+  write "Removing OneDrive leftovers"
+  rm -Recurse -Force -ea 0 "$env:localappdata\Microsoft\OneDrive"
+  rm -Recurse -Force -ea 0 "$env:programdata\Microsoft OneDrive"
+  rm -Recurse -Force -ea 0 "$env:systemdrive\OneDriveTemp"
+  If ((ls "$env:userprofile\OneDrive" -Recurse | Measure-Object).Count -eq 0) {
+    rm -Recurse -Force -ea 0 "$env:userprofile\OneDrive"
+  }
+  write "Remove Onedrive from explorer sidebar"
+  (New-PSDrive -PSProvider "Registry" -Root "HKEY_CLASSES_ROOT" -Name "HKCR") | Out-Null
+  (mkdir -Force "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}") | Out-Null
+  (sp "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0) | Out-Null
+  (mkdir -Force "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}") | Out-Null
+  (sp "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" "System.IsPinnedToNameSpaceTree" 0) | Out-Null
+  (Remove-PSDrive "HKCR") | Out-Null
+  write "Removing run hook for new users"
+  reg load "hku\Default" "C:\Users\Default\NTUSER.DAT" | Out-Null
+  reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v OneDriveSetup /f 2>&1 | Out-Null
+  reg unload "hku\Default" | Out-Null
+  reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v OneDriveSetup /f 2>&1 | Out-Null
+  write "Removing startmenu entry"
+  rm -Force -ea 0 "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
+  write "Removing scheduled task"
+  Get-ScheduledTask -TaskPath '\' -TaskName 'OneDrive*' -ea 0 | Unregister-ScheduledTask -Confirm:$false -ea 0 | Out-Null
+}
+
+function fix-tasks(){
+  write-header "Disabling some scheduled tasks..."
+  foreach ($task in $tasks) {
+    $parts=$task.split('\')
+    $name=$parts[-1]
+    $path=$parts[0..($parts.length-2)] -join '\'
+    Disable-ScheduledTask -TaskName "$name" -TaskPath "$path" -ea 0 | Out-Null
+  }
+}
+
+function fix-root-tasks(){
+  write-header "Disabling some scheduled root tasks..."
+  foreach ($task in $root_tasks) {
+    $parts=$task.split('\')
+    $name=$parts[-1]
+    Disable-ScheduledTask -TaskName "$name" -TaskPath "\" -ea 0 | Out-Null
+  }
+}
+
+function fix-tasks-files(){
+  write-header "Removing some scheduled tasks..."
+  foreach ($tpath in $tpaths) {
+    ls -ea 0 -Path "$env:systemroot$tpath" * | foreach {
+      Takeown-File $_.FullName | Out-Null
+      rm -ea 0 -Path $_.FullName | Out-Null
+    }
+  }
+}
+
+function fix-services(){
+  write-header "Disabling some services..."
+  foreach ($service in $services) {
+    write "Trying to disable $service"
+    gsv -Name $service -ea 0 | Set-Service -StartupType Disabled -ea 0 | Out-Null
+  }
+}
+
+function fix-bservices() {
+  write-header "Disabling some bad services..."
+  foreach ($bservice in $bservices) {
+    write "Trying to disable $bservice"
+    sp -ea 0 "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice" "Start" 4
+    Set-Registry-ReadOnly "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice"
+  }
+}
+
+function rdw($path,$key,$val) {
+  reg add $path /v $key /t REG_DWORD /d $val /f | Out-Null
+}
+
+function rsz($path,$key,$val) {
+  reg add $path /v $key /t REG_SZ /d $val /f | Out-Null
+}
+
 function fix-registry() {
   write-header "Tuning registry keys..."
   foreach ($r in $reg_dw) {
@@ -639,82 +679,91 @@ function fix-registry() {
   reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store" /f 2>&1 | Out-Null
 }
 
-$prg_list=@(
-"%SystemRoot%\System32\SIHClient.exe"
-"%SystemRoot%\System32\mousocoreworker.exe"
-"%SystemRoot%\UUS\amd64\MoUsoCoreWorker.exe"
-"%SystemRoot%\System32\Speech_OneCore\common\SpeechRuntime.exe"
-"%SystemRoot%\System32\OneDriveSetup.exe"
-"%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe"
-"%SystemRoot%\explorer.exe"
-)
-
 function fix-network() {
   write-header "Adding firewall rules..."
   foreach ($p in $prg_list) {
-    Remove-NetFirewallRule -DisplayName "$p block-internet" -ErrorAction SilentlyContinue | Out-Null
-    New-NetFirewallRule -Program "$p" -DisplayName "$p block-internet" -Direction Outbound -RemoteAddress Internet -Action Block -ErrorAction SilentlyContinue | Out-Null
+    Remove-NetFirewallRule -DisplayName "$p block-internet" -ea 0 | Out-Null
+    New-NetFirewallRule -Program "$p" -DisplayName "$p block-internet" -Direction Outbound -RemoteAddress Internet -Action Block -ea 0 | Out-Null
+  }
+}
+
+function clean_dir($path){
+  if (!(Test-Path -LiteralPath $path -Type leaf)){
+    try{
+      if (Test-Path -Path $path){
+        foreach($f in (ls -Path $path -Force)){
+          if (Test-Path -LiteralPath $f -Type leaf){                        
+            try{
+              Write-Host "Trying to remove file     : `"$f`""
+              rm $f -Force -ea 0 2>&1 | Out-Null
+            }catch{}
+          }
+          else{
+            Write-Host "Trying to remove directory: `"$f`""
+            cmd.exe /c "rd /q /s `"$($f.FullName)`"" 2>&1 | Out-Null
+          }
+        }
+      }
+    }catch{}
+  }
+  if (Test-Path -LiteralPath $path){                        
+    try{
+      Write-Host "Trying to remove file     : `"$path`""
+      rm $path -Force -ea 0 2>&1 | Out-Null
+    }catch{}
   }
 }
 
 function cleanup(){
   $drive=Get-WmiObject -Class Win32_Volume -Filter "DriveLetter='$env:systemdrive'"
   $drive | Set-WmiInstance -Arguments @{IndexingEnabled=$False} | Out-Null
+  write-header "Windows components cleanup..."
+  Dism /Online /Cleanup-Image /StartComponentCleanup /ResetBase /NoRestart /Quiet
+  write-header "Disabling Windows reserved storage..."
+  Dism /Online /Set-ReservedStorageState /State:Disabled /NoRestart /Quiet
   write-header "Deleting system restore points..."
-  vssadmin delete shadows /for=$env:systemdrive /all | Out-Null
-  write-header "Deleting temporary folders..."
-  if (test-path $env:systemdrive\Config.Msi) {Remove-Item -Path $env:systemdrive\Config.Msi -Force -Recurse}
-  if (test-path $env:systemdrive\Intel) {Remove-Item -Path $env:systemdrive\Intel -Force -Recurse}
-  if (test-path $env:systemdrive\PerfLogs) {Remove-Item -Path $env:systemdrive\PerfLogs -Force -Recurse}
-  if (test-path $env:windir\memory.dmp) {Remove-Item $env:windir\memory.dmp -Force}
-  write-header "Deleting Windows error reporting files"
-  if (test-path $env:systemdrive\ProgramData\Microsoft\Windows\WER) {Get-ChildItem -ErrorAction SilentlyContinue -Path $env:systemdrive\ProgramData\Microsoft\Windows\WER -Recurse | Remove-Item -ErrorAction SilentlyContinue -Force -Recurse 2>&1 | Out-Null}
-  write-header "Removing system and user temporary Files"
+  vssadmin delete shadows /for=$env:systemdrive /all /quiet 2>&1 | Out-Null
+  spsv wuauserv -Force -ea 0 2>&1 | Out-Null
+  spsv TrustedInstaller -Force -ea 0 2>&1 | Out-Null
+  write-header "Deleting temporary folders and files..."
+  foreach($p in $acl_reset_dirs) {
+    takeown /a /f $p 2>&1 | Out-Null
+    icacls $p /reset /t /c /q 2>&1 | Out-Null
+    cmd.exe /c "del /q /s `"$p\*`"" 2>&1 | Out-Null
+  }
+  foreach($p in $temp_dirs) { clean_dir($p) }
   try{
-    Get-ChildItem $env:systemdrive\ -Include @("*.log","*.tmp","*.dmp") -Recurse -File -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue | Out-Null
+    ls $env:systemdrive\ -Include "*.log","*.tmp","*.dmp" -Force -s -File -ea 0 | foreach {
+      Write-Host "Trying to remove file     : `"$_`""
+      try{ rm $_ -Force -ea 0 2>&1 | Out-Null } catch {}
+    }
   }catch{}
-  foreach($f in (Get-ChildItem -Path "$env:windir\Temp\" -Force -ErrorAction SilentlyContinue )) { cmd.exe /c "rmdir /q /s $($f.FullName) >nul 2>&1" | Out-Null }
-  Remove-Item -Path "$env:windir\minidump\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\Prefetch\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\Logs\CBS\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\Logs\DISM\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\Logs\PLUG\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\Logs\SIH\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\Logs\waasmedic\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\Logs\waasmediccapsule\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\Logs\WindowsUpdate\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Temp\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\WER\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\Temporary Internet Files\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IECompatUaCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IEDownloadHistory\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  try{
-    Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  }catch{}
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCookies\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:systemdrive\Users\*\AppData\Local\Microsoft\Terminal Server Client\Cache\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  write-header "Removing Windows updates downloads..."
-  Stop-Service wuauserv -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Stop-Service TrustedInstaller -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Remove-Item -Path "$env:windir\SoftwareDistribution\*" -Force -Recurse -ErrorAction SilentlyContinue 2>&1 | Out-Null
-  Start-Service TrustedInstaller -ErrorAction SilentlyContinue 2>&1 | Out-Null
+  sasv TrustedInstaller -ea 0 2>&1 | Out-Null
   write-header "Running Windows system cleanup..."
   $StateFlags='StateFlags1234'
   $StateRun=$StateFlags.Substring($StateFlags.get_Length()-4)
   $StateRun='/sagerun:' + $StateRun 
   foreach ($cleanflag in $cleanflags) {
-    Start-Job -Name regprop -ScriptBlock {Set-ItemProperty -path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\$using:cleanflag" -name $using:StateFlags -type DWORD -Value 2 -ErrorAction SilentlyContinue} | Out-Null
-    (Get-Job | Wait-Job) | Out-Null
+    sajb -Name regprop -ScriptBlock {sp -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\$using:cleanflag" -Name $using:StateFlags -Type DWORD -Value 2 -ea 0  2>&1 | Out-Null }  2>&1 | Out-Null
+    (gjb | wjb) | Out-Null
   }
-  Start-Process -FilePath CleanMgr.exe -ArgumentList $StateRun  -WindowStyle Hidden -Wait
-  write-header "Clearing all event logs..."
-  wevtutil el | Foreach-Object {Write-Host "Clearing $_"; wevtutil cl "$_"}
+  saps -FilePath CleanMgr.exe -ArgumentList $StateRun -WindowStyle 1 -Wait
   foreach ($cleanflag in $cleanflags) {
-    Remove-ItemProperty -path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\$cleanflag" -name $StateFlags -ErrorAction SilentlyContinue
+    rp -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\$cleanflag" -Name $StateFlags -ea 0 2>&1 | Out-Null
   }
-  Remove-Item "C:\ProgramData\Microsoft\Windows Defender\Scans\mpenginedb.db" -ErrorAction SilentlyContinue
+  write-header "Deleting system notifications..."
+  [Windows.UI.Notifications.ToastNotificationManager,Windows.UI.Notifications,ContentType=WindowsRuntime] | Out-Null
+  $notifications=ls -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings" | select -ExpandProperty Name
+  foreach ($notification in $notifications){ 
+    $lastRegistryKeyName=($notification -split "\\")[-1] -replace "\\$"
+    [Windows.UI.Notifications.ToastNotificationManager]::History.Clear($lastRegistryKeyName)
+  }
+  write-header "Clearing all event logs..."
+  wevtutil el | foreach { Write-Host "Clearing $_"; wevtutil cl "$_" 2>&1 | Out-Null }
+  write-header "Clearing filesystem journal..."
   fsutil usn deletejournal /n $env:systemdrive | Out-Null
+  write-header "Windows system drive defragmentation..."
+  defrag $env:systemdrive /H /X /V /U
 } 
 
 function fix-view(){
@@ -735,29 +784,29 @@ function fix-view(){
   if(((Get-WmiObject Win32_OperatingSystem).Caption).Contains("11")){
     $Bags="HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags"
     $DLID="{885A186E-A440-4ADA-812B-DB871B942259}"
-    (Get-ChildItem $bags -recurse | ? PSChildName -eq $DLID ) | Remove-Item -Force -ErrorAction SilentlyContinue 2>&1 | Out-Null
+    (ls $bags -recurse | ? PSChildName -eq $DLID ) | rm -Force -ea 0 2>&1 | Out-Null
     rdw "HKLM\SOFTWARE\Microsoft\Windows\Shell\Bags\AllFolders\Shell\{885A186E-A440-4ADA-812B-DB871B942259}" Mode 4
     rdw "HKLM\SOFTWARE\Microsoft\Windows\Shell\Bags\AllFolders\Shell\{885A186E-A440-4ADA-812B-DB871B942259}" GroupView 0
     reg add "HKCU\SOFTWARE\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve /t REG_SZ /d " " | Out-Null
   }
   Try{
-    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" 2>&1 | Out-Null
+    rm -Recurse -Force -ea 0 "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" 2>&1 | Out-Null
   }
   Catch {}
   Try{
-    Start-Process wt.exe -WindowStyle hidden 2>&1 | Out-Null
-    Start-Sleep -s 5
-    $r=(Get-Content "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Encoding UTF8 -ErrorAction SilentlyContinue) -replace "^\s*\/\/.*" | Out-String -ErrorAction SilentlyContinue
-    $j=(ConvertFrom-Json -InputObject $r -ErrorAction SilentlyContinue)
+    saps wt.exe -WindowStyle hidden 2>&1 | Out-Null
+    sleep -s 5
+    $r=(gc "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Encoding UTF8 -ea 0) -replace "^\s*\/\/.*" | Out-String -ea 0
+    $j=(ConvertFrom-Json -InputObject $r -ea 0)
     $j.profiles.list | % {if($_.name -eq "Azure Cloud Shell"){$_.hidden=[boolean]"true"}}
-    $j | ConvertTo-Json -depth 32  -ErrorAction SilentlyContinue | Set-Content "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Encoding UTF8 -ErrorAction SilentlyContinue
+    $j | ConvertTo-Json -depth 32  -ea 0 | Set-Content "$env:localappdata\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Encoding UTF8 -ea 0
   }
   Catch {}
 }
 
 function fix-tiles(){
   Try{
-    Import-StartLayout -LayoutPath "$env:systemdrive\fixes\base\layout.xml" -MountPath "$env:systemdrive\" -ErrorAction SilentlyContinue | Out-Null
+    Import-StartLayout -LayoutPath "$env:systemdrive\fixes\base\layout.xml" -MountPath "$env:systemdrive\" -ea 0 | Out-Null
   }
   Catch {}
   reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" /f 2>&1 | Out-Null
@@ -774,15 +823,6 @@ function fix-misc(){
   rdw "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" RpcProtocols 0x7
 }
 
-function clear-notifications(){
-  [Windows.UI.Notifications.ToastNotificationManager,Windows.UI.Notifications,ContentType=WindowsRuntime] | Out-Null
-  $notifications=Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings" | Select-Object -ExpandProperty Name
-  foreach ($notification in $notifications){ 
-    $lastRegistryKeyName=($notification -split "\\")[-1] -replace "\\$"
-    [Windows.UI.Notifications.ToastNotificationManager]::History.Clear($lastRegistryKeyName)
-  }
-}
-
 fix-view
 remove-apps
 remove-onedrive
@@ -796,4 +836,3 @@ fix-network
 fix-tiles
 fix-misc
 cleanup
-clear-notifications

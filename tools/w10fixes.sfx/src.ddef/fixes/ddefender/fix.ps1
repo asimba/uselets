@@ -90,14 +90,14 @@ function Set-Registry-ReadOnly($regpath) {
     Catch {}
   }
   Try{
-    Set-Acl -ErrorAction SilentlyContinue $regpath $acl | Out-Null;
+    Set-Acl -ea 0 $regpath $acl | Out-Null;
   }
   Catch {}
 }
 
 function fix-services() {
   foreach ($bservice in $bservices) {
-    Set-ItemProperty -ErrorAction SilentlyContinue "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice" "Start" 4 | Out-Null
+    sp -ea 0 "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice" "Start" 4 | Out-Null
     Set-Registry-ReadOnly "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice"
   }
 }
@@ -118,7 +118,7 @@ function fix-registry() {
   rsz "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" "SmartScreenEnabled" "Off"
   reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run" /v "SecurityHealth" /f | Out-Null
   reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v SecurityHealth /f | Out-Null
-  Remove-Item "C:\ProgramData\Microsoft\Windows Defender\Scans\mpenginedb.db" -ErrorAction SilentlyContinue | Out-Null
+  rm "C:\ProgramData\Microsoft\Windows Defender\Scans\mpenginedb.db" -ea 0 | Out-Null
 }
 
 fix-services

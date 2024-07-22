@@ -49,6 +49,7 @@
 >          - [Пример конфигурации Xen для гостевой системы Windows Server 2012 R2 (Linux).](#пример-конфигурации-xen-для-гостевой-системы-windows-server-2012-r2-linux)  
 >          - [Очистка всех журналов событий из командной строки (Windows).](#очистка-всех-журналов-событий-из-командной-строки-windows)  
 >          - [Получение информации о материнской плате из командной строки (Windows).](#получение-информации-о-материнской-плате-из-командной-строки-windows)  
+>          - [Очистка системного диска Windows 10/11 от временных файлов.](#очистка-системного-диска-windows-1011-от-временных-файлов)  
 >          - [Отключение Windows Defender ("Защитник Windows") (Windows 10/11).](#отключение-windows-defender-защитник-windows-windows-1011)  
 >          - [Комплексное решение: отключение (снижение активности) Windows Defender (Windows 10/11), удаление bloatware, отключение телеметрии и автообновлений Windows 10/11.](#комплексное-решение-отключение-снижение-активности-windows-defender-windows-1011-удаление-bloatware-отключение-телеметрии-и-автообновлений-windows-1011)  
 >          - [Обход требований наличия модуля TPM 2.0 и включенного режима SecureBoot во время установки Windows 11.](#обход-требований-наличия-модуля-tpm-20-и-включенного-режима-secureboot-во-время-установки-windows-11)  
@@ -955,6 +956,10 @@ wmic baseboard get product,Manufacturer,version,serialnumber
 wmic csproduct get name
 wmic bios get serialnumber
 ```  
+
+#### Очистка системного диска Windows 10/11 от временных файлов.  
+_Требования (зависимости):_ PowerShell, [cleanup-x86_64](https://github.com/asimba/uselets/raw/main/tools/w10fixes.sfx/bin/cleanup.zip)  
+<p align="justify">Потребуется выполнить <b>на свой страх и риск</b> <i>cleanup.exe</i> из прилагающегося архива.</p>  
 
 #### Отключение Windows Defender ("Защитник Windows") (Windows 10/11).  
 _Требования (зависимости):_ PowerShell, [ddef-binary-x86_64](https://github.com/asimba/uselets/raw/main/tools/w10fixes.sfx/bin/ddef64.zip)  

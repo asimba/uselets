@@ -1,0 +1,48 @@
+#include "winver.h"
+
+#define VER_FILEVERSION             0,0,0,0
+#define VER_FILEVERSION_STR         "0.0.0.0\0"
+ 
+#define VER_PRODUCTVERSION          0,0,0,0
+#define VER_PRODUCTVERSION_STR      "0.0.0.0\0"
+ 
+#ifndef DEBUG
+#define VER_DEBUG                   0
+#else
+#define VER_DEBUG                   VS_FF_DEBUG
+#endif
+
+LANGUAGE  0x0,0x0
+98  RCDATA "cleanup.qb"
+99  RCDATA "banner.qb"
+100 RCDATA "dialog.qb"
+101 ICON "cleanup.ico"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     VER_FILEVERSION
+PRODUCTVERSION  VER_PRODUCTVERSION
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       VER_DEBUG
+FILEOS          VOS__WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "04090480"
+        BEGIN
+            VALUE "CompanyName",""
+            VALUE "FileDescription",""
+            VALUE "FileVersion",VER_FILEVERSION_STR
+            VALUE "InternalName",""
+            VALUE "LegalCopyright",""
+            VALUE "OriginalFilename",""
+            VALUE "ProductName",""
+            VALUE "ProductVersion",VER_PRODUCTVERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation",0x0019,1200
+    END
+END

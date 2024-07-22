@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="159.87163"
+   inkscape:export-xdpi="159.87163"
+   inkscape:export-filename="G:\temp\cleaner\banner.png"
+   sodipodi:docname="banner.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 80.391998 30.392"
+   height="30.392mm"
+   width="80.391998mm">
+  <defs
+     id="defs2">
+    <filter
+       id="filter3295"
+       inkscape:label="Drop Shadow"
+       style="color-interpolation-filters:sRGB;">
+      <feFlood
+         id="feFlood3285"
+         result="flood"
+         flood-color="rgb(0,0,0)"
+         flood-opacity="0.4" />
+      <feComposite
+         id="feComposite3287"
+         result="composite1"
+         operator="in"
+         in2="SourceGraphic"
+         in="flood" />
+      <feGaussianBlur
+         id="feGaussianBlur3289"
+         result="blur"
+         stdDeviation="0.1"
+         in="composite1" />
+      <feOffset
+         id="feOffset3291"
+         result="offset"
+         dy="0.3"
+         dx="0.3" />
+      <feComposite
+         id="feComposite3293"
+         result="composite2"
+         operator="over"
+         in2="offset"
+         in="SourceGraphic" />
+    </filter>
+    <filter
+       height="1.067877"
+       y="-0.033938495"
+       width="1.0254539"
+       x="-0.012726936"
+       id="filter3958"
+       style="color-interpolation-filters:sRGB"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur3960"
+         stdDeviation="0.42423121"
+         inkscape:collect="always" />
+    </filter>
+    <filter
+       height="1.0678771"
+       y="-0.033938494"
+       width="1.0254539"
+       x="-0.012726936"
+       id="filter3958-3"
+       style="color-interpolation-filters:sRGB"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur3960-1"
+         stdDeviation="0.42423121"
+         inkscape:collect="always" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:window-height="979"
+     inkscape:window-width="1818"
+     fit-margin-bottom="0"
+     fit-margin-right="0"
+     fit-margin-left="0"
+     fit-margin-top="0"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="g918"
+     inkscape:document-units="mm"
+     inkscape:cy="70.570422"
+     inkscape:cx="126.64854"
+     inkscape:zoom="2.8"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-19.458763,-20.214715)"
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Слой 1">
+    <g
+       transform="translate(0.431035,0.52916667)"
+       id="g918">
+      <g
+         id="g4102">
+        <rect
+           style="opacity:0.996;fill:#acb7af;fill-opacity:1;stroke:#171717;stroke-width:0.392;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect833"
+           width="80"
+           height="30"
+           x="19.223728"
+           y="19.881548" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:4.58611px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter3295)"
+           x="59.176613"
+           y="33.225643"
+           id="text837"><tspan
+             id="tspan1319"
+             sodipodi:role="line"
+             x="59.176613"
+             y="33.225643"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611px;font-family:Akrux;-inkscape-font-specification:Akrux;text-align:center;text-anchor:middle;stroke-width:0.264583px">Идёт выполнение.</tspan><tspan
+             sodipodi:role="line"
+             x="59.176613"
+             y="38.96809"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611px;font-family:Akrux;-inkscape-font-specification:Akrux;text-align:center;text-anchor:middle;stroke-width:0.264583px"
+             id="tspan864">Пожалуйста, ожидайте...</tspan></text>
+        <g
+           transform="matrix(1.0000812,0,0,0.99355796,-54.307264,-9.0873667)"
+           id="g3208">
+          <rect
+             y="19.681704"
+             x="19.223728"
+             height="30.000002"
+             width="80"
+             id="rect833-8"
+             style="opacity:0.996;fill:none;fill-opacity:1;stroke:#171717;stroke-width:0.892;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3958-3)"
+             transform="matrix(0.99260562,0,0,1.0002436,54.735967,9.5638467)" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
