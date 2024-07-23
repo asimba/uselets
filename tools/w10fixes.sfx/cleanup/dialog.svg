@@ -322,6 +322,70 @@
          in2="offset"
          in="SourceGraphic" />
     </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter1005">
+      <feFlood
+         flood-opacity="0.4"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood995" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite997" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="0.1"
+         result="blur"
+         id="feGaussianBlur999" />
+      <feOffset
+         dx="0.3"
+         dy="0.3"
+         result="offset"
+         id="feOffset1001" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite1003" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter1017">
+      <feFlood
+         flood-opacity="0.4"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood1007" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite1009" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="0.1"
+         result="blur"
+         id="feGaussianBlur1011" />
+      <feOffset
+         dx="0.3"
+         dy="0.3"
+         result="offset"
+         id="feOffset1013" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite1015" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -368,7 +432,7 @@
        id="g918"
        transform="translate(0.431035,0.52916667)">
       <g
-         id="g281">
+         id="g944">
         <rect
            y="19.881548"
            x="19.223728"
@@ -398,7 +462,7 @@
            height="11.837507"
            width="34.837505"
            id="rect833-0"
-           style="opacity:0.996;fill:#e8ebe8;fill-opacity:1;stroke:#171717;stroke-width:0.562;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter255)"
+           style="opacity:0.996;fill:none;fill-opacity:0.472656;stroke:#171717;stroke-width:0.8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter1005)"
            ry="3.3408692" />
         <text
            id="text837-3"
@@ -413,7 +477,7 @@
              sodipodi:role="line">Да</tspan></text>
         <rect
            ry="3.3408692"
-           style="opacity:0.996;fill:#e8ebe8;fill-opacity:1;stroke:#171717;stroke-width:0.561999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter267)"
+           style="opacity:0.996;fill:none;fill-opacity:1;stroke:#171717;stroke-width:0.8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter1017)"
            id="rect833-0-4"
            width="34.837505"
            height="11.837507"
