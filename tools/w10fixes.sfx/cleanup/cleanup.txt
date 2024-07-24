@@ -1,0 +1,770 @@
+
+cleanup.exe:     file format pei-x86-64
+cleanup.exe
+architecture: i386:x86-64, flags 0x00000103:
+HAS_RELOC, EXEC_P, D_PAGED
+start address 0x0000000140002d80
+
+Characteristics 0x22e
+	executable
+	line numbers stripped
+	symbols stripped
+	large address aware
+	debugging information removed
+
+Time/Date		Thu Jan 01 03:00:00 1970
+Magic			020b	(PE32+)
+MajorLinkerVersion	2
+MinorLinkerVersion	36
+SizeOfCode		0000000000002a00
+SizeOfInitializedData	000000000000da00
+SizeOfUninitializedData	0000000000030800
+AddressOfEntryPoint	0000000000002d80
+BaseOfCode		0000000000001000
+ImageBase		0000000140000000
+SectionAlignment	00001000
+FileAlignment		00000200
+MajorOSystemVersion	6
+MinorOSystemVersion	0
+MajorImageVersion	255
+MinorImageVersion	255
+MajorSubsystemVersion	6
+MinorSubsystemVersion	2
+Win32Version		00000000
+SizeOfImage		00047000
+SizeOfHeaders		00000400
+CheckSum		0001fc93
+Subsystem		00000002	(Windows GUI)
+DllCharacteristics	00000160
+SizeOfStackReserve	0000000000200000
+SizeOfStackCommit	0000000000001000
+SizeOfHeapReserve	0000000000100000
+SizeOfHeapCommit	0000000000001000
+LoaderFlags		00000000
+NumberOfRvaAndSizes	00000010
+
+The Data Directory
+Entry 0 0000000000038000 00001b6f Export Directory [.edata (or where ever we found it)]
+Entry 1 000000000003a000 00000a60 Import Directory [parts of .idata]
+Entry 2 000000000003c000 0000a870 Resource Directory [.rsrc]
+Entry 3 0000000000000000 00000000 Exception Directory [.pdata]
+Entry 4 0000000000000000 00000000 Security Directory
+Entry 5 0000000000000000 00000000 Base Relocation Directory [.reloc]
+Entry 6 0000000000006000 0000001c Debug Directory
+Entry 7 0000000000000000 00000000 Description Directory
+Entry 8 0000000000000000 00000000 Special Directory
+Entry 9 0000000000000000 00000000 Thread Storage Directory [.tls]
+Entry a 0000000000000000 00000000 Load Configuration Directory
+Entry b 0000000000000000 00000000 Bound Import Directory
+Entry c 000000000003a2c4 00000238 Import Address Table Directory
+Entry d 0000000000000000 00000000 Delay Import Directory
+Entry e 0000000000000000 00000000 CLR Runtime Header
+Entry f 0000000000000000 00000000 Reserved
+
+There is an import table in .idata at 0x4003a000
+
+The Import Tables (interpreted .idata section contents)
+ vma:            Hint    Time      Forward  DLL       First
+                 Table   Stamp     Chain    Name      Thunk
+ 0003a000	0003a08c 00000000 00000000 0003a918 0003a2c4
+
+	DLL Name: ADVAPI32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	3a4fc	 1032  AllocateAndInitializeSid
+	3a518	 1095  CheckTokenMembership
+	3a530	 1309  FreeSid
+
+ 0003a014	0003a0ac 00000000 00000000 0003a950 0003a2e4
+
+	DLL Name: GDI32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	3a53a	   20  BitBlt
+	3a544	   42  CreateBitmap
+	3a554	   50  CreateCompatibleDC
+	3a56a	   80  CreatePen
+	3a576	  385  DeleteDC
+	3a582	  388  DeleteObject
+	3a592	  687  GetObjectW
+	3a5a0	  747  LineTo
+	3a5aa	  767  MoveToEx
+	3a5b6	  870  SelectObject
+
+ 0003a028	0003a104 00000000 00000000 0003a9a8 0003a33c
+
+	DLL Name: KERNEL32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	3a5c6	  141  CloseHandle
+	3a5d4	  227  CreateMutexW
+	3a5e4	  231  CreatePipe
+	3a5f2	  239  CreateProcessW
+	3a604	  252  CreateThread
+	3a614	  366  ExitProcess
+	3a622	  422  FindResourceW
+	3a632	  488  GetCommandLineW
+	3a644	  552  GetCurrentProcess
+	3a658	  630  GetLastError
+	3a668	  994  LoadResource
+	3a678	  997  LocalAlloc
+	3a686	 1002  LocalFree
+	3a692	 1016  LockResource
+	3a6a2	 1242  SearchPathW
+	3a6b0	 1330  SetHandleInformation
+	3a6c8	 1503  WaitForSingleObject
+	3a6de	 1567  WriteFile
+	3a6ea	 1600  lstrcmpW
+
+ 0003a03c	0003a1a4 00000000 00000000 0003a9bc 0003a3dc
+
+	DLL Name: ntdll.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	3a6f6	 1145  RtlGetVersion
+
+ 0003a050	0003a1b4 00000000 00000000 0003a9d0 0003a3ec
+
+	DLL Name: SHELL32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	3a706	   11  CommandLineToArgvW
+	3a71c	  340  ShellExecuteW
+
+ 0003a064	0003a1cc 00000000 00000000 0003aa54 0003a404
+
+	DLL Name: USER32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	3a72c	    3  AdjustWindowRect
+	3a740	   17  BeginPaint
+	3a74e	  116  CreateWindowExW
+	3a760	  165  DefWindowProcW
+	3a772	  177  DestroyWindow
+	3a782	  186  DispatchMessageW
+	3a796	  241  EndPaint
+	3a7a2	  304  GetClientRect
+	3a7b2	  319  GetDC
+	3a7ba	  384  GetMessageW
+	3a7c8	  440  GetSystemMetrics
+	3a7dc	  522  InvalidateRect
+	3a7ee	  568  KillTimer
+	3a7fa	  576  LoadCursorW
+	3a808	  578  LoadIconW
+	3a814	  620  MessageBoxW
+	3a822	  656  PostQuitMessage
+	3a834	  658  PostThreadMessageW
+	3a84a	  665  PtInRect
+	3a856	  699  RegisterClassW
+	3a868	  728  ReleaseCapture
+	3a87a	  729  ReleaseDC
+	3a886	  754  SendMessageW
+	3a896	  832  SetTimer
+	3a8a2	  853  SetWindowTextW
+	3a8b4	  865  ShowWindow
+	3a8c2	  890  TrackMouseEvent
+	3a8d4	  897  TranslateMessage
+	3a8e8	  907  UnregisterClassW
+	3a8fc	  922  UpdateWindow
+
+ 0003a078	00000000 00000000 00000000 00000000 00000000
+
+There is an export table in .edata at 0x40038000
+
+The Export Tables (interpreted .edata section contents)
+
+Export Flags 			0
+Time/Date stamp 		0
+Major/Minor 			0/0
+Name 				0000000000038a46 ngskuyfo.exe
+Ordinal Base 			1
+Number in:
+	Export Address Table 		00000103
+	[Name Pointer/Ordinal] Table	00000103
+Table Addresses
+	Export Address Table 		0000000000038028
+	Name Pointer Table 		0000000000038434
+	Ordinal Table 			0000000000038840
+
+Export Address Table -- Ordinal Base 1
+	[   0] +base[   1] 1000 Export RVA
+	[   1] +base[   2] 1010 Export RVA
+	[   2] +base[   3] 1020 Export RVA
+	[   3] +base[   4] 1030 Export RVA
+	[   4] +base[   5] 1040 Export RVA
+	[   5] +base[   6] 1050 Export RVA
+	[   6] +base[   7] 1060 Export RVA
+	[   7] +base[   8] 1070 Export RVA
+	[   8] +base[   9] 1080 Export RVA
+	[   9] +base[  10] 1090 Export RVA
+	[  10] +base[  11] 10a0 Export RVA
+	[  11] +base[  12] 10b0 Export RVA
+	[  12] +base[  13] 10c0 Export RVA
+	[  13] +base[  14] 10d0 Export RVA
+	[  14] +base[  15] 10e0 Export RVA
+	[  15] +base[  16] 10f0 Export RVA
+	[  16] +base[  17] 1100 Export RVA
+	[  17] +base[  18] 1110 Export RVA
+	[  18] +base[  19] 1120 Export RVA
+	[  19] +base[  20] 1130 Export RVA
+	[  20] +base[  21] 1140 Export RVA
+	[  21] +base[  22] 1150 Export RVA
+	[  22] +base[  23] 1160 Export RVA
+	[  23] +base[  24] 1170 Export RVA
+	[  24] +base[  25] 1180 Export RVA
+	[  25] +base[  26] 1190 Export RVA
+	[  26] +base[  27] 11a0 Export RVA
+	[  27] +base[  28] 11b0 Export RVA
+	[  28] +base[  29] 11c0 Export RVA
+	[  29] +base[  30] 11d0 Export RVA
+	[  30] +base[  31] 11e0 Export RVA
+	[  31] +base[  32] 11f0 Export RVA
+	[  32] +base[  33] 1200 Export RVA
+	[  33] +base[  34] 1210 Export RVA
+	[  34] +base[  35] 1220 Export RVA
+	[  35] +base[  36] 1230 Export RVA
+	[  36] +base[  37] 1240 Export RVA
+	[  37] +base[  38] 1250 Export RVA
+	[  38] +base[  39] 1260 Export RVA
+	[  39] +base[  40] 1270 Export RVA
+	[  40] +base[  41] 1280 Export RVA
+	[  41] +base[  42] 1290 Export RVA
+	[  42] +base[  43] 12a0 Export RVA
+	[  43] +base[  44] 12b0 Export RVA
+	[  44] +base[  45] 12c0 Export RVA
+	[  45] +base[  46] 12d0 Export RVA
+	[  46] +base[  47] 12e0 Export RVA
+	[  47] +base[  48] 12f0 Export RVA
+	[  48] +base[  49] 1300 Export RVA
+	[  49] +base[  50] 1310 Export RVA
+	[  50] +base[  51] 1320 Export RVA
+	[  51] +base[  52] 1330 Export RVA
+	[  52] +base[  53] 1340 Export RVA
+	[  53] +base[  54] 1350 Export RVA
+	[  54] +base[  55] 1360 Export RVA
+	[  55] +base[  56] 1370 Export RVA
+	[  56] +base[  57] 1380 Export RVA
+	[  57] +base[  58] 1390 Export RVA
+	[  58] +base[  59] 13a0 Export RVA
+	[  59] +base[  60] 13b0 Export RVA
+	[  60] +base[  61] 13c0 Export RVA
+	[  61] +base[  62] 13d0 Export RVA
+	[  62] +base[  63] 13e0 Export RVA
+	[  63] +base[  64] 13f0 Export RVA
+	[  64] +base[  65] 1400 Export RVA
+	[  65] +base[  66] 1410 Export RVA
+	[  66] +base[  67] 1420 Export RVA
+	[  67] +base[  68] 1430 Export RVA
+	[  68] +base[  69] 1440 Export RVA
+	[  69] +base[  70] 1450 Export RVA
+	[  70] +base[  71] 1460 Export RVA
+	[  71] +base[  72] 1470 Export RVA
+	[  72] +base[  73] 1480 Export RVA
+	[  73] +base[  74] 1490 Export RVA
+	[  74] +base[  75] 14a0 Export RVA
+	[  75] +base[  76] 14b0 Export RVA
+	[  76] +base[  77] 14c0 Export RVA
+	[  77] +base[  78] 14d0 Export RVA
+	[  78] +base[  79] 14e0 Export RVA
+	[  79] +base[  80] 14f0 Export RVA
+	[  80] +base[  81] 1500 Export RVA
+	[  81] +base[  82] 1510 Export RVA
+	[  82] +base[  83] 1520 Export RVA
+	[  83] +base[  84] 1530 Export RVA
+	[  84] +base[  85] 1540 Export RVA
+	[  85] +base[  86] 1550 Export RVA
+	[  86] +base[  87] 1560 Export RVA
+	[  87] +base[  88] 1570 Export RVA
+	[  88] +base[  89] 1580 Export RVA
+	[  89] +base[  90] 1590 Export RVA
+	[  90] +base[  91] 15a0 Export RVA
+	[  91] +base[  92] 15b0 Export RVA
+	[  92] +base[  93] 15c0 Export RVA
+	[  93] +base[  94] 15d0 Export RVA
+	[  94] +base[  95] 15e0 Export RVA
+	[  95] +base[  96] 15f0 Export RVA
+	[  96] +base[  97] 1600 Export RVA
+	[  97] +base[  98] 1610 Export RVA
+	[  98] +base[  99] 1620 Export RVA
+	[  99] +base[ 100] 1630 Export RVA
+	[ 100] +base[ 101] 1640 Export RVA
+	[ 101] +base[ 102] 1650 Export RVA
+	[ 102] +base[ 103] 1660 Export RVA
+	[ 103] +base[ 104] 1670 Export RVA
+	[ 104] +base[ 105] 1680 Export RVA
+	[ 105] +base[ 106] 1690 Export RVA
+	[ 106] +base[ 107] 16a0 Export RVA
+	[ 107] +base[ 108] 16b0 Export RVA
+	[ 108] +base[ 109] 16c0 Export RVA
+	[ 109] +base[ 110] 16d0 Export RVA
+	[ 110] +base[ 111] 16e0 Export RVA
+	[ 111] +base[ 112] 16f0 Export RVA
+	[ 112] +base[ 113] 1700 Export RVA
+	[ 113] +base[ 114] 1710 Export RVA
+	[ 114] +base[ 115] 1720 Export RVA
+	[ 115] +base[ 116] 1730 Export RVA
+	[ 116] +base[ 117] 1740 Export RVA
+	[ 117] +base[ 118] 1750 Export RVA
+	[ 118] +base[ 119] 1760 Export RVA
+	[ 119] +base[ 120] 1770 Export RVA
+	[ 120] +base[ 121] 1780 Export RVA
+	[ 121] +base[ 122] 1790 Export RVA
+	[ 122] +base[ 123] 17a0 Export RVA
+	[ 123] +base[ 124] 17b0 Export RVA
+	[ 124] +base[ 125] 17c0 Export RVA
+	[ 125] +base[ 126] 17d0 Export RVA
+	[ 126] +base[ 127] 17e0 Export RVA
+	[ 127] +base[ 128] 17f0 Export RVA
+	[ 128] +base[ 129] 1800 Export RVA
+	[ 129] +base[ 130] 1810 Export RVA
+	[ 130] +base[ 131] 1820 Export RVA
+	[ 131] +base[ 132] 1830 Export RVA
+	[ 132] +base[ 133] 1840 Export RVA
+	[ 133] +base[ 134] 1850 Export RVA
+	[ 134] +base[ 135] 1860 Export RVA
+	[ 135] +base[ 136] 1870 Export RVA
+	[ 136] +base[ 137] 1880 Export RVA
+	[ 137] +base[ 138] 1890 Export RVA
+	[ 138] +base[ 139] 18a0 Export RVA
+	[ 139] +base[ 140] 18b0 Export RVA
+	[ 140] +base[ 141] 18c0 Export RVA
+	[ 141] +base[ 142] 18d0 Export RVA
+	[ 142] +base[ 143] 18e0 Export RVA
+	[ 143] +base[ 144] 18f0 Export RVA
+	[ 144] +base[ 145] 1900 Export RVA
+	[ 145] +base[ 146] 1910 Export RVA
+	[ 146] +base[ 147] 1920 Export RVA
+	[ 147] +base[ 148] 1930 Export RVA
+	[ 148] +base[ 149] 1940 Export RVA
+	[ 149] +base[ 150] 1950 Export RVA
+	[ 150] +base[ 151] 1960 Export RVA
+	[ 151] +base[ 152] 1970 Export RVA
+	[ 152] +base[ 153] 1980 Export RVA
+	[ 153] +base[ 154] 1990 Export RVA
+	[ 154] +base[ 155] 19a0 Export RVA
+	[ 155] +base[ 156] 19b0 Export RVA
+	[ 156] +base[ 157] 19c0 Export RVA
+	[ 157] +base[ 158] 19d0 Export RVA
+	[ 158] +base[ 159] 19e0 Export RVA
+	[ 159] +base[ 160] 19f0 Export RVA
+	[ 160] +base[ 161] 1a00 Export RVA
+	[ 161] +base[ 162] 1a10 Export RVA
+	[ 162] +base[ 163] 1a20 Export RVA
+	[ 163] +base[ 164] 1a30 Export RVA
+	[ 164] +base[ 165] 1a40 Export RVA
+	[ 165] +base[ 166] 1a50 Export RVA
+	[ 166] +base[ 167] 1a60 Export RVA
+	[ 167] +base[ 168] 1a70 Export RVA
+	[ 168] +base[ 169] 1a80 Export RVA
+	[ 169] +base[ 170] 1a90 Export RVA
+	[ 170] +base[ 171] 1aa0 Export RVA
+	[ 171] +base[ 172] 1ab0 Export RVA
+	[ 172] +base[ 173] 1ac0 Export RVA
+	[ 173] +base[ 174] 1ad0 Export RVA
+	[ 174] +base[ 175] 1ae0 Export RVA
+	[ 175] +base[ 176] 1af0 Export RVA
+	[ 176] +base[ 177] 1b00 Export RVA
+	[ 177] +base[ 178] 1b10 Export RVA
+	[ 178] +base[ 179] 1b20 Export RVA
+	[ 179] +base[ 180] 1b30 Export RVA
+	[ 180] +base[ 181] 1b40 Export RVA
+	[ 181] +base[ 182] 1b50 Export RVA
+	[ 182] +base[ 183] 1b60 Export RVA
+	[ 183] +base[ 184] 1b70 Export RVA
+	[ 184] +base[ 185] 1b80 Export RVA
+	[ 185] +base[ 186] 1b90 Export RVA
+	[ 186] +base[ 187] 1ba0 Export RVA
+	[ 187] +base[ 188] 1bb0 Export RVA
+	[ 188] +base[ 189] 1bc0 Export RVA
+	[ 189] +base[ 190] 1bd0 Export RVA
+	[ 190] +base[ 191] 1be0 Export RVA
+	[ 191] +base[ 192] 1bf0 Export RVA
+	[ 192] +base[ 193] 1c00 Export RVA
+	[ 193] +base[ 194] 1c10 Export RVA
+	[ 194] +base[ 195] 1c20 Export RVA
+	[ 195] +base[ 196] 1c30 Export RVA
+	[ 196] +base[ 197] 1c40 Export RVA
+	[ 197] +base[ 198] 1c50 Export RVA
+	[ 198] +base[ 199] 1c60 Export RVA
+	[ 199] +base[ 200] 1c70 Export RVA
+	[ 200] +base[ 201] 1c80 Export RVA
+	[ 201] +base[ 202] 1c90 Export RVA
+	[ 202] +base[ 203] 1ca0 Export RVA
+	[ 203] +base[ 204] 1cb0 Export RVA
+	[ 204] +base[ 205] 1cc0 Export RVA
+	[ 205] +base[ 206] 1cd0 Export RVA
+	[ 206] +base[ 207] 1ce0 Export RVA
+	[ 207] +base[ 208] 1cf0 Export RVA
+	[ 208] +base[ 209] 1d00 Export RVA
+	[ 209] +base[ 210] 1d10 Export RVA
+	[ 210] +base[ 211] 1d20 Export RVA
+	[ 211] +base[ 212] 1d30 Export RVA
+	[ 212] +base[ 213] 1d40 Export RVA
+	[ 213] +base[ 214] 1d50 Export RVA
+	[ 214] +base[ 215] 1d60 Export RVA
+	[ 215] +base[ 216] 1d70 Export RVA
+	[ 216] +base[ 217] 1d80 Export RVA
+	[ 217] +base[ 218] 1d90 Export RVA
+	[ 218] +base[ 219] 1da0 Export RVA
+	[ 219] +base[ 220] 1db0 Export RVA
+	[ 220] +base[ 221] 1dc0 Export RVA
+	[ 221] +base[ 222] 1dd0 Export RVA
+	[ 222] +base[ 223] 1de0 Export RVA
+	[ 223] +base[ 224] 1df0 Export RVA
+	[ 224] +base[ 225] 1e00 Export RVA
+	[ 225] +base[ 226] 1e10 Export RVA
+	[ 226] +base[ 227] 1e20 Export RVA
+	[ 227] +base[ 228] 1e30 Export RVA
+	[ 228] +base[ 229] 1e40 Export RVA
+	[ 229] +base[ 230] 1e50 Export RVA
+	[ 230] +base[ 231] 1e60 Export RVA
+	[ 231] +base[ 232] 1e70 Export RVA
+	[ 232] +base[ 233] 1e80 Export RVA
+	[ 233] +base[ 234] 1e90 Export RVA
+	[ 234] +base[ 235] 1ea0 Export RVA
+	[ 235] +base[ 236] 1eb0 Export RVA
+	[ 236] +base[ 237] 1ec0 Export RVA
+	[ 237] +base[ 238] 1ed0 Export RVA
+	[ 238] +base[ 239] 1ee0 Export RVA
+	[ 239] +base[ 240] 1ef0 Export RVA
+	[ 240] +base[ 241] 1f00 Export RVA
+	[ 241] +base[ 242] 1f10 Export RVA
+	[ 242] +base[ 243] 1f20 Export RVA
+	[ 243] +base[ 244] 1f30 Export RVA
+	[ 244] +base[ 245] 1f40 Export RVA
+	[ 245] +base[ 246] 1f50 Export RVA
+	[ 246] +base[ 247] 1f60 Export RVA
+	[ 247] +base[ 248] 1f70 Export RVA
+	[ 248] +base[ 249] 1f80 Export RVA
+	[ 249] +base[ 250] 1f90 Export RVA
+	[ 250] +base[ 251] 1fa0 Export RVA
+	[ 251] +base[ 252] 1fb0 Export RVA
+	[ 252] +base[ 253] 1fc0 Export RVA
+	[ 253] +base[ 254] 1fd0 Export RVA
+	[ 254] +base[ 255] 1fe0 Export RVA
+	[ 255] +base[ 256] 1ff0 Export RVA
+	[ 256] +base[ 257] 3b004 Export RVA
+	[ 257] +base[ 258] 3b000 Export RVA
+	[ 258] +base[ 259] 2d80 Export RVA
+
+[Ordinal/Name Pointer] Table
+	[   0] __M2EzMTFhMWLz_g
+	[   1] __M2I1MDkyYWOB_g
+	[   2] __M2NhNGU1Njbd_g
+	[   3] __M2Q4Mzc0M2JQ_g
+	[   4] __M2VhZTk3ZGbI_g
+	[   5] __M2Y2MmQyMWVs_g
+	[   6] __MDA2YjdjY2SG_g
+	[   7] __MDFiMjg5MjD5_g
+	[   8] __MDJhNjg0Zjf7_g
+	[   9] __MDM5YTMzNTL0_g
+	[  10] __MDQzZjYyZDIe_g
+	[  11] __MDU0MjRlNzcj_g
+	[  12] __MDYwMWIyODkg_g
+	[  13] __MDdiMzU2ZTnF_g
+	[  14] __MDhlZTA0M2Zi_g
+	[  15] __MDkyYmJiOTH4_g
+	[  16] __MGExMTA3YjNW_g
+	[  17] __MGIyZGQ1YWa0_g
+	[  18] __MGNkMzhjNGZA_g
+	[  19] __MGQxMzRkYjHa_g
+	[  20] __MGUyYzc1MTLe_g
+	[  21] __MGYxZmZkZmZn_g
+	[  22] __MTBmNTdlY2Um_g
+	[  23] __MTEwN2IzNTbp_g
+	[  24] __MTJkZWEzMWSt_g
+	[  25] __MTM0ZGIxZGHK_g
+	[  26] __MTRiOTIyZTRu_g
+	[  27] __MTU4ZTE5NGFd_g
+	[  28] __MTY3ZDgwY2IQ_g
+	[  29] __MTc5MzdmMTZ9_g
+	[  30] __MTgwOGVlMDQ__g
+	[  31] __MTk0YTVkNTRw_g
+	[  32] __MWExYmYzMDVC_g
+	[  33] __MWJmMzA1NDJO_g
+	[  34] __MWNmMTM1MjgJ_g
+	[  35] __MWRhZGI4NDjc_g
+	[  36] __MWU2Y2EyNWV4_g
+	[  37] __MWZmZGZmNjf2_g
+	[  38] __MjBmOTdhNznY_g
+	[  39] __MjFjNmJjN2Ko_g
+	[  40] __MjJlNDZlMzi6_g
+	[  41] __MjM4YTY4MmWH_g
+	[  42] __MjQ4ZmJkMzS2_g
+	[  43] __MjVhYmViYWHn_g
+	[  44] __MjY3MjQzNjHU_g
+	[  45] __Mjc5ZGU2NzON_g
+	[  46] __MjgwOTJiYmKR_g
+	[  47] __Mjk0NDU3NWaf_g
+	[  48] __MmE5ODNlYWWX_g
+	[  49] __MmJiYjkxZjiC_g
+	[  50] __MmM3NTEyZGWj_g
+	[  51] __MmRkNWFmYjQq_g
+	[  52] __MmU4N2JmNWIC_g
+	[  53] __MmYxY2YxMzUo_g
+	[  54] __MzA2ZjM5OWLb_g
+	[  55] __MzExYTFiZjMF_g
+	[  56] __MzJmMmIwYzJY_g
+	[  57] __MzM1MmY0MGYf_g
+	[  58] __MzRiNjBkMTNN_g
+	[  59] __MzUyODA5MmK7_g
+	[  60] __MzY4ODYwMDYB_g
+	[  61] __Mzc5ZTVjYzNR_g
+	[  62] __MzhiYTQ2ZTiV_g
+	[  63] __Mzk5YmRiM2Ok_g
+	[  64] __N2E3OWQ4NzHq_g
+	[  65] __N2JhOGVjNjSc_g
+	[  66] __N2NjZDg2Y2bj_g
+	[  67] __N2Q4MGNiMTD1_g
+	[  68] __N2VjZTI2NzJD_g
+	[  69] __N2YxNjdkODDL_g
+	[  70] __NDAyMWM2YmN7_g
+	[  71] __NDEyOTQ0NTdf_g
+	[  72] __NDI0ZTc3MjOK_g
+	[  73] __NDM2MWQ0ZDbX_g
+	[  74] __NDQ1NzVmOWa__g
+	[  75] __NDUxNGI5MjLk_g
+	[  76] __NDZlODk1YzA6_g
+	[  77] __NDc5OWM5MmYc_g
+	[  78] __NDhkY2UwMzBv_g
+	[  79] __NDk5NmZjYjeF_g
+	[  80] __NGE1ZDU0NzBZ_g
+	[  81] __NGIyNDhmYmQ0_g
+	[  82] __NGM0Nzk5Yzkv_g
+	[  83] __NGRiMWRhY2EO_g
+	[  84] __NGU3NzIzOGFo_g
+	[  85] __NGY0MDIxYza8_g
+	[  86] __NTA5MmFjODH__g
+	[  87] __NTExNzkzN2YW_g
+	[  88] __NTJmNDBmMWb9_g
+	[  89] __NTM1NWVmMGER_g
+	[  90] __NTQ3MDU5NjlM_g
+	[  91] __NTVlZjBhMTEH_g
+	[  92] __NTZlOWM1YTWh_g
+	[  93] __NTc1ZjlmYmUA_g
+	[  94] __NTgzNzllNWPD_g
+	[  95] __NTk2OTRjNDeZ_g
+	[  96] __NWFjMTBiMmTV_g
+	[  97] __NWIwMmE2ODT3_g
+	[  98] __NWNjMzUxMTeT_g
+	[  99] __NWQ1NDcwNTlp_g
+	[ 100] __NWU3ODk0NWHB_g
+	[ 101] __NWY5ZmJlMDBr_g
+	[ 102] __NjAwNjAxYjKJ_g
+	[ 103] __NjFkNGQ2ZDdB_g
+	[ 104] __NjJkMjFlNmOi_g
+	[ 105] __NjM2YWE5OGIM_g
+	[ 106] __NjQ5Y2EwMzaI_g
+	[ 107] __NjU0YjI0OGa9_g
+	[ 108] __NjZkZGUyNzYD_g
+	[ 109] __NjdmNmI1MzLy_g
+	[ 110] __NjgyZTg3YmZb_g
+	[ 111] __Njk0YzQ3OTnJ_g
+	[ 112] __NmFhOThiMGPT_g
+	[ 113] __NmI3Y2NkODbP_g
+	[ 114] __NmNhMjVlNziU_g
+	[ 115] __NmRjY2QwNTNV_g
+	[ 116] __NmUzOGJhNDbo_g
+	[ 117] __NmYzOTliZGI8_g
+	[ 118] __NzA1OTY5NGNH_g
+	[ 119] __NzFlYWZhNDmW_g
+	[ 120] __NzI0MzYxZDTW_g
+	[ 121] __NzM4ZDkwYTft_g
+	[ 122] __NzQzYjUwOTKs_g
+	[ 123] __NzUxMmRlYTMd_g
+	[ 124] __NzYwMzlhMzNS_g
+	[ 125] __NzcyMzhhNjgu_g
+	[ 126] __Nzg5NDVhYzEL_g
+	[ 127] __NzlkODcxZWH6_g
+	[ 128] __ODBjYjEwZjV__g
+	[ 129] __ODFmZWQxMTgI_g
+	[ 130] __ODI0NTE0Yjki_g
+	[ 131] __ODM3NDNiNTCS_g
+	[ 132] __ODRmN2ZiMjed_g
+	[ 133] __ODU2NTRiMjSP_g
+	[ 134] __ODZjZmUzZTHH_g
+	[ 135] __ODdiZjViMDKm_g
+	[ 136] __ODg2MDA2MDGy_g
+	[ 137] __ODkyMGY5N2F5_g
+	[ 138] __OGE2ODJlODe__g
+	[ 139] __OGIwY2QzOGNP_g
+	[ 140] __OGM0ZjQwMjHG_g
+	[ 141] __OGQ5MGE3ZWRj_g
+	[ 142] __OGUxOTRhNWRU_g
+	[ 143] __OGZiZDM0YjYN_g
+	[ 144] __OTBhN2VkNjNq_g
+	[ 145] __OTFmODgyNDUU_g
+	[ 146] __OTJhYzgxZmXR_g
+	[ 147] __OTM3ZjE2N2SA_g
+	[ 148] __OTQ1YWMxMGIt_g
+	[ 149] __OTVjMDNhMzEa_g
+	[ 150] __OTZmY2I3ODVl_g
+	[ 151] __OTdkZmM4MjWr_g
+	[ 152] __OTgzZWFlOTff_g
+	[ 153] __OTljOTJmMWPx_g
+	[ 154] __OWEzMzUyZjQP_g
+	[ 155] __OWJkYjNjYTTl_g
+	[ 156] __OWNhMDM2ODhg_g
+	[ 157] __OWRlNjczOGSQ_g
+	[ 158] __OWU1Y2MzNTEX_g
+	[ 159] __OWZiZTAwNmJ8_g
+	[ 160] __Y2EwZTJjNzUS_g
+	[ 161] __Y2IxMGY1N2XO_g
+	[ 162] __Y2NkMDUzNTXv_g
+	[ 163] __Y2Q4NmNmZTPh_g
+	[ 164] __Y2UyNjcyNDNh_g
+	[ 165] __Y2ZlM2UxYzfZ_g
+	[ 166] __YTAzNjg4NjAG_g
+	[ 167] __YTFmMGM0MTWO_g
+	[ 168] __YTI1ZTc4OTRa_g
+	[ 169] __YTMxZGFkYjhI_g
+	[ 170] __YTRlNTY2ZGTi_g
+	[ 171] __YTVhMWYwYzQV_g
+	[ 172] __YTY4NGY3ZmIn_g
+	[ 173] __YTdlZDYzNmGp_g
+	[ 174] __YThlYzY0OWOg_g
+	[ 175] __YTk4YjBjZDOM_g
+	[ 176] __YWFlNzZkY2PQ_g
+	[ 177] __YWJlYmFhZTdt_g
+	[ 178] __YWM4MWZlZDEY_g
+	[ 179] __YWRiODQ4ZGPg_g
+	[ 180] __YWU5N2RmYzgl_g
+	[ 181] __YWZiNDJhOTg__g
+	[ 182] __YjBjMjU4Mzee_g
+	[ 183] __YjFkYWNhMGUs_g
+	[ 184] __YjI4OTIwZjl6_g
+	[ 185] __YjM1NmU5YzWl_g
+	[ 186] __YjQyYTk4M2Wu_g
+	[ 187] __YjUzMmYyYjDC_g
+	[ 188] __YjYwZDEzNGSx_g
+	[ 189] __Yjc4NTY1NGIk_g
+	[ 190] __Yjg0OGRjZTAw_g
+	[ 191] __YjkyMmU0NmU4_g
+	[ 192] __YmE0NmU4OTXA_g
+	[ 193] __YmI5MWY4ODJF_g
+	[ 194] __YmM3YmE4ZWNk_g
+	[ 195] __YmQzNGI2MGQT_g
+	[ 196] __YmUwMDZiN2PN_g
+	[ 197] __YmY1YjAyYTaE_g
+	[ 198] __YzAzYTMxMWEb_g
+	[ 199] __YzEwYjJkZDWv_g
+	[ 200] __YzI1ODM3OWVc_g
+	[ 201] __YzM1MTE3OTN__g
+	[ 202] __YzQxNThlMTlK_g
+	[ 203] __YzVhNWExZjDE_g
+	[ 204] __YzZiYzdiYTjs_g
+	[ 205] __YzdkOTNkODN0_g
+	[ 206] __YzgyNWFiZWKq_g
+	[ 207] __YzkyZjFjZjE1_g
+	[ 208] __ZDA1MzU1ZWYK_g
+	[ 209] __ZDExODA4ZWUE_g
+	[ 210] __ZDIxZTZjYTJe_g
+	[ 211] __ZDM4YzRmNDAh_g
+	[ 212] __ZDRkNmQ3NDEp_g
+	[ 213] __ZDVhZmI0MmGY_g
+	[ 214] __ZDZkNzQxMjlE_g
+	[ 215] __ZDc0MTI5NDRX_g
+	[ 216] __ZDg3MWVhZmFJ_g
+	[ 217] __ZDkzZDgzNzQ7_g
+	[ 218] __ZGFjYTBlMmN1_g
+	[ 219] __ZGIzY2E0ZTVm_g
+	[ 220] __ZGNlMDMwNmY5_g
+	[ 221] __ZGRlMjc2MDOa_g
+	[ 222] __ZGVhMzFkYWS4_g
+	[ 223] __ZGZjODI1YWLr_g
+	[ 224] __ZTAzMDZmMzmb_g
+	[ 225] __ZTFjN2Q5M2SD_g
+	[ 226] __ZTI3NjAzOWEz_g
+	[ 227] __ZTNlMWM3ZDk9_g
+	[ 228] __ZTQ2ZTM4YmFG_g
+	[ 229] __ZTU2NmRkZTJ2_g
+	[ 230] __ZTY3MzhkOTCn_g
+	[ 231] __ZTc2ZGNjZDBT_g
+	[ 232] __ZTg5NWMwM2Ex_g
+	[ 233] __ZTljNWE1YTHw_g
+	[ 234] __ZWFmYTQ5OTb8_g
+	[ 235] __ZWJhYWU3NmTM_g
+	[ 236] __ZWM2NDljYTA2_g
+	[ 237] __ZWQ2MzZhYTmL_g
+	[ 238] __ZWUwNDNmNjLS_g
+	[ 239] __ZWYwYTExMDez_g
+	[ 240] __ZjBjNDE1OGUZ_g
+	[ 241] __ZjEzNTI4MDkr_g
+	[ 242] __ZjJiMGMyNTg3_g
+	[ 243] __ZjMwNTQyNGV3_g
+	[ 244] __ZjQwZjFmZmT__g
+	[ 245] __ZjU3ZWNlMjZy_g
+	[ 246] __ZjZiNTMyZjKw_g
+	[ 247] __ZjdmYjI3OWTm_g
+	[ 248] __Zjg4MjQ1MTS5_g
+	[ 249] __Zjk3YTc5ZDhx_g
+	[ 250] __ZmE0OTk2ZmO3_g
+	[ 251] __ZmIyNzlkZTZz_g
+	[ 252] __ZmNiNzg1NjVL_g
+	[ 253] __ZmRmZjY3Zja1_g
+	[ 254] __ZmVkMTE4MDju_g
+	[ 255] __ZmY2N2Y2YjUy_g
+	[ 256] __tls_end
+	[ 257] __tls_start
+	[ 258] start
+
+There is a debug directory in .buildid at 0x40006000
+
+Type                Size     Rva      Offset
+  2        CodeView 00000019 0000601c 0000321c
+(format RSDS signature 355aae7f7b724a08138f1756737c6fcf age 1)
+
+The .rsrc Resource Directory section:
+000  Type Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 4
+010   Entry: ID: 0x000003, Value: 0x80000030
+030    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+040     Entry: ID: 0x000001, Value: 0x80000048
+048      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+058       Entry: ID: 00000000, Value: 0x000130
+130        Leaf: Addr: 0x03c190, Size: 0x000ea8, Codepage: 0
+018   Entry: ID: 0x00000a, Value: 0x80000060
+060    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 3
+070     Entry: ID: 0x000062, Value: 0x80000088
+088      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+098       Entry: ID: 00000000, Value: 0x000140
+140        Leaf: Addr: 0x03d038, Size: 0x000913, Codepage: 0
+078     Entry: ID: 0x000063, Value: 0x800000a0
+0a0      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+0b0       Entry: ID: 00000000, Value: 0x000150
+150        Leaf: Addr: 0x03d950, Size: 0x003a0d, Codepage: 0
+080     Entry: ID: 0x000064, Value: 0x800000b8
+0b8      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+0c8       Entry: ID: 00000000, Value: 0x000160
+160        Leaf: Addr: 0x041360, Size: 0x0052c1, Codepage: 0
+020   Entry: ID: 0x00000e, Value: 0x800000d0
+0d0    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+0e0     Entry: ID: 0x000065, Value: 0x800000e8
+0e8      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+0f8       Entry: ID: 00000000, Value: 0x000170
+170        Leaf: Addr: 0x046628, Size: 0x000014, Codepage: 0
+028   Entry: ID: 0x000010, Value: 0x80000100
+100    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+110     Entry: ID: 0x000001, Value: 0x80000118
+118      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+128       Entry: ID: 00000000, Value: 0x000180
+180        Leaf: Addr: 0x046640, Size: 0x00022c, Codepage: 0
+ Resources start at offset: 0x190
+
+Sections:
+Idx Name          Size      VMA               LMA               File off  Algn
+  0 .text         00002810  0000000140001000  0000000140001000  00000400  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000010  0000000140004000  0000000140004000  00002e00  2**4
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .rdata        000001f0  0000000140005000  0000000140005000  00003000  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  3 .buildid      00000035  0000000140006000  0000000140006000  00003200  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .bss          000306a0  0000000140007000  0000000140007000  00000000  2**5
+                  ALLOC
+  5 .edata        00001b6f  0000000140038000  0000000140038000  00003400  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  6 .idata        00000a60  000000014003a000  000000014003a000  00005000  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  7 .tls          00000008  000000014003b000  000000014003b000  00005c00  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  8 .rsrc         0000a870  000000014003c000  000000014003c000  00005e00  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+SYMBOL TABLE:
+no symbols
+
+

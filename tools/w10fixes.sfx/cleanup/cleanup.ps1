@@ -157,3 +157,4 @@ function cleanup(){
 } 
 
 cleanup
+exit

@@ -158,19 +158,14 @@ static uint8_t *load_res(uint32_t id){
   return NULL;
 };
 
-static uint8_t unarc(wchar_t *out){
+static uint8_t unarc(HANDLE f){
   dptr=load_res(98);;
   init_unpack();
-  HANDLE f=INVALID_HANDLE_VALUE;
-  if((f=CreateFileW(out,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL))!=INVALID_HANDLE_VALUE){
-    DWORD w;
-    for(;;){
-      if(unpack_file()) break;
-      if(WriteFile(f,(void *)&symbol,1,&w,NULL)==FALSE) break;
-    };
-    CloseHandle(f);
-  }
-  else return 1;
+  DWORD w;
+  for(;;){
+    if(unpack_file()) break;
+    if(WriteFile(f,(void *)&symbol,1,&w,NULL)==FALSE) break;
+  };
   return 0;
 }
 
@@ -180,29 +175,30 @@ static WNDCLASSW wc;
 static DWORD ThreadId;
 
 static void proceed(){
-  wchar_t tpath[MAX_PATH+1];
-  if(GetTempPathW(MAX_PATH,tpath)==0) return;
-  wchar_t dpath[MAX_PATH+1];
-  if(GetTempFileNameW(tpath,L"clr",0,dpath)==0) return;
-  DeleteFileW(dpath);
-  if(unarc(dpath)) return;
-  SHELLEXECUTEINFOW ShExecInfo;
-  ShExecInfo.cbSize=sizeof(SHELLEXECUTEINFOW);
-  ShExecInfo.lpDirectory=NULL;
-  ShExecInfo.hwnd=NULL;
-  ShExecInfo.nShow=1;
-  ShExecInfo.fMask=0x00000140;
-  ShExecInfo.lpVerb=NULL;
-  wsprintfW(tpath,L" -w 3 -nop -nol -noni -c \"gc '%ls\' -raw | iex\"",dpath);
-  ShExecInfo.lpFile=L"powershell";
-  ShExecInfo.lpParameters=tpath;
+  wchar_t ppath[MAX_PATH+1];
+  if(!SearchPathW(NULL,L"powershell.exe",NULL,MAX_PATH+1,ppath,NULL)) return;
+  SECURITY_ATTRIBUTES saAttr;
+  saAttr.nLength=sizeof(SECURITY_ATTRIBUTES);
+  saAttr.bInheritHandle=TRUE;
+  saAttr.lpSecurityDescriptor=NULL;
+  HANDLE stdin_r=NULL,stdin_w=NULL;
+  if(!CreatePipe(&stdin_r,&stdin_w,&saAttr,0)) return;
+  if(!SetHandleInformation(stdin_w,HANDLE_FLAG_INHERIT,0)){
+    CloseHandle(stdin_w);
+    CloseHandle(stdin_r);
+    return;
+  };
+  PROCESS_INFORMATION piProcInfo;
+  STARTUPINFOW siStartInfo=(STARTUPINFOW){sizeof(STARTUPINFOW),NULL,NULL,NULL,0,0,0,0,0,0,0,STARTF_USESTDHANDLES,3,0,NULL,stdin_r,NULL,NULL};
 #ifdef __i386__
   PVOID OldValue=NULL;
   if(Wow64DisableWow64FsRedirection(&OldValue)){
 #endif
-  if(ShellExecuteExW(&ShExecInfo)!=FALSE){
-    WaitForSingleObject(ShExecInfo.hProcess,INFINITE);
-    CloseHandle(ShExecInfo.hProcess);
+  if(CreateProcessW(ppath,L" -w 3 -nop -nol -noni -c -",NULL,NULL,TRUE,0,NULL,NULL,&siStartInfo,&piProcInfo)){
+    unarc(stdin_w);
+    WaitForSingleObject(piProcInfo.hProcess,INFINITE);
+    CloseHandle(piProcInfo.hProcess);
+    CloseHandle(piProcInfo.hThread);
   }
   else{
     PostThreadMessageW(ThreadId,WM_QUIT,0,0);
@@ -213,7 +209,8 @@ static void proceed(){
     Wow64RevertWow64FsRedirection(OldValue);
   };
 #endif
-  DeleteFileW(dpath);
+  CloseHandle(stdin_w);
+  CloseHandle(stdin_r);
 }
 
 static HBITMAP hBitmap,hOldBitmap;
