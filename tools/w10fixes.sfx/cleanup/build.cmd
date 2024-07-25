@@ -13,7 +13,6 @@ goto :eof
 
 del /q cleanup.qb cleanup.rc.o 2>&1 >nul
 qbp c cleanup.ps1 cleanup.qb
-mutexh.exe
 makedefs.exe cleanup.h
 genico.exe cleanup.ico
 windres -i cleanup.rc -o cleanup.rc.o -F pe-x86-64

