@@ -175,7 +175,7 @@ static DWORD ThreadId;
 
 static void proceed(){
   wchar_t ppath[MAX_PATH+1];
-  for(uint8_t i=0;i<16;i++){
+  for(uint8_t i=0;i<STRMAX;i++){
     cmd[i]^=xchr[i];
     opt[i]^=xchr[i];
   };

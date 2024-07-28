@@ -76,49 +76,40 @@ $bservices=@(
 "Sense"
 )
 
-function Set-Registry-ReadOnly($regpath) {
+function Set-Registry-ReadOnly($regpath){
   $acl=Get-Acl $regpath
   $acl.SetAccessRuleProtection($True,$True)
-  foreach ($a in $acl.Access) {
-    Try{
+  foreach($a in $acl.Access){
+    try{
       $u=$a.IdentityReference
       $propagation=$a.PropagationFlags
       $rule=New-Object System.Security.AccessControl.RegistryAccessRule($u,"ReadKey",@("ObjectInherit","ContainerInherit"),"None","Allow")
       $acl.PurgeAccessRules($u)
       $acl.SetAccessRule($rule)
     }
-    Catch {}
+    catch{}
   }
-  Try{
-    Set-Acl -ea 0 $regpath $acl | Out-Null;
-  }
-  Catch {}
+  try{Set-Acl $regpath $acl -ea 0 *>$null}catch{}
 }
 
-function fix-services() {
-  foreach ($bservice in $bservices) {
-    sp -ea 0 "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice" "Start" 4 | Out-Null
+function fix-services(){
+  foreach($bservice in $bservices){
+    sp -ea 0 "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice" "Start" 4 *>$null
     Set-Registry-ReadOnly "HKLM:\SYSTEM\CurrentControlSet\Services\$bservice"
   }
 }
 
-function rdw($path,$key,$val) {
-  reg add $path /v $key /t REG_DWORD /d $val /f | Out-Null
-}
+function rdw($path,$key,$val){reg add $path /v $key /t REG_DWORD /d $val /f *>$null}
 
-function rsz($path,$key,$val) {
-  reg add $path /v $key /t REG_SZ /d $val /f | Out-Null
-}
+function rsz($path,$key,$val){reg add $path /v $key /t REG_SZ /d $val /f *>$null}
 
-function fix-registry() {
-  foreach ($r in $reg_dw) {
-    rdw $r[0] $r[1] $r[2]
-  }
+function fix-registry(){
+  foreach($r in $reg_dw){rdw $r[0] $r[1] $r[2]}
   rsz "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\SmartScreen" "ConfigureAppInstallControl" "Anywhere"
   rsz "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" "SmartScreenEnabled" "Off"
-  reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run" /v "SecurityHealth" /f | Out-Null
-  reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v SecurityHealth /f | Out-Null
-  rm "C:\ProgramData\Microsoft\Windows Defender\Scans\mpenginedb.db" -ea 0 | Out-Null
+  reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run" /v "SecurityHealth" /f *>$null
+  reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v SecurityHealth /f *>$null
+  rm "C:\ProgramData\Microsoft\Windows Defender\Scans\mpenginedb.db" -ea 0 *>$null
 }
 
 fix-services

