@@ -245,6 +245,8 @@ $cleanflags=@(
 )
 
 $temp_dirs=@(
+"$env:windir\Containers\serviced\WindowsDefenderApplicationGuard.wim"
+"$env:windir\InboxApps\*"
 "$env:windir\memory.dmp"
 "$env:windir\minidump\*"
 "$env:windir\Logs\CBS\*"
@@ -260,10 +262,15 @@ $temp_dirs=@(
 "$env:windir\System32\config\systemprofile\AppData\Local\*.tmp"
 "$env:windir\SoftwareDistribution\*"
 "$env:windir\Temp\*"
+"$env:windir\Performance\WinSAT\DataStore\*"
 "$env:windir\Prefetch\*"
-"$env:systemdrive\Users\*\AppData\Local\Temp\*"
 "$env:systemdrive\ProgramData\Microsoft\Windows\WER\*"
 "$env:systemdrive\ProgramData\Microsoft\Windows Defender\*"
+"$env:systemdrive\Program Files\Windows Defender\*"
+"$env:systemdrive\Program Files (x86)\Microsoft\Edge\Application\SetupMetrics\*"
+"$env:systemdrive\Program Files (x86)\Microsoft\EdgeWebView\Application\SetupMetrics\*"
+"$env:systemdrive\Program Files (x86)\Microsoft\EdgeUpdate\Download\*"
+"$env:systemdrive\Program Files (x86)\Windows Defender\*"
 "$env:systemdrive\Users\*\AppData\Local\Microsoft\Edge\User Data\Default\Cache\Cache_Data\*"
 "$env:systemdrive\Users\*\AppData\Local\Microsoft\Edge\User Data\Default\IndexedDB\*"
 "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\WebCache\*"
@@ -275,6 +282,7 @@ $temp_dirs=@(
 "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\IEDownloadHistory\*"
 "$env:systemdrive\Users\*\AppData\Local\Microsoft\Windows\INetCookies\*"
 "$env:systemdrive\Users\*\AppData\Local\Microsoft\Terminal Server Client\Cache\*"
+"$env:systemdrive\Users\*\AppData\Local\Temp\*"
 "$env:systemdrive\Users\*\AppData\Local\Packages\Microsoft.*\AC\*\*"
 "$env:systemdrive\Users\*\AppData\Local\Packages\Microsoft.*\AppData\*\*"
 "$env:systemdrive\`$SysReset"
