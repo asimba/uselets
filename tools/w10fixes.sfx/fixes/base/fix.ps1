@@ -506,7 +506,7 @@ function wc($c,$m){Write-Host -ForegroundColor $c $m}
 function wn($m){Write-Host -NoNewline $m}
 function wh($m){wc 10 $m}
 $ed={if($?){wc 1 " - Done."}else{wc 4 " - File deletion error ($($Error[0].CategoryInfo.Category))!"}}
-function rf($f){try{wn "Trying to remove file     : `"$f`"";rm $f -Force -ea 0 *>$null;.$ed}catch{}}
+function rf($f){try{wn "Trying to remove file     : `"$f`"";rm $f -Recurse -Force -ea 0 *>$null;.$ed}catch{}}
 
 function Set-Registry-ReadOnly($regpath){
   try{
