@@ -61,6 +61,7 @@ $apps=@(
 "Microsoft.Windows.CapturePicker"
 "Microsoft.Windows.Photos"
 "MicrosoftTeams"
+"MSTeams"
 "Windows.MiracastView"
 "Clipchamp.Clipchamp"
 "MicrosoftCorporationII.QuickAssist"
@@ -300,6 +301,7 @@ $reg_dw=@(
 @("HKCU\Control Panel\International\User Profile","HttpAcceptLanguageOptOut",1),
 @("HKCU\Control Panel\UnsupportedHardwareNotificationCache","SV1",0),
 @("HKCU\Control Panel\UnsupportedHardwareNotificationCache","SV2",0),
+@("HKCU\Control Panel\Keyboard","PrintScreenKeyForSnippingEnabled",0),
 @("HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter","EnabledV9",0),
 @("HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter","PreventOverride",0),
 @("HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge.stable_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter","EnabledV9",0),
@@ -308,6 +310,9 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Microsoft\InputPersonalization","RestrictImplicitTextCollection",1),
 @("HKCU\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore","HarvestContacts",0),
 @("HKCU\SOFTWARE\Microsoft\Input\TIPC","Enabled",0),
+@("HKCU\SOFTWARE\Microsoft\Input\Settings","InsightsEnabled",0),
+@("HKCU\SOFTWARE\Microsoft\Input\Settings","EnableHwkbTextPrediction",0),
+@("HKCU\SOFTWARE\Microsoft\Input\Settings","MultilingualEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Messaging","CloudServiceSyncEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Personalization\Settings","AcceptedPrivacyPolicy",0),
 @("HKCU\SOFTWARE\Microsoft\Siuf\Rules","NumberOfSIUFInPeriod",0),
@@ -315,6 +320,11 @@ $reg_dw=@(
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Preferences","ModelDownloadAllowed",0),
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Settings\VoiceActivation\UserPreferenceForAllApps","AgentActivationEnabled",0),
 @("HKCU\SOFTWARE\Microsoft\Speech_OneCore\Settings\VoiceActivation\UserPreferenceForAllApps","AgentActivationOnLockScreenEnabled",0),
+@("HKCU\SOFTWARE\Microsoft\TabletTip\1.7","EnableAutocorrection",0),
+@("HKCU\SOFTWARE\Microsoft\TabletTip\1.7","EnableSpellchecking",0),
+@("HKCU\SOFTWARE\Microsoft\TabletTip\ConvertibleChassis","ConvertibleChassis",0),
+@("HKCU\SOFTWARE\Microsoft\TabletTip\ConvertibleChassis","EnableAutocorrection",0),
+@("HKCU\SOFTWARE\Microsoft\TabletTip\ConvertibleChassis","EnableSpellchecking",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost","EnableWebContentEvaluation",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost","PreventOverride",0),
 @("HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications","GlobalUserDisabled",1),

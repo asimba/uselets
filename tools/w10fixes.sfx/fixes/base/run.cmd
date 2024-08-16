@@ -21,5 +21,6 @@ MsiExec.exe /q /X{2953E19B-9F91-4A49-A23B-7E25970A1951} >nul 2>&1
 MsiExec.exe /q /X{AF47B488-9780-4AB5-A97E-762E28013CA6} >nul 2>&1
 MsiExec.exe /q /X{1FC1A6C2-576E-489A-9B4A-92D21F542136} >nul 2>&1
 MsiExec.exe /q /X{C6FD611E-7EFE-488C-A0E0-974C09EF6473} >nul 2>&1
+MsiExec.exe /q /X{A7AB73A3-CB10-4AA5-9D38-6AEFFBDE4C91} >nul 2>&1
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v "cleanup" /t REG_SZ /d "schtasks /run /tn cmd_g" /f >nul 2>&1
 shutdown -f -r -t 5 >nul 2>&1
