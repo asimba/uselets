@@ -407,6 +407,7 @@ $reg_dw=@(
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy","LetAppsActivateWithVoice",2),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy","LetAppsGetDiagnosticInfo",2),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy","LetAppsRunInBackground",2),
+@("HKLM\SOFTWARE\Policies\Microsoft\Windows\Appx","AllowAutomaticAppArchiving",0),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent","DisableSoftLanding",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent","DisableWindowsConsumerFeatures",1),
 @("HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent","DisableWindowsSpotlightFeatures",1),
