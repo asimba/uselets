@@ -33,7 +33,8 @@ uint8_t vocbuf[0x10000];
 uint16_t vocarea[0x10000];
 uint16_t hashes[0x10000];
 vocpntr vocindx[0x10000];
-uint16_t frequency[256][256];
+uint16_t _frequency[256][260];
+uint16_t* frequency[256];
 uint16_t fcs[256];
 uint16_t buf_size;
 uint16_t voclast;
@@ -45,7 +46,6 @@ uint32_t hlp;
 uint32_t range;
 uint8_t *lowp;
 uint8_t *hlpp;
-uint8_t scntx;
 
 void pack_initialize(){
   cntxs[0]=flags=buf_size=vocroot=low=hlp=icbuf=wpos=rpos=0;
@@ -54,7 +54,10 @@ void pack_initialize(){
   lowp=&((uint8_t *)&low)[3];
   hlpp=&((uint8_t *)&hlp)[0];
   for(int i=0;i<256;i++){
-    for(int j=0;j<256;j++) frequency[i][j]=1;
+    uint64_t *f=(uint64_t *)_frequency[i];
+    frequency[i]=_frequency[i]+4;
+    f[0]=0;
+    for(int j=1;j<65;j++) f[j]=0x0001000100010001ULL;
     fcs[i]=256;
   };
   for(int i=0;i<0x10000;i++){
@@ -69,7 +72,6 @@ void pack_initialize(){
   vocarea[0xfffd]=0xfffd;
   vocarea[0xfffe]=0xfffe;
   vocarea[0xffff]=0xffff;
-  scntx=0xff;
 }
 
 void wbuf(uint8_t c,FILE *ofile){
@@ -114,14 +116,12 @@ inline uint32_t rc32_putc(uint32_t c,FILE *ofile,uint8_t cntx){
     if(!(wbuf(*lowp,ofile),wpos)) return 1;
     rc32_shift();
   };
-  uint16_t *f=frequency[cntx],fc=fcs[cntx];
+  uint16_t *f=_frequency[cntx]+(c&3),fc=fcs[cntx];
   register uint64_t s=0;
-  while(c>3) s+=*(uint64_t *)f,f+=4,c-=4;
-  if(c>>1) s+=*(uint32_t *)f,f+=2;
-  if(c&1) s+=*f++;
+  c=(c>>2)+1;
+  while(c--) s+=*(uint64_t *)f,f+=4;
   s+=s>>32;
-  s+=s>>16;
-  low+=((uint16_t)s)*(range/=fc);
+  low+=((uint16_t)(s+(s>>16)))*(range/=fc);
   rc32_rescale();
 }
 
@@ -180,10 +180,9 @@ void pack_file(FILE *ifile,FILE *ofile){
         buf_size-=length;
       }
       else{
-        *npos++=scntx;
-        scntx=vocbuf[symbol];
-        *cbuffer|=1;
+        *npos++=vocbuf[(uint16_t)(symbol-1)];
         *cpos=vocbuf[symbol];
+        *cbuffer|=1;
         buf_size--;
       };
     }
@@ -213,7 +212,7 @@ void pack_file(FILE *ifile,FILE *ofile){
 }
 
 void unpack_file(FILE *ifile, FILE *ofile){
-  uint8_t *cpos=NULL,c,rle_flag=0,bytes=0,cntx,cflags;
+  uint8_t c,rle_flag=0,cflags=0;
   length=0;
   for(c=0;c<4;c++){
     hlp<<=8;
@@ -221,54 +220,35 @@ void unpack_file(FILE *ifile, FILE *ofile){
   }
   for(;;){
     if(length){
-      if(!rle_flag) c=vocbuf[offset++];
-      vocbuf[vocroot++]=c;
+      if(rle_flag) vocbuf[vocroot++]=offset;
+      else vocbuf[vocroot++]=vocbuf[offset++];
       length--;
-      bytes=1;
-      if(!vocroot&&(bytes=0,fwrite(vocbuf,1,0x10000,ofile)<0x10000)) break;
+      if(!vocroot&&(fwrite(vocbuf,1,0x10000,ofile)<0x10000)) break;
       continue;
     };
     if(flags){
       length=rle_flag=1;
-      if(*cbuffer&0x80) c=*cpos;
+      if(cflags&0x80){
+        if(rc32_getc((uint8_t *)&offset,ifile,vocbuf[(uint16_t)(vocroot-1)])) return;
+      }
       else{
-        length=LZ_MIN_MATCH+1+*cpos++;
-        if((offset=*(uint16_t*)cpos++)<0x0100) c=offset;
-        else{
+        for(c=1;c<4;c++)
+          if(rc32_getc(cbuffer+c-1,ifile,c)) return;
+        length=LZ_MIN_MATCH+1+*cbuffer;
+        if((offset=*(uint16_t*)(cbuffer+1))>=0x0100){
           if(offset==0x0100) break;
           offset=~offset+vocroot+LZ_BUF_SIZE;
           rle_flag=0;
         };
       };
-      *cbuffer<<=1;
-      cpos++;
-      flags--;
+      cflags<<=1;
+      flags<<=1;
       continue;
     };
-    cpos=cbuffer;
-    if(rc32_getc(cpos++,ifile,0)) break;
-    for(c=~*cbuffer;c;flags++) c&=c-1;
-    cflags=*cbuffer;
-    for(c=0;c<(cntx=8+(flags<<1));){
-      if(cflags&0x80) cntxs[c++]=4;
-      else{
-        *(uint32_t*)(cntxs+c)=0x00030201;
-        c+=3;
-      };
-      cflags<<=1;
-    };
-    for(c=0;c<cntx;c++)
-      if(cntxs[c]==4){
-        if(rc32_getc(cpos,ifile,scntx)) return;
-        scntx=*cpos++;
-      }
-      else{
-        if(rc32_getc(cpos++,ifile,cntxs[c])) return;
-      };
-    cpos=&cbuffer[1];
-    flags=8;
+    if(rc32_getc(&cflags,ifile,0)) break;
+    flags=0xff;
   };
-  if(bytes) fwrite(vocbuf,1,vocroot?vocroot:0x10000,ofile);
+  if(length) fwrite(vocbuf,1,vocroot?vocroot:0x10000,ofile);
 }
 
 /***********************************************************************************************************/

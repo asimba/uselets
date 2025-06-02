@@ -30,4 +30,4 @@ src\sfx64.cc ^
 src\rsrc64.o ^
 -lntdll -lkernel32 -luser32
 del /q src\rsrc64.o 2>&1 >nul
-move /y %exe%.exe ddef64.exe 2>&1 >nul
+move /y %exe%.exe ddef.exe 2>&1 >nul

@@ -3,7 +3,7 @@ cleanup.exe:     file format pei-x86-64
 cleanup.exe
 architecture: i386:x86-64, flags 0x00000103:
 HAS_RELOC, EXEC_P, D_PAGED
-start address 0x0000000140002d80
+start address 0x0000000000403270
 
 Characteristics 0x22e
 	executable
@@ -15,13 +15,13 @@ Characteristics 0x22e
 Time/Date		Thu Jan 01 03:00:00 1970
 Magic			020b	(PE32+)
 MajorLinkerVersion	2
-MinorLinkerVersion	36
-SizeOfCode		0000000000002a00
-SizeOfInitializedData	000000000000da00
+MinorLinkerVersion	33
+SizeOfCode		0000000000002c00
+SizeOfInitializedData	000000000000e600
 SizeOfUninitializedData	0000000000030800
-AddressOfEntryPoint	0000000000002d80
+AddressOfEntryPoint	0000000000003270
 BaseOfCode		0000000000001000
-ImageBase		0000000140000000
+ImageBase		0000000000400000
 SectionAlignment	00001000
 FileAlignment		00000200
 MajorOSystemVersion	6
@@ -31,11 +31,11 @@ MinorImageVersion	255
 MajorSubsystemVersion	6
 MinorSubsystemVersion	2
 Win32Version		00000000
-SizeOfImage		00047000
+SizeOfImage		00048000
 SizeOfHeaders		00000400
-CheckSum		0001cdd6
+CheckSum		00020c08
 Subsystem		00000002	(Windows GUI)
-DllCharacteristics	00000160
+DllCharacteristics	00000140
 SizeOfStackReserve	0000000000200000
 SizeOfStackCommit	0000000000001000
 SizeOfHeapReserve	0000000000100000
@@ -45,8 +45,8 @@ NumberOfRvaAndSizes	00000010
 
 The Data Directory
 Entry 0 0000000000038000 00001b6f Export Directory [.edata (or where ever we found it)]
-Entry 1 000000000003a000 00000a60 Import Directory [parts of .idata]
-Entry 2 000000000003c000 0000a9d0 Resource Directory [.rsrc]
+Entry 1 000000000003a000 00000ab0 Import Directory [parts of .idata]
+Entry 2 000000000003c000 0000b4a0 Resource Directory [.rsrc]
 Entry 3 0000000000000000 00000000 Exception Directory [.pdata]
 Entry 4 0000000000000000 00000000 Security Directory
 Entry 5 0000000000000000 00000000 Base Relocation Directory [.reloc]
@@ -56,121 +56,123 @@ Entry 8 0000000000000000 00000000 Special Directory
 Entry 9 0000000000000000 00000000 Thread Storage Directory [.tls]
 Entry a 0000000000000000 00000000 Load Configuration Directory
 Entry b 0000000000000000 00000000 Bound Import Directory
-Entry c 000000000003a2c4 00000238 Import Address Table Directory
+Entry c 000000000003a2d4 00000248 Import Address Table Directory
 Entry d 0000000000000000 00000000 Delay Import Directory
 Entry e 0000000000000000 00000000 CLR Runtime Header
 Entry f 0000000000000000 00000000 Reserved
 
-There is an import table in .idata at 0x4003a000
+There is an import table in .idata at 0x43a000
 
 The Import Tables (interpreted .idata section contents)
  vma:            Hint    Time      Forward  DLL       First
                  Table   Stamp     Chain    Name      Thunk
- 0003a000	0003a08c 00000000 00000000 0003a918 0003a2c4
+ 0003a000	0003a08c 00000000 00000000 0003a960 0003a2d4
 
 	DLL Name: ADVAPI32.dll
 	vma:  Hint/Ord Member-Name Bound-To
-	3a4fc	 1032  AllocateAndInitializeSid
-	3a518	 1095  CheckTokenMembership
-	3a530	 1309  FreeSid
+	3a51c	 1032  AllocateAndInitializeSid
+	3a538	 1095  CheckTokenMembership
+	3a550	 1309  FreeSid
 
- 0003a014	0003a0ac 00000000 00000000 0003a950 0003a2e4
+ 0003a014	0003a0ac 00000000 00000000 0003a9a0 0003a2f4
 
 	DLL Name: GDI32.dll
 	vma:  Hint/Ord Member-Name Bound-To
-	3a53a	   20  BitBlt
-	3a544	   42  CreateBitmap
-	3a554	   50  CreateCompatibleDC
-	3a56a	   80  CreatePen
-	3a576	  385  DeleteDC
-	3a582	  388  DeleteObject
-	3a592	  687  GetObjectW
-	3a5a0	  747  LineTo
-	3a5aa	  767  MoveToEx
-	3a5b6	  870  SelectObject
+	3a55a	 1018  BitBlt
+	3a564	 1040  CreateBitmap
+	3a574	 1048  CreateCompatibleDC
+	3a58a	 1075  CreatePen
+	3a596	 1085  CreateSolidBrush
+	3a5aa	 1267  DeleteDC
+	3a5b6	 1270  DeleteObject
+	3a5c6	 1346  ExtCreatePen
+	3a5d6	 1552  GetObjectW
+	3a5e4	 1652  Polyline
+	3a5f0	 1660  Rectangle
+	3a5fc	 1724  SelectObject
 
- 0003a028	0003a104 00000000 00000000 0003a9a8 0003a33c
+ 0003a028	0003a114 00000000 00000000 0003a9f8 0003a35c
 
 	DLL Name: KERNEL32.dll
 	vma:  Hint/Ord Member-Name Bound-To
-	3a5c6	  141  CloseHandle
-	3a5d4	  227  CreateMutexW
-	3a5e4	  231  CreatePipe
-	3a5f2	  239  CreateProcessW
-	3a604	  252  CreateThread
-	3a614	  366  ExitProcess
-	3a622	  422  FindResourceW
-	3a632	  488  GetCommandLineW
-	3a644	  552  GetCurrentProcess
-	3a658	  630  GetLastError
-	3a668	  994  LoadResource
-	3a678	  997  LocalAlloc
-	3a686	 1002  LocalFree
-	3a692	 1016  LockResource
-	3a6a2	 1242  SearchPathW
-	3a6b0	 1330  SetHandleInformation
-	3a6c8	 1503  WaitForSingleObject
-	3a6de	 1567  WriteFile
-	3a6ea	 1600  lstrcmpW
+	3a60c	  141  CloseHandle
+	3a61a	  227  CreateMutexW
+	3a62a	  231  CreatePipe
+	3a638	  239  CreateProcessW
+	3a64a	  252  CreateThread
+	3a65a	  366  ExitProcess
+	3a668	  422  FindResourceW
+	3a678	  488  GetCommandLineW
+	3a68a	  552  GetCurrentProcess
+	3a69e	  630  GetLastError
+	3a6ae	  994  LoadResource
+	3a6be	  997  LocalAlloc
+	3a6cc	 1002  LocalFree
+	3a6d8	 1016  LockResource
+	3a6e8	 1242  SearchPathW
+	3a6f6	 1330  SetHandleInformation
+	3a70e	 1503  WaitForSingleObject
+	3a724	 1570  WriteFile
+	3a730	 1603  lstrcmpW
 
- 0003a03c	0003a1a4 00000000 00000000 0003a9bc 0003a3dc
+ 0003a03c	0003a1b4 00000000 00000000 0003aa0c 0003a3fc
 
 	DLL Name: ntdll.dll
 	vma:  Hint/Ord Member-Name Bound-To
-	3a6f6	 1145  RtlGetVersion
+	3a73c	 1145  RtlGetVersion
 
- 0003a050	0003a1b4 00000000 00000000 0003a9d0 0003a3ec
+ 0003a050	0003a1c4 00000000 00000000 0003aa20 0003a40c
 
 	DLL Name: SHELL32.dll
 	vma:  Hint/Ord Member-Name Bound-To
-	3a706	   11  CommandLineToArgvW
-	3a71c	  340  ShellExecuteW
+	3a74c	   11  CommandLineToArgvW
+	3a762	  340  ShellExecuteW
 
- 0003a064	0003a1cc 00000000 00000000 0003aa54 0003a404
+ 0003a064	0003a1dc 00000000 00000000 0003aaa4 0003a424
 
 	DLL Name: USER32.dll
 	vma:  Hint/Ord Member-Name Bound-To
-	3a72c	    3  AdjustWindowRect
-	3a740	   17  BeginPaint
-	3a74e	  116  CreateWindowExW
-	3a760	  165  DefWindowProcW
-	3a772	  177  DestroyWindow
-	3a782	  186  DispatchMessageW
-	3a796	  241  EndPaint
-	3a7a2	  304  GetClientRect
-	3a7b2	  319  GetDC
-	3a7ba	  384  GetMessageW
-	3a7c8	  440  GetSystemMetrics
-	3a7dc	  522  InvalidateRect
-	3a7ee	  568  KillTimer
-	3a7fa	  576  LoadCursorW
-	3a808	  578  LoadIconW
-	3a814	  620  MessageBoxW
-	3a822	  656  PostQuitMessage
-	3a834	  658  PostThreadMessageW
-	3a84a	  665  PtInRect
-	3a856	  699  RegisterClassW
-	3a868	  728  ReleaseCapture
-	3a87a	  729  ReleaseDC
-	3a886	  754  SendMessageW
-	3a896	  832  SetTimer
-	3a8a2	  853  SetWindowTextW
-	3a8b4	  865  ShowWindow
-	3a8c2	  890  TrackMouseEvent
-	3a8d4	  897  TranslateMessage
-	3a8e8	  907  UnregisterClassW
-	3a8fc	  922  UpdateWindow
+	3a772	    3  AdjustWindowRect
+	3a786	   17  BeginPaint
+	3a794	  116  CreateWindowExW
+	3a7a6	  165  DefWindowProcW
+	3a7b8	  177  DestroyWindow
+	3a7c8	  186  DispatchMessageW
+	3a7dc	  241  EndPaint
+	3a7e8	  304  GetClientRect
+	3a7f8	  319  GetDC
+	3a800	  384  GetMessageW
+	3a80e	  440  GetSystemMetrics
+	3a822	  522  InvalidateRect
+	3a834	  568  KillTimer
+	3a840	  576  LoadCursorW
+	3a84e	  578  LoadIconW
+	3a85a	  620  MessageBoxW
+	3a868	  656  PostQuitMessage
+	3a87a	  658  PostThreadMessageW
+	3a890	  665  PtInRect
+	3a89c	  699  RegisterClassW
+	3a8ae	  728  ReleaseCapture
+	3a8c0	  729  ReleaseDC
+	3a8cc	  754  SendMessageW
+	3a8dc	  832  SetTimer
+	3a8e8	  853  SetWindowTextW
+	3a8fa	  865  ShowWindow
+	3a908	  890  TrackMouseEvent
+	3a91a	  897  TranslateMessage
+	3a92e	  907  UnregisterClassW
+	3a942	  922  UpdateWindow
 
  0003a078	00000000 00000000 00000000 00000000 00000000
 
-There is an export table in .edata at 0x40038000
+There is an export table in .edata at 0x438000
 
 The Export Tables (interpreted .edata section contents)
 
 Export Flags 			0
 Time/Date stamp 		0
 Major/Minor 			0/0
-Name 				0000000000038a46 afqvysio.exe
+Name 				0000000000038a46 mzlmlkix.exe
 Ordinal Base 			1
 Number in:
 	Export Address Table 		00000103
@@ -439,274 +441,274 @@ Export Address Table -- Ordinal Base 1
 	[ 255] +base[ 256] 1ff0 Export RVA
 	[ 256] +base[ 257] 3b004 Export RVA
 	[ 257] +base[ 258] 3b000 Export RVA
-	[ 258] +base[ 259] 2d80 Export RVA
+	[ 258] +base[ 259] 3270 Export RVA
 
 [Ordinal/Name Pointer] Table
-	[   0] __M2ExNGU3YTOc_g
-	[   1] __M2I3NWFmZmUp_g
-	[   2] __M2MwY2VmYjAu_g
-	[   3] __M2Q3M2QzODkJ_g
-	[   4] __M2VjM2ZjN2Tg_g
-	[   5] __M2ZmMDAxODT0_g
-	[   6] __MDAwZTEyNjVa_g
-	[   7] __MDE4NGY0OWSH_g
-	[   8] __MDJlYzgwYTXh_g
-	[   9] __MDMzNjEwZTms_g
-	[  10] __MDQyZDU4MDVj_g
-	[  11] __MDU2M2VhMGQ6_g
-	[  12] __MDZlNDY0NDC__g
-	[  13] __MDc5MzUwYTKF_g
-	[  14] __MDgzOWRiYmHJ_g
-	[  15] __MDljODVmMWUd_g
-	[  16] __MGEzYjc1YWb__g
-	[  17] __MGI0YjUxNGaP_g
-	[  18] __MGNlZmIwMmUY_g
-	[  19] __MGQzYTE0ZTej_g
-	[  20] __MGUxMjY1NWHY_g
-	[  21] __MGZkOWNmYThv_g
-	[  22] __MTBlOWFjNWPl_g
-	[  23] __MTE4NmFlYWEj_g
-	[  24] __MTI2NTVhZDhn_g
-	[  25] __MTM2ODI3MDg5_g
-	[  26] __MTRlN2EzOWPz_g
-	[  27] __MTU3MGY2YzVF_g
-	[  28] __MTY4ZTM0ZTN7_g
-	[  29] __MTc0ZTMxM2XD_g
-	[  30] __MTg4MTVlYTbu_g
-	[  31] __MTk2NjcyOTfo_g
-	[  32] __MWE5OTJjMDeT_g
-	[  33] __MWI5ODk1YjU1_g
-	[  34] __MWMzNzAzMzYQ_g
-	[  35] __MWQ2MDk2M2bw_g
-	[  36] __MWUxZDYwOTY__g
-	[  37] __MWYyNTYyZGOK_g
-	[  38] __MjAyZmI2MDAO_g
-	[  39] __MjE3MTZjNjEC_g
-	[  40] __MjJjMWE5ZmG4_g
-	[  41] __MjMyYjdhZGFd_g
-	[  42] __MjRmNTgzMGJL_g
-	[  43] __MjU2MmRjOGE9_g
-	[  44] __MjY1NjU5OTJD_g
-	[  45] __MjcwODM5ZGK6_g
-	[  46] __MjhmN2I3MTlm_g
-	[  47] __MjllZGIzNDRV_g
-	[  48] __MmEyMDJmYjYA_g
-	[  49] __MmI3YWRhNWQi_g
-	[  50] __MmMwNzkzNTCi_g
-	[  51] __MmQ1ODA1NjPq_g
-	[  52] __MmUxODgxNWWm_g
-	[  53] __MmZiNjAwMGUS_g
-	[  54] __MzBkNTliOWV5_g
-	[  55] __MzEzZWMzZmN9_g
-	[  56] __MzJiYjNjMGPv_g
-	[  57] __MzM4MjUzMzh__g
-	[  58] __MzRlMzdiNmG__g
-	[  59] __MzVjNmFkOWHK_g
-	[  60] __MzYxMGU5YWNc_g
-	[  61] __MzcwMzM2MTDp_g
-	[  62] __Mzg3ZTZkNzay_g
-	[  63] __MzlkYmJhYznH_g
-	[  64] __N2FkYTVkMjLB_g
-	[  65] __N2I2YWJmMWGZ_g
-	[  66] __N2MwNmU0NjRA_g
-	[  67] __N2RlMDk0ZDKn_g
-	[  68] __N2U2ZDc2YjIy_g
-	[  69] __N2ZkNmE0N2MG_g
-	[  70] __NDBiZTY5NTJJ_g
-	[  71] __NDE5MGY5YWLX_g
-	[  72] __NDI0ODE3NGUx_g
-	[  73] __NDNhMThiNWJ4_g
-	[  74] __NDQ1NTA0MmRY_g
-	[  75] __NDVmMjMzODJT_g
-	[  76] __NDY3NDRjY2XU_g
-	[  77] __NDdjMmU2YjHE_g
-	[  78] __NDgxNzRlMzE__g
-	[  79] __NDk4YzhkY2Nu_g
-	[  80] __NGFmMTg4MGbZ_g
-	[  81] __NGI1MTRmOGbi_g
-	[  82] __NGNjZWQ0NmKg_g
-	[  83] __NGQ0MTkwZjmr_g
-	[  84] __NGUzMTNlYzP8_g
-	[  85] __NGY4ZmUyNGRB_g
-	[  86] __NTBhMjg1MmEg_g
-	[  87] __NTE0ZjhmZTJN_g
-	[  88] __NTI0OThjOGTM_g
-	[  89] __NTMzODdlNmR2_g
-	[  90] __NTRkMWRkNTfN_g
-	[  91] __NTUwNDJkNTgF_g
-	[  92] __NTY1OTkyNDOh_g
-	[  93] __NTdjZDEzNjgn_g
-	[  94] __NTgwNTYzZWEN_g
-	[  95] __NTk5MjQzYTGL_g
-	[  96] __NWFkODY3NTTR_g
-	[  97] __NWI3OGJkOTGf_g
-	[  98] __NWNlNTMwZDWb_g
-	[  99] __NWQyMmMxYTn6_g
-	[ 100] __NWVhNmVlYjTQ_g
-	[ 101] __NWYxZTFkNjCW_g
-	[ 102] __NjA5NjNmZjAB_g
-	[ 103] __NjEwMmVjODCl_g
-	[ 104] __NjJkYzhhM2Rz_g
-	[ 105] __NjNlYTBkM2EU_g
-	[ 106] __NjQ0MGJlNjlS_g
-	[ 107] __NjU1YWQ4NjdU_g
-	[ 108] __NjY3Mjk3ZThH_g
-	[ 109] __Njc1NGQxZGRX_g
-	[ 110] __NjgyNzA4Mznb_g
-	[ 111] __Njk1MjQ5OGON_g
-	[ 112] __NmFiZjFhOTks_g
-	[ 113] __NmJhMDFiOTiV_g
-	[ 114] __NmM2MTAyZWOA_g
-	[ 115] __NmQ3NmIyMzK7_g
-	[ 116] __NmU0MjQ4MTdO_g
-	[ 117] __NmYyMTcxNmNh_g
-	[ 118] __NzBmNmM1NDXy_g
-	[ 119] __NzE2YzYxMDLs_g
-	[ 120] __NzI5N2U4NDfC_g
-	[ 121] __NzNkMzg5MDnI_g
-	[ 122] __NzQ0Y2NlZDRr_g
-	[ 123] __NzVhZmZlMjnt_g
-	[ 124] __NzZiMjMyYmI8_g
-	[ 125] __NzdkZTI4Zje3_g
-	[ 126] __NzhiZDkxOWYV_g
-	[ 127] __NzkyNGY1ODML_g
-	[ 128] __ODBhNWUxMTaO_g
-	[ 129] __ODE1ZWE2ZWW0_g
-	[ 130] __ODI1MzM4N2Vt_g
-	[ 131] __ODMwYjRiNTFP_g
-	[ 132] __ODRmNDlkODcc_g
-	[ 133] __ODUyYTIwMma2_g
-	[ 134] __ODZhZWFhMjMr_g
-	[ 135] __ODcxYzM3MDM2_g
-	[ 136] __ODgwZmQ5Y2ao_g
-	[ 137] __ODkwOWM4NWYe_g
-	[ 138] __OGEzZDczZDOJ_g
-	[ 139] __OGI1Yjc4YmSR_g
-	[ 140] __OGM4ZGNjNmVC_g
-	[ 141] __OGRjYzZlNDJI_g
-	[ 142] __OGUzNGUzN2Jq_g
-	[ 143] __OGZlMjRkNDGQ_g
-	[ 144] __OTBmOWFiZDe5_g
-	[ 145] __OTE5ZjE1NzD2_g
-	[ 146] __OTI0M2ExOGJb_g
-	[ 147] __OTM1MGEyODUq_g
-	[ 148] __OTRkMmE3NGHx_g
-	[ 149] __OTViNTM1Yzat_g
-	[ 150] __OTYzZmYwMDGE_g
-	[ 151] __OTdlODQ3YzLm_g
-	[ 152] __OTg5NWI1MzXG_g
-	[ 153] __OTkyYzA3OTNQ_g
-	[ 154] __OWFjYTBhM2J1_g
-	[ 155] __OWI5ZTc5MjT1_g
-	[ 156] __OWNmM2JjZmLr_g
-	[ 157] __OWQ4NzFjMzcD_g
-	[ 158] __OWU3OTI0ZjWD_g
-	[ 159] __OWYxNTcwZjbF_g
-	[ 160] __Y2EwYTNiNzWv_g
-	[ 161] __Y2JmZjFmMjVi_g
-	[ 162] __Y2M2ZTQyNDgX_g
-	[ 163] __Y2QxMzY4MjcI_g
-	[ 164] __Y2VkNDZiYTAb_g
-	[ 165] __Y2ZhODZmMjFx_g
-	[ 166] __YTAxYjk4OTW1_g
-	[ 167] __YTE4YjViNzi9_g
-	[ 168] __YTI4NTJhMjAv_g
-	[ 169] __YTM5Y2YzYmP7_g
-	[ 170] __YTQ3YzA2ZTRk_g
-	[ 171] __YTVlMTE2OGU0_g
-	[ 172] __YTZlZWI0ZDB3_g
-	[ 173] __YTc0YWYxODgP_g
-	[ 174] __YTg2ZjIxNzFs_g
-	[ 175] __YTlmYWI4Y2L__g
-	[ 176] __YWEyMzJiN2Ha_g
-	[ 177] __YWJkN2I5N2bW_g
-	[ 178] __YWM1Y2U1MzDV_g
-	[ 179] __YWQ5YWNhMGE7_g
-	[ 180] __YWVhYTIzMmJ6_g
-	[ 181] __YWZmZTI5ZWSz_g
-	[ 182] __YjAyZTE4ODFe_g
-	[ 183] __YjFjNGZkNDZ0_g
-	[ 184] __YjIzMmJiM2MM_g
-	[ 185] __YjM0NDU1MDQt_g
-	[ 186] __YjRkMDc3ZGUo_g
-	[ 187] __YjUzNWM2YWSa_g
-	[ 188] __YjYwMDBlMTJl_g
-	[ 189] __YjcxOTY2NzKX_g
-	[ 190] __YjhjYmZmMWYl_g
-	[ 191] __Yjk3ZmQ2YTR8_g
-	[ 192] __YmFjOWM3ZGb4_g
-	[ 193] __YmIzYzBjZWaw_g
-	[ 194] __YmNmYmViMTGG_g
-	[ 195] __YmQ5MTlmMTVw_g
-	[ 196] __YmU2OTUyNDmM_g
-	[ 197] __YmYxYTk5MmMH_g
-	[ 198] __YzAyNjU2NTmS_g
-	[ 199] __YzFhOWZhYjjL_g
-	[ 200] __YzJlNmIxYzT9_g
-	[ 201] __YzNmYzdkZTCU_g
-	[ 202] __YzRmZDQ2NzRM_g
-	[ 203] __YzU0NWYyMzOC_g
-	[ 204] __YzZhZDlhY2EK_g
-	[ 205] __YzdkZmY4YzAm_g
-	[ 206] __Yzg1ZjFlMWRg_g
-	[ 207] __YzljN2RmZjjA_g
-	[ 208] __ZDA3N2RlMjj3_g
-	[ 209] __ZDFkZDU3Y2QT_g
-	[ 210] __ZDJhNzRhZjGI_g
-	[ 211] __ZDM4OTA5Yzhf_g
-	[ 212] __ZDQ2YmEwMWKY_g
-	[ 213] __ZDU5YjllNzkk_g
-	[ 214] __ZDZhNDdjMDbk_g
-	[ 215] __ZDdiOTdmZDak_g
-	[ 216] __ZDg2NzU0ZDHd_g
-	[ 217] __ZDljZmE4NmYh_g
-	[ 218] __ZGE1ZDIyYzGp_g
-	[ 219] __ZGJiYWM5Yzff_g
-	[ 220] __ZGM4YTNkNzPT_g
-	[ 221] __ZGQ1N2NkMTNo_g
-	[ 222] __ZGUyOGY3YjcZ_g
-	[ 223] __ZGZmOGMwMjZW_g
-	[ 224] __ZTA5NGQyYTdK_g
-	[ 225] __ZTExNjhlMzTj_g
-	[ 226] __ZTI0ZDQxOTD5_g
-	[ 227] __ZTM3YjZhYmYa_g
-	[ 228] __ZTQ2NDQwYmVp_g
-	[ 229] __ZTUzMGQ1OWKe_g
-	[ 230] __ZTZiMWM0ZmRG_g
-	[ 231] __ZTdhMzljZjO8_g
-	[ 232] __ZTg0N2MyZTax_g
-	[ 233] __ZTlhYzVjZTUw_g
-	[ 234] __ZWEwZDNhMTTn_g
-	[ 235] __ZWIxMTg2YWWq_g
-	[ 236] __ZWM4MGE1ZTEW_g
-	[ 237] __ZWRiMzQ0NTUE_g
-	[ 238] __ZWViNGQwNzfe_g
-	[ 239] __ZWZiMDJlMTiB_g
-	[ 240] __ZjAwMTg0ZjSd_g
-	[ 241] __ZjE4ODBmZDnP_g
-	[ 242] __ZjIzMzgyNTM4_g
-	[ 243] __ZjNiY2ZiZWIR_g
-	[ 244] __ZjQ5ZDg3MWM3_g
-	[ 245] __ZjU4MzBiNGJR_g
-	[ 246] __ZjZjNTQ1ZjIz_g
-	[ 247] __ZjdiNzE5NjZy_g
-	[ 248] __ZjhjMDI2NTZZ_g
-	[ 249] __ZjlhYmQ3Yjl__g
-	[ 250] __ZmFiOGNiZmYf_g
-	[ 251] __ZmJlYjExODau_g
-	[ 252] __ZmM3ZGUwOTTS_g
-	[ 253] __ZmQ0Njc0NGPO_g
-	[ 254] __ZmUyOWVkYjNE_g
-	[ 255] __ZmYxZjI1NjLc_g
+	[   0] __M2FlMjMzNzFB_g
+	[   1] __M2JhYWJkZTWy_g
+	[   2] __M2NhNTU5YzE9_g
+	[   3] __M2Q0ZDk4NTdO_g
+	[   4] __M2U2NzM5NDVK_g
+	[   5] __M2ZmYmI4ZmG__g
+	[   6] __MDAxY2I3MjGa_g
+	[   7] __MDE0MjhjZWUb_g
+	[   8] __MDI3NDM0NDkY_g
+	[   9] __MDNiNjFhZjCC_g
+	[  10] __MDQ4NzlkOGHg_g
+	[  11] __MDVkM2RiYjTP_g
+	[  12] __MDZiYzFkMWU7_g
+	[  13] __MDcyY2JiNDY8_g
+	[  14] __MDhiOTk5NWEB_g
+	[  15] __MDk2ZjA2YmMd_g
+	[  16] __MGFlMzY1NTJR_g
+	[  17] __MGIwM2I2MWHw_g
+	[  18] __MGMyOTY2ZWIf_g
+	[  19] __MGRjYWY2ZmXI_g
+	[  20] __MGU5MGE2MmF8_g
+	[  21] __MGY3ZjgxZDgR_g
+	[  22] __MTA1Mzc3ZGEF_g
+	[  23] __MTExMDUzNzfa_g
+	[  24] __MTIyMmU4NmLc_g
+	[  25] __MTM5MmIxYTgx_g
+	[  26] __MTQ1ZDRiMjAC_g
+	[  27] __MTViNTM2ZTb__g
+	[  28] __MTZmMTY4OGV1_g
+	[  29] __MTcxNWI1Mzbm_g
+	[  30] __MTg3MDA3MmO7_g
+	[  31] __MTkzMmMyOGR4_g
+	[  32] __MWFmMDgyNDSU_g
+	[  33] __MWI2MmY5MTbx_g
+	[  34] __MWNiNzIxOWH0_g
+	[  35] __MWQxZTNiYWG9_g
+	[  36] __MWUzYmFhYmTl_g
+	[  37] __MWZkZmYzNzJY_g
+	[  38] __MjAwMjc0MzRJ_g
+	[  39] __MjE5YWY0NDNk_g
+	[  40] __MjJlODZiZGPt_g
+	[  41] __MjNiYWVjYWTd_g
+	[  42] __MjQ1YmY1OTUu_g
+	[  43] __MjU2ZDEyMjLo_g
+	[  44] __MjZkNzkxODh2_g
+	[  45] __MjdkMDk3OTZV_g
+	[  46] __MjgzZTY3MzlF_g
+	[  47] __Mjk2NmViMWbf_g
+	[  48] __MmE3Y2EyNDDF_g
+	[  49] __MmJhYzAwMWO3_g
+	[  50] __MmNiYjQ2M2Ol_g
+	[  51] __MmQwZTkwYTYq_g
+	[  52] __MmUzNzJiYWMA_g
+	[  53] __MmYyZDBlOTCm_g
+	[  54] __MzAyNDViZjWV_g
+	[  55] __MzFkNTI3ZDCX_g
+	[  56] __MzJjMjhkNziv_g
+	[  57] __MzM3MTQxZTRf_g
+	[  58] __MzQ0OTE4NzAH_g
+	[  59] __MzU3YjczMjbX_g
+	[  60] __MzZlNmZmY2UP_g
+	[  61] __MzcyYmFjMDAc_g
+	[  62] __Mzg1MDg1MjVt_g
+	[  63] __Mzk0NTRhMzhQ_g
+	[  64] __N2FjY2QyNjPJ_g
+	[  65] __N2I3MzI2ZDeR_g
+	[  66] __N2NhMjQwYzUT_g
+	[  67] __N2RlYTE0NWRL_g
+	[  68] __N2UxNzE1YjU2_g
+	[  69] __N2Y4MWQ4MTEQ_g
+	[  70] __NDBjNTEzOTKx_g
+	[  71] __NDFlNDVmNjGp_g
+	[  72] __NDI4Y2VlMWJi_g
+	[  73] __NDM2NGMwYWWE_g
+	[  74] __NDQ5NDZhZjKh_g
+	[  75] __NDU0YTM4NTCF_g
+	[  76] __NDYzY2E1NTnB_g
+	[  77] __NDdlOTNhZTIz_g
+	[  78] __NDg5YjBhZTNl_g
+	[  79] __NDkxODcwMDcs_g
+	[  80] __NGEzODUwODUl_g
+	[  81] __NGIyMDAyNzQ0_g
+	[  82] __NGNmZGUxNWOe_g
+	[  83] __NGQ5ODU3NGVs_g
+	[  84] __NGU2Y2Q5OWMv_g
+	[  85] __NGY4NjU0YjMJ_g
+	[  86] __NTA4NTI1NmQS_g
+	[  87] __NTE0Y2ZkZTFc_g
+	[  88] __NTI1MTRjZmTh_g
+	[  89] __NTM3N2RhMDXT_g
+	[  90] __NTRiMzA5NmYG_g
+	[  91] __NTVjZGU3OGaw_g
+	[  92] __NTY1ZWY3MDi5_g
+	[  93] __NTc0ZTZjZDmc_g
+	[  94] __NTg3ZGVhMTRd_g
+	[  95] __NTljMTNkNGSY_g
+	[  96] __NWEwMTQyOGPu_g
+	[  97] __NWJmNTk1MmU3_g
+	[  98] __NWM5ZTU2NWX3_g
+	[  99] __NWQ0YjIwMDJ0_g
+	[ 100] __NWVmNzA4YjmZ_g
+	[ 101] __NWY2MWE5M2b7_g
+	[ 102] __NjBhMGRlNDib_g
+	[ 103] __NjFhOTNmZmK4_g
+	[ 104] __NjJmOTE2ZjFo_g
+	[ 105] __NjNjOTlmZDEM_g
+	[ 106] __NjRjMGFlODS__g
+	[ 107] __NjU1MjUxNGP9_g
+	[ 108] __NjZlYjFmZGbz_g
+	[ 109] __NjczOTQ1NGE4_g
+	[ 110] __Njg4ZTc1OGJp_g
+	[ 111] __NjkxOTMyYzKN_g
+	[ 112] __NmFmMmExNDfp_g
+	[ 113] __NmJkY2VkZjik_g
+	[ 114] __NmNkOTljMmYt_g
+	[ 115] __NmQxMjIyZThr_g
+	[ 116] __NmUwNDg3OWSK_g
+	[ 117] __NmYwNmJjMWQe_g
+	[ 118] __NzAwNzJjYmJG_g
+	[ 119] __NzE0MWU0NWZh_g
+	[ 120] __NzI1ODdkZWEU_g
+	[ 121] __NzMyNmQ3OTGI_g
+	[ 122] __NzQzNDQ5MThw_g
+	[ 123] __NzU4YjY5MTky_g
+	[ 124] __NzZjNjkzYzTv_g
+	[ 125] __NzdkYTA1ZDPb_g
+	[ 126] __NzhhZjBkY2H2_g
+	[ 127] __NzlhYjgwZDbU_g
+	[ 128] __ODBkNmQ0NGaG_g
+	[ 129] __ODFkODExMTBT_g
+	[ 130] __ODI0NDk0NmHy_g
+	[ 131] __ODMyM2JhZWOt_g
+	[ 132] __ODRiZmM3NmUE_g
+	[ 133] __ODUyNTZkMTIi_g
+	[ 134] __ODY1NGIzMDlv_g
+	[ 135] __ODc5ZDhhZTD8_g
+	[ 136] __ODg3NmM2OTPE_g
+	[ 137] __ODlhNzI4M2Vn_g
+	[ 138] __OGFlMGZjN2HM_g
+	[ 139] __OGI2OTE5MzLC_g
+	[ 140] __OGNlZTFiNjL5_g
+	[ 141] __OGQ3OGFmMGTK_g
+	[ 142] __OGU3NThiNjkZ_g
+	[ 143] __OGZiMDBiMDO2_g
+	[ 144] __OTBhNjJhN2Oi_g
+	[ 145] __OTE4ODc2YzaT_g
+	[ 146] __OTJiMWE4MzHV_g
+	[ 147] __OTNjNGVmY2LD_g
+	[ 148] __OTQ2YWYyYTFH_g
+	[ 149] __OTUyZTM3MmKs_g
+	[ 150] __OTY1NWNkZTeP_g
+	[ 151] __OTc5NjU1Y2Tn_g
+	[ 152] __OTg1NzRlNmPZ_g
+	[ 153] __OTk1YTAxNDKM_g
+	[ 154] __OWFmNDQzNjTA_g
+	[ 155] __OWIwYWUzNjVS_g
+	[ 156] __OWMyZjJkMGWQ_g
+	[ 157] __OWQ4YWUwZmN6_g
+	[ 158] __OWU1NjVlZjcI_g
+	[ 159] __OWZkMTBjMjlm_g
+	[ 160] __Y2FmNmZlYzh__g
+	[ 161] __Y2JjMzgzMjO6_g
+	[ 162] __Y2NkMjYzYzmf_g
+	[ 163] __Y2RlNzhmYjAL_g
+	[ 164] __Y2UwZjdmODHY_g
+	[ 165] __Y2Y3OWFiODDW_g
+	[ 166] __YTBkZTQ4OWIK_g
+	[ 167] __YTE0N2U5M2Hi_g
+	[ 168] __YTI0MGM1MTOS_g
+	[ 169] __YTM4OWE3Mjg__g
+	[ 170] __YTQ2MGEwZGVI_g
+	[ 171] __YTU1OWMxM2RN_g
+	[ 172] __YTYyYTdjYTJA_g
+	[ 173] __YTcyODNlNjc5_g
+	[ 174] __YTgzMWQ1MjfQ_g
+	[ 175] __YTkzZmZiYjj6_g
+	[ 176] __YWFiZGU1YjIw_g
+	[ 177] __YWI4MGQ2ZDRP_g
+	[ 178] __YWMwMDFjYjch_g
+	[ 179] __YWRkZGEzODmn_g
+	[ 180] __YWU4NGJmYzdu_g
+	[ 181] __YWYwZGNhZjb__g
+	[ 182] __YjAwYjAzYjYa_g
+	[ 183] __YjFhODMxZDUn_g
+	[ 184] __YjIzMDI0NWL1_g
+	[ 185] __YjMwOTZmMDa8_g
+	[ 186] __YjRjZjc5YWKA_g
+	[ 187] __YjUzNmU2ZmbO_g
+	[ 188] __YjYxYWYwODJE_g
+	[ 189] __YjcyMTlhZjRD_g
+	[ 190] __YjhmYWJlMzV7_g
+	[ 191] __Yjk5OTVhMDFC_g
+	[ 192] __YmFlY2FkZGSj_g
+	[ 193] __YmI0NjNjYTVZ_g
+	[ 194] __YmMxZDFlM2Kq_g
+	[ 195] __YmRlNWIyMzAk_g
+	[ 196] __YmUzNTdiNzMm_g
+	[ 197] __YmZjNzZlMDSH_g
+	[ 198] __YzBhZTg0YmbH_g
+	[ 199] __YzEzZDRkOThX_g
+	[ 200] __YzI4ZDc4YWYN_g
+	[ 201] __YzM4MzIzYmHs_g
+	[ 202] __YzRlZmNiYzOD_g
+	[ 203] __YzUxMzkyYjGo_g
+	[ 204] __YzY5M2M0ZWbL_g
+	[ 205] __Yzc2ZTA0ODed_g
+	[ 206] __Yzg3ZTE3MTW1_g
+	[ 207] __Yzk5ZmQxMGMp_g
+	[ 208] __ZDA5Nzk2NTXN_g
+	[ 209] __ZDEwYzI5Njbr_g
+	[ 210] __ZDI2M2M5OWbR_g
+	[ 211] __ZDNkYmI0Y2Z5_g
+	[ 212] __ZDQ0Zjg2NTSz_g
+	[ 213] __ZDUyN2QwOTeW_g
+	[ 214] __ZDZkNDRmODZU_g
+	[ 215] __ZDc5MTg4NzbG_g
+	[ 216] __ZDgxMTEwNTN3_g
+	[ 217] __ZDk5YzJmMmQO_g
+	[ 218] __ZGEwNWQzZGK0_g
+	[ 219] __ZGJiNGNmNzmr_g
+	[ 220] __ZGNlZGY4YTRg_g
+	[ 221] __ZGRhMzg5YTco_g
+	[ 222] __ZGU0ODliMGHj_g
+	[ 223] __ZGZmMzcyNTh9_g
+	[ 224] __ZTBmYzdhY2PS_g
+	[ 225] __ZTE1YzllNTZe_g
+	[ 226] __ZTIzMzcxNDHk_g
+	[ 227] __ZTM2NTUyNTFM_g
+	[ 228] __ZTQ1ZjYxYTk__g
+	[ 229] __ZTViMjMwMjRb_g
+	[ 230] __ZTZmZmNlMGZ__g
+	[ 231] __ZTc4ZmIwMGID_g
+	[ 232] __ZTg2YmRjZWT4_g
+	[ 233] __ZTkzYWUyMzNx_g
+	[ 234] __ZWExNDVkNGIg_g
+	[ 235] __ZWIxZmRmZjNy_g
+	[ 236] __ZWNhZGRkYTOJ_g
+	[ 237] __ZWRmOGE0NjCg_g
+	[ 238] __ZWUxYjYyZjkW_g
+	[ 239] __ZWZjYmMzODMj_g
+	[ 240] __ZjA4MjQ0OTRq_g
+	[ 241] __ZjE2ODhlNzWL_g
+	[ 242] __ZjJhMTQ3ZTk6_g
+	[ 243] __ZjM3MjU4N2Tq_g
+	[ 244] __ZjQ0MzY0YzCu_g
+	[ 245] __ZjU5NTJlMzcr_g
+	[ 246] __ZjZmZWM4N2UX_g
+	[ 247] __ZjcwOGI5OTla_g
+	[ 248] __ZjhhNDYwYTDe_g
+	[ 249] __ZjkxNmYxNjiO_g
+	[ 250] __ZmFiZTM1N2Jz_g
+	[ 251] __ZmJiOGZhYmU1_g
+	[ 252] __ZmM3YWNjZDJj_g
+	[ 253] __ZmRlMTVjOWVW_g
+	[ 254] __ZmVjODdlMTcV_g
+	[ 255] __ZmZjZTBmN2aB_g
 	[ 256] __tls_end
 	[ 257] __tls_start
 	[ 258] start
 
-There is a debug directory in .buildid at 0x40006000
+There is a debug directory in .buildid at 0x406000
 
 Type                Size     Rva      Offset
-  2        CodeView 00000019 0000601c 0000321c
-(format RSDS signature 3d6b54b0c737bbe4bbcbb288b193413e age 1)
+  2        CodeView 00000019 0000601c 0000341c
+(format RSDS signature 3e67f5685c83c99b32db5ad473e211a0 age 1)
 
 The .rsrc Resource Directory section:
 000  Type Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 4
@@ -721,48 +723,48 @@ The .rsrc Resource Directory section:
 070     Entry: ID: 0x000062, Value: 0x80000088
 088      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 098       Entry: ID: 00000000, Value: 0x000140
-140        Leaf: Addr: 0x03d038, Size: 0x000a78, Codepage: 0
+140        Leaf: Addr: 0x03d038, Size: 0x000a66, Codepage: 0
 078     Entry: ID: 0x000063, Value: 0x800000a0
 0a0      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 0b0       Entry: ID: 00000000, Value: 0x000150
-150        Leaf: Addr: 0x03dab0, Size: 0x003a0d, Codepage: 0
+150        Leaf: Addr: 0x03daa0, Size: 0x0044e6, Codepage: 0
 080     Entry: ID: 0x000064, Value: 0x800000b8
 0b8      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 0c8       Entry: ID: 00000000, Value: 0x000160
-160        Leaf: Addr: 0x0414c0, Size: 0x0052c1, Codepage: 0
+160        Leaf: Addr: 0x041f88, Size: 0x0052cf, Codepage: 0
 020   Entry: ID: 0x00000e, Value: 0x800000d0
 0d0    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 0e0     Entry: ID: 0x000065, Value: 0x800000e8
 0e8      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 0f8       Entry: ID: 00000000, Value: 0x000170
-170        Leaf: Addr: 0x046788, Size: 0x000014, Codepage: 0
+170        Leaf: Addr: 0x047258, Size: 0x000014, Codepage: 0
 028   Entry: ID: 0x000010, Value: 0x80000100
 100    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 110     Entry: ID: 0x000001, Value: 0x80000118
 118      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 128       Entry: ID: 00000000, Value: 0x000180
-180        Leaf: Addr: 0x0467a0, Size: 0x00022c, Codepage: 0
+180        Leaf: Addr: 0x047270, Size: 0x00022c, Codepage: 0
  Resources start at offset: 0x190
 
 Sections:
 Idx Name          Size      VMA               LMA               File off  Algn
-  0 .text         00002860  0000000140001000  0000000140001000  00000400  2**4
+  0 .text         00002af0  0000000000401000  0000000000401000  00000400  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         000000e0  0000000140004000  0000000140004000  00002e00  2**5
+  1 .data         000000e0  0000000000404000  0000000000404000  00003000  2**5
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .rdata        000001c0  0000000140005000  0000000140005000  00003000  2**5
+  2 .rdata        000001c0  0000000000405000  0000000000405000  00003200  2**5
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .buildid      00000035  0000000140006000  0000000140006000  00003200  2**2
+  3 .buildid      00000035  0000000000406000  0000000000406000  00003400  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  4 .bss          000306a0  0000000140007000  0000000140007000  00000000  2**5
+  4 .bss          00030680  0000000000407000  0000000000407000  00000000  2**5
                   ALLOC
-  5 .edata        00001b6f  0000000140038000  0000000140038000  00003400  2**2
+  5 .edata        00001b6f  0000000000438000  0000000000438000  00003600  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  6 .idata        00000a60  000000014003a000  000000014003a000  00005000  2**2
+  6 .idata        00000ab0  000000000043a000  000000000043a000  00005200  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  7 .tls          00000008  000000014003b000  000000014003b000  00005c00  2**2
+  7 .tls          00000008  000000000043b000  000000000043b000  00005e00  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  8 .rsrc         0000a9d0  000000014003c000  000000014003c000  00005e00  2**2
+  8 .rsrc         0000b4a0  000000000043c000  000000000043c000  00006000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
 SYMBOL TABLE:
 no symbols

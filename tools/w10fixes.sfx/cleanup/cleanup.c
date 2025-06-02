@@ -16,8 +16,7 @@ uint32_t __tls_end __attribute__ ((section (".tls$ZZZ")))=0;
 #define LZ_MIN_MATCH 3
 
 static uint8_t flags;
-static uint8_t cbuffer[LZ_CAPACITY+1];
-static uint8_t cntxs[LZ_CAPACITY+2];
+static uint8_t cbuffer[4];
 static uint8_t vocbuf[0x10000];
 static uint16_t frequency[256][256];
 static uint16_t fcs[256];
@@ -31,9 +30,7 @@ static uint32_t hlp;
 static uint32_t range;
 static char *lowp;
 static char *hlpp;
-static uint8_t *cpos;
 static uint8_t rle_flag;
-static uint8_t scntx;
 
 static uint8_t *dptr;
 static HANDLE iMutex;
@@ -79,53 +76,32 @@ static uint8_t rc32_getc(uint8_t *c,uint8_t cntx){
 static uint8_t unpack_file(){
   for(;;){
     if(length){
-      if(rle_flag==0) symbol=vocbuf[offset++];
-      vocbuf[vocroot++]=symbol;
+      if(rle_flag) vocbuf[vocroot++]=symbol=offset;
+      else symbol=vocbuf[vocroot++]=vocbuf[offset++];
       length--;
       return 0;
-    }
-    else{
-      if(flags==0){
-        cpos=cbuffer;
-        if(rc32_getc(cpos++,0)) return 1;
-        for(uint8_t c=~*cbuffer;c;length++) c&=c-1;
-        uint8_t cflags=*cbuffer;
-        uint8_t cntx=8+(length<<1);
-        for(uint8_t c=0;c<cntx;){
-          if(cflags&0x80) cntxs[c++]=4;
-          else{
-            *(uint32_t*)(cntxs+c)=0x00030201;
-            c+=3;
-          };
-          cflags<<=1;
-        };
-        for(uint8_t c=0;c<cntx;c++){
-          if(cntxs[c]==4){
-            if(rc32_getc(cpos,scntx)) return 1;
-            scntx=*cpos++;
-          }
-          else{
-            if(rc32_getc(cpos++,cntxs[c])) return 1;
-          };
-        };
-        cpos=&cbuffer[1];
-        flags=8;
-      };
+    };
+    if(flags){
       length=rle_flag=1;
-      if(*cbuffer&0x80) symbol=*cpos;
+      if(*cbuffer&0x80){
+        if(rc32_getc((uint8_t *)&offset,vocbuf[(uint16_t)(vocroot-1)])) return 1;
+      }
       else{
-        length=LZ_MIN_MATCH+1+*cpos++;
-        if((offset=*(uint16_t*)cpos++)<0x0100) symbol=(uint8_t)(offset);
-        else{
+        for(uint8_t c=1;c<4;c++)
+          if(rc32_getc(cbuffer+c,c)) return 1;
+        length=LZ_MIN_MATCH+1+cbuffer[1];
+        if((offset=*(uint16_t*)(cbuffer+2))>=0x0100){
           if(offset==0x0100) return 1;
-          offset=~offset+(uint16_t)(vocroot+LZ_BUF_SIZE);
+          offset=~offset+vocroot+LZ_BUF_SIZE;
           rle_flag=0;
         };
       };
-      *cbuffer<<=1;
-      cpos++;
-      flags--;
+      cbuffer[0]<<=1;
+      flags<<=1;
+      continue;
     };
+    if(rc32_getc(cbuffer,0)) return 1;
+    flags=0xff;
   };
   return 0;
 }
@@ -135,7 +111,6 @@ static void init_unpack(){
   offset=range=0xffffffff;
   lowp=&((char *)&low)[3];
   hlpp=&((char *)&hlp)[0];
-  scntx=0xff;
   uint32_t i;
   for(i=0;i<256;i++){
     for(int j=0;j<256;j++) frequency[i][j]=1;
@@ -221,7 +196,8 @@ static HDC hdc,hdcMem;
 static BITMAP bm;
 static PAINTSTRUCT ps;
 static RECT rect,rc,rc_yes,rc_no;
-static HPEN hpen;
+static HPEN hpen,hpensa,hpensb;
+static HBRUSH hbrush;
 static POINT mpos;
 static BOOL mousetrack=FALSE,mark_yes=FALSE,mark_no=FALSE;
 static TRACKMOUSEEVENT tme;
@@ -253,7 +229,10 @@ static LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lPar
       hdc=GetDC(hWnd);
       hdcMem=CreateCompatibleDC(hdc);
       hOldBitmap=SelectObject(hdcMem,hBitmap);
-      hpen=CreatePen(PS_SOLID,8,RGB(39,39,39));
+      LOGBRUSH lb={BS_SOLID,RGB(39,39,39),0};
+      hpen=ExtCreatePen(PS_GEOMETRIC|PS_SOLID|PS_ENDCAP_ROUND|PS_JOIN_ROUND,7,&lb,0,NULL);
+      hpensa=CreatePen(PS_SOLID,7,RGB(115,122,117));
+      hpensb=CreatePen(PS_SOLID,7,RGB(145,154,148));
       ReleaseDC(hWnd,hdc);
       return 0;
     case WM_KEYDOWN:
@@ -339,23 +318,39 @@ static LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lPar
       hdc=BeginPaint(hWnd,&ps);
       GetClientRect(hWnd,&rect);
       BitBlt(hdc,0,0,rect.right,rect.bottom,hdcMem,0,0,SRCCOPY);
+      POINT apnts[3]={{33,118},{53,138},{33,158}};
+      POINT apnts_[3]={{32,120},{52,140},{32,160}};
+      POINT apnts__[3]={{34,121},{54,141},{34,161}};
+      POINT bpnts[3]={{220,118},{200,138},{220,158}};
+      POINT bpnts_[3]={{219,120},{199,140},{219,160}};
+      POINT bpnts__[3]={{221,121},{201,141},{221,161}};
+      POINT cpnts[3]={{286,118},{306,138},{286,158}};
+      POINT cpnts_[3]={{285,120},{305,140},{285,160}};
+      POINT cpnts__[3]={{287,121},{307,141},{287,161}};
+      POINT dpnts[3]={{473,118},{453,138},{473,158}};
+      POINT dpnts_[3]={{472,120},{452,140},{472,160}};
+      POINT dpnts__[3]={{474,121},{454,141},{474,161}};
       if(mark_yes){
+        SelectObject(hdc,hpensb);
+        Polyline(hdc,apnts_,3);
+        Polyline(hdc,bpnts_,3);
+        SelectObject(hdc,hpensa);
+        Polyline(hdc,apnts__,3);
+        Polyline(hdc,bpnts__,3);
         SelectObject(hdc,hpen);
-        MoveToEx(hdc,33,118,NULL);
-        LineTo(hdc,53,138);
-        LineTo(hdc,33,158);
-        MoveToEx(hdc,220,118,NULL);
-        LineTo(hdc,200,138);
-        LineTo(hdc,220,158);
+        Polyline(hdc,apnts,3);
+        Polyline(hdc,bpnts,3);
       };
       if(mark_no){
+        SelectObject(hdc,hpensb);
+        Polyline(hdc,cpnts_,3);
+        Polyline(hdc,dpnts_,3);
+        SelectObject(hdc,hpensa);
+        Polyline(hdc,cpnts__,3);
+        Polyline(hdc,dpnts__,3);
         SelectObject(hdc,hpen);
-        MoveToEx(hdc,286,118,NULL);
-        LineTo(hdc,306,138);
-        LineTo(hdc,286,158);
-        MoveToEx(hdc,473,118,NULL);
-        LineTo(hdc,453,138);
-        LineTo(hdc,473,158);
+        Polyline(hdc,cpnts,3);
+        Polyline(hdc,dpnts,3);
       };
       EndPaint(hWnd,&ps);
       break;
@@ -376,6 +371,9 @@ static LRESULT CALLBACK dlg_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lPar
       DeleteDC(hdcMem);
       DeleteObject(hBitmap);
       DeleteObject(hOldBitmap);
+      DeleteObject(hpen);
+      DeleteObject(hpensa);
+      DeleteObject(hpensb);
       break;
   }
   return DefWindowProcW(hWnd,msg,wParam,lParam);
@@ -425,7 +423,8 @@ static LRESULT CALLBACK banner_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM l
       hdc=GetDC(hWnd);
       hdcMem=CreateCompatibleDC(hdc);
       hOldBitmap=(HBITMAP)SelectObject(hdcMem,hBitmap);
-      hpen=CreatePen(PS_SOLID,8,RGB(39,39,39));
+      hpen=CreatePen(PS_NULL,1,RGB(39,39,39));
+      hbrush=CreateSolidBrush(RGB(39,39,39));
       ReleaseDC(hWnd,hdc);
       return 0;
     case WM_KEYDOWN:
@@ -439,30 +438,26 @@ static LRESULT CALLBACK banner_wndproc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM l
       GetClientRect(hWnd,&rect);
       BitBlt(hdc,0,0,rect.right,rect.bottom,hdcMem,0,0,SRCCOPY);
       SelectObject(hdc,hpen);
-      MoveToEx(hdc,10,10,NULL);
-      LineTo(hdc,40,40);
-      MoveToEx(hdc,496,10,NULL);
-      LineTo(hdc,466,40);
-      MoveToEx(hdc,40,10,NULL);
-      LineTo(hdc,70,40);
-      LineTo(hdc,436,40);
-      LineTo(hdc,466,10);
-      MoveToEx(hdc,10,181,NULL);
-      LineTo(hdc,40,151);
-      MoveToEx(hdc,496,181,NULL);
-      LineTo(hdc,466,151);
-      MoveToEx(hdc,40,181,NULL);
-      LineTo(hdc,70,151);
-      LineTo(hdc,436,151);
-      LineTo(hdc,466,181);
+      SelectObject(hdc,hbrush);
+      Rectangle(hdc,425-44*(tcounter%9),32,434-44*(tcounter%9),40);
+      Rectangle(hdc,73+44*(tcounter%9),152,82+44*(tcounter%9),160);
       EndPaint(hWnd,&ps);
       break;
+    case WM_TIMER:
+      tcounter++;
+      InvalidateRect(hWnd,NULL,FALSE);
+      UpdateWindow(hWnd);
+      break;
     case WM_CLOSE:
+    case WM_ENDSESSION:
     case WM_DESTROY:
+      KillTimer(hWnd,0);
       PostQuitMessage(0);
       DeleteDC(hdcMem);
       DeleteObject(hBitmap);
       DeleteObject(hOldBitmap);
+      DeleteObject(hpen);
+      DeleteObject(hbrush);
       break;
   }
   return DefWindowProcW(hWnd,msg,wParam,lParam);
@@ -481,6 +476,8 @@ static void banner_window(){
   if(nY<0) nY=0;
   HWND hWnd=CreateWindowExW(WS_EX_TOPMOST,wc.lpszClassName,NULL,WS_POPUP,nX,nY,nWidth,nHeight,NULL,NULL,0,NULL);
   ShowWindow(hWnd,SW_SHOW);
+  tcounter=0;
+  SetTimer(hWnd,0,1000,(TIMERPROC)NULL);
   UpdateWindow(hWnd);
   MSG msg;
   while(GetMessageW(&msg,NULL,0,0)){

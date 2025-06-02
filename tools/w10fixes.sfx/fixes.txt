@@ -1,0 +1,971 @@
+
+fixes.exe:     file format pei-x86-64
+fixes.exe
+architecture: i386:x86-64, flags 0x00000103:
+HAS_RELOC, EXEC_P, D_PAGED
+start address 0x0000000000406ad0
+
+Characteristics 0x22e
+	executable
+	line numbers stripped
+	symbols stripped
+	large address aware
+	debugging information removed
+
+Time/Date		Thu Jan 01 03:00:00 1970
+Magic			020b	(PE32+)
+MajorLinkerVersion	2
+MinorLinkerVersion	33
+SizeOfCode		0000000000006600
+SizeOfInitializedData	0000000000083c00
+SizeOfUninitializedData	0000000000000000
+AddressOfEntryPoint	0000000000006ad0
+BaseOfCode		0000000000001000
+ImageBase		0000000000400000
+SectionAlignment	00001000
+FileAlignment		00000200
+MajorOSystemVersion	6
+MinorOSystemVersion	0
+MajorImageVersion	255
+MinorImageVersion	255
+MajorSubsystemVersion	6
+MinorSubsystemVersion	2
+Win32Version		00000000
+SizeOfImage		0008f000
+SizeOfHeaders		00000400
+CheckSum		000925ea
+Subsystem		00000002	(Windows GUI)
+DllCharacteristics	00000140
+SizeOfStackReserve	0000000000200000
+SizeOfStackCommit	0000000000001000
+SizeOfHeapReserve	0000000000100000
+SizeOfHeapCommit	0000000000001000
+LoaderFlags		00000000
+NumberOfRvaAndSizes	00000010
+
+The Data Directory
+Entry 0 000000000000b000 00001e5e Export Directory [.edata (or where ever we found it)]
+Entry 1 000000000000d000 000003cc Import Directory [parts of .idata]
+Entry 2 000000000000e000 0007fb58 Resource Directory [.rsrc]
+Entry 3 0000000000000000 00000000 Exception Directory [.pdata]
+Entry 4 0000000000000000 00000000 Security Directory
+Entry 5 000000000008e000 00000208 Base Relocation Directory [.reloc]
+Entry 6 000000000000a000 0000001c Debug Directory
+Entry 7 0000000000000000 00000000 Description Directory
+Entry 8 0000000000000000 00000000 Special Directory
+Entry 9 0000000000000000 00000000 Thread Storage Directory [.tls]
+Entry a 0000000000000000 00000000 Load Configuration Directory
+Entry b 0000000000000000 00000000 Bound Import Directory
+Entry c 000000000000d118 000000c8 Import Address Table Directory
+Entry d 0000000000000000 00000000 Delay Import Directory
+Entry e 0000000000000000 00000000 CLR Runtime Header
+Entry f 0000000000000000 00000000 Reserved
+
+There is an import table in .idata at 0x40d000
+
+The Import Tables (interpreted .idata section contents)
+ vma:            Hint    Time      Forward  DLL       First
+                 Table   Stamp     Chain    Name      Thunk
+ 0000d000	0000d050 00000000 00000000 0000d368 0000d118
+
+	DLL Name: KERNEL32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	d1e0	  141  CloseHandle
+	d1ee	  224  CreateMutexA
+	d1fe	  366  ExitProcess
+	d20c	  630  GetLastError
+	d21c	  997  LocalAlloc
+	d22a	 1002  LocalFree
+	d236	 1131  QueryPerformanceCounter
+
+ 0000d014	0000d090 00000000 00000000 0000d37c 0000d158
+
+	DLL Name: ntdll.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	d250	 1079  RtlGetCurrentPeb
+
+ 0000d028	0000d0a0 00000000 00000000 0000d3c0 0000d168
+
+	DLL Name: USER32.dll
+	vma:  Hint/Ord Member-Name Bound-To
+	d264	  115  CreateWindowExA
+	d276	  164  DefWindowProcA
+	d288	  177  DestroyWindow
+	d298	  185  DispatchMessageA
+	d2ac	  380  GetMessageA
+	d2ba	  568  KillTimer
+	d2c6	  613  MessageBoxA
+	d2d4	  656  PostQuitMessage
+	d2e6	  696  RegisterClassA
+	d2f8	  832  SetTimer
+	d304	  852  SetWindowTextA
+	d316	  865  ShowWindow
+	d324	  897  TranslateMessage
+	d338	  906  UnregisterClassA
+
+ 0000d03c	00000000 00000000 00000000 00000000 00000000
+
+There is an export table in .edata at 0x40b000
+
+The Export Tables (interpreted .edata section contents)
+
+Export Flags 			0
+Time/Date stamp 		0
+Major/Minor 			0/0
+Name 				000000000000ba6e dvgnzkpp.exe
+Ordinal Base 			1
+Number in:
+	Export Address Table 		00000107
+	[Name Pointer/Ordinal] Table	00000107
+Table Addresses
+	Export Address Table 		000000000000b028
+	Name Pointer Table 		000000000000b444
+	Ordinal Table 			000000000000b860
+
+Export Address Table -- Ordinal Base 1
+	[   0] +base[   1] 27e0 Export RVA
+	[   1] +base[   2] 2800 Export RVA
+	[   2] +base[   3] 2820 Export RVA
+	[   3] +base[   4] 2840 Export RVA
+	[   4] +base[   5] 2860 Export RVA
+	[   5] +base[   6] 2880 Export RVA
+	[   6] +base[   7] 28a0 Export RVA
+	[   7] +base[   8] 28b0 Export RVA
+	[   8] +base[   9] 28c0 Export RVA
+	[   9] +base[  10] 28d0 Export RVA
+	[  10] +base[  11] 28e0 Export RVA
+	[  11] +base[  12] 28f0 Export RVA
+	[  12] +base[  13] 2900 Export RVA
+	[  13] +base[  14] 2910 Export RVA
+	[  14] +base[  15] 2920 Export RVA
+	[  15] +base[  16] 2930 Export RVA
+	[  16] +base[  17] 2940 Export RVA
+	[  17] +base[  18] 2950 Export RVA
+	[  18] +base[  19] 2960 Export RVA
+	[  19] +base[  20] 2970 Export RVA
+	[  20] +base[  21] 2980 Export RVA
+	[  21] +base[  22] 2990 Export RVA
+	[  22] +base[  23] 29a0 Export RVA
+	[  23] +base[  24] 29b0 Export RVA
+	[  24] +base[  25] 29c0 Export RVA
+	[  25] +base[  26] 29d0 Export RVA
+	[  26] +base[  27] 29e0 Export RVA
+	[  27] +base[  28] 29f0 Export RVA
+	[  28] +base[  29] 2a00 Export RVA
+	[  29] +base[  30] 2a10 Export RVA
+	[  30] +base[  31] 2a20 Export RVA
+	[  31] +base[  32] 2a30 Export RVA
+	[  32] +base[  33] 2a40 Export RVA
+	[  33] +base[  34] 2a50 Export RVA
+	[  34] +base[  35] 2a60 Export RVA
+	[  35] +base[  36] 2a70 Export RVA
+	[  36] +base[  37] 2a80 Export RVA
+	[  37] +base[  38] 2a90 Export RVA
+	[  38] +base[  39] 2aa0 Export RVA
+	[  39] +base[  40] 2ab0 Export RVA
+	[  40] +base[  41] 2ac0 Export RVA
+	[  41] +base[  42] 2ad0 Export RVA
+	[  42] +base[  43] 2ae0 Export RVA
+	[  43] +base[  44] 2af0 Export RVA
+	[  44] +base[  45] 2b00 Export RVA
+	[  45] +base[  46] 2b10 Export RVA
+	[  46] +base[  47] 2b20 Export RVA
+	[  47] +base[  48] 2b30 Export RVA
+	[  48] +base[  49] 2b40 Export RVA
+	[  49] +base[  50] 2b50 Export RVA
+	[  50] +base[  51] 2b60 Export RVA
+	[  51] +base[  52] 2b70 Export RVA
+	[  52] +base[  53] 2b80 Export RVA
+	[  53] +base[  54] 2b90 Export RVA
+	[  54] +base[  55] 2ba0 Export RVA
+	[  55] +base[  56] 2bb0 Export RVA
+	[  56] +base[  57] 2bc0 Export RVA
+	[  57] +base[  58] 2bd0 Export RVA
+	[  58] +base[  59] 2be0 Export RVA
+	[  59] +base[  60] 2bf0 Export RVA
+	[  60] +base[  61] 2c00 Export RVA
+	[  61] +base[  62] 2c10 Export RVA
+	[  62] +base[  63] 2c20 Export RVA
+	[  63] +base[  64] 2c30 Export RVA
+	[  64] +base[  65] 2c40 Export RVA
+	[  65] +base[  66] 2c50 Export RVA
+	[  66] +base[  67] 2c60 Export RVA
+	[  67] +base[  68] 2c70 Export RVA
+	[  68] +base[  69] 2c80 Export RVA
+	[  69] +base[  70] 2c90 Export RVA
+	[  70] +base[  71] 2ca0 Export RVA
+	[  71] +base[  72] 2cb0 Export RVA
+	[  72] +base[  73] 2cc0 Export RVA
+	[  73] +base[  74] 2cd0 Export RVA
+	[  74] +base[  75] 2ce0 Export RVA
+	[  75] +base[  76] 2cf0 Export RVA
+	[  76] +base[  77] 2d00 Export RVA
+	[  77] +base[  78] 2d10 Export RVA
+	[  78] +base[  79] 2d20 Export RVA
+	[  79] +base[  80] 2d30 Export RVA
+	[  80] +base[  81] 2d40 Export RVA
+	[  81] +base[  82] 2d50 Export RVA
+	[  82] +base[  83] 2d60 Export RVA
+	[  83] +base[  84] 2d70 Export RVA
+	[  84] +base[  85] 2d80 Export RVA
+	[  85] +base[  86] 2d90 Export RVA
+	[  86] +base[  87] 2da0 Export RVA
+	[  87] +base[  88] 2db0 Export RVA
+	[  88] +base[  89] 2dc0 Export RVA
+	[  89] +base[  90] 2dd0 Export RVA
+	[  90] +base[  91] 2de0 Export RVA
+	[  91] +base[  92] 2df0 Export RVA
+	[  92] +base[  93] 2e00 Export RVA
+	[  93] +base[  94] 2e10 Export RVA
+	[  94] +base[  95] 2e20 Export RVA
+	[  95] +base[  96] 2e30 Export RVA
+	[  96] +base[  97] 2e40 Export RVA
+	[  97] +base[  98] 2e50 Export RVA
+	[  98] +base[  99] 2e60 Export RVA
+	[  99] +base[ 100] 2e70 Export RVA
+	[ 100] +base[ 101] 2e80 Export RVA
+	[ 101] +base[ 102] 2e90 Export RVA
+	[ 102] +base[ 103] 2ea0 Export RVA
+	[ 103] +base[ 104] 2eb0 Export RVA
+	[ 104] +base[ 105] 2ec0 Export RVA
+	[ 105] +base[ 106] 2ed0 Export RVA
+	[ 106] +base[ 107] 2ee0 Export RVA
+	[ 107] +base[ 108] 2ef0 Export RVA
+	[ 108] +base[ 109] 2f00 Export RVA
+	[ 109] +base[ 110] 2f10 Export RVA
+	[ 110] +base[ 111] 2f20 Export RVA
+	[ 111] +base[ 112] 2f30 Export RVA
+	[ 112] +base[ 113] 2f40 Export RVA
+	[ 113] +base[ 114] 2f50 Export RVA
+	[ 114] +base[ 115] 2f60 Export RVA
+	[ 115] +base[ 116] 2f70 Export RVA
+	[ 116] +base[ 117] 2f80 Export RVA
+	[ 117] +base[ 118] 2f90 Export RVA
+	[ 118] +base[ 119] 2fa0 Export RVA
+	[ 119] +base[ 120] 2fb0 Export RVA
+	[ 120] +base[ 121] 2fc0 Export RVA
+	[ 121] +base[ 122] 2fd0 Export RVA
+	[ 122] +base[ 123] 2fe0 Export RVA
+	[ 123] +base[ 124] 2ff0 Export RVA
+	[ 124] +base[ 125] 3000 Export RVA
+	[ 125] +base[ 126] 3010 Export RVA
+	[ 126] +base[ 127] 3020 Export RVA
+	[ 127] +base[ 128] 3030 Export RVA
+	[ 128] +base[ 129] 3040 Export RVA
+	[ 129] +base[ 130] 3050 Export RVA
+	[ 130] +base[ 131] 3060 Export RVA
+	[ 131] +base[ 132] 3070 Export RVA
+	[ 132] +base[ 133] 3080 Export RVA
+	[ 133] +base[ 134] 3090 Export RVA
+	[ 134] +base[ 135] 30a0 Export RVA
+	[ 135] +base[ 136] 30b0 Export RVA
+	[ 136] +base[ 137] 30c0 Export RVA
+	[ 137] +base[ 138] 30d0 Export RVA
+	[ 138] +base[ 139] 30e0 Export RVA
+	[ 139] +base[ 140] 30f0 Export RVA
+	[ 140] +base[ 141] 3100 Export RVA
+	[ 141] +base[ 142] 3110 Export RVA
+	[ 142] +base[ 143] 3120 Export RVA
+	[ 143] +base[ 144] 3130 Export RVA
+	[ 144] +base[ 145] 3140 Export RVA
+	[ 145] +base[ 146] 3150 Export RVA
+	[ 146] +base[ 147] 3160 Export RVA
+	[ 147] +base[ 148] 3170 Export RVA
+	[ 148] +base[ 149] 3180 Export RVA
+	[ 149] +base[ 150] 3190 Export RVA
+	[ 150] +base[ 151] 31a0 Export RVA
+	[ 151] +base[ 152] 31b0 Export RVA
+	[ 152] +base[ 153] 31c0 Export RVA
+	[ 153] +base[ 154] 31d0 Export RVA
+	[ 154] +base[ 155] 31e0 Export RVA
+	[ 155] +base[ 156] 31f0 Export RVA
+	[ 156] +base[ 157] 3200 Export RVA
+	[ 157] +base[ 158] 3210 Export RVA
+	[ 158] +base[ 159] 3220 Export RVA
+	[ 159] +base[ 160] 3230 Export RVA
+	[ 160] +base[ 161] 3240 Export RVA
+	[ 161] +base[ 162] 3250 Export RVA
+	[ 162] +base[ 163] 3260 Export RVA
+	[ 163] +base[ 164] 3270 Export RVA
+	[ 164] +base[ 165] 3280 Export RVA
+	[ 165] +base[ 166] 3290 Export RVA
+	[ 166] +base[ 167] 32a0 Export RVA
+	[ 167] +base[ 168] 32b0 Export RVA
+	[ 168] +base[ 169] 32c0 Export RVA
+	[ 169] +base[ 170] 32d0 Export RVA
+	[ 170] +base[ 171] 32e0 Export RVA
+	[ 171] +base[ 172] 32f0 Export RVA
+	[ 172] +base[ 173] 3300 Export RVA
+	[ 173] +base[ 174] 3310 Export RVA
+	[ 174] +base[ 175] 3320 Export RVA
+	[ 175] +base[ 176] 3330 Export RVA
+	[ 176] +base[ 177] 3340 Export RVA
+	[ 177] +base[ 178] 3350 Export RVA
+	[ 178] +base[ 179] 3360 Export RVA
+	[ 179] +base[ 180] 3370 Export RVA
+	[ 180] +base[ 181] 3380 Export RVA
+	[ 181] +base[ 182] 3390 Export RVA
+	[ 182] +base[ 183] 33a0 Export RVA
+	[ 183] +base[ 184] 33b0 Export RVA
+	[ 184] +base[ 185] 33c0 Export RVA
+	[ 185] +base[ 186] 33d0 Export RVA
+	[ 186] +base[ 187] 33e0 Export RVA
+	[ 187] +base[ 188] 33f0 Export RVA
+	[ 188] +base[ 189] 3400 Export RVA
+	[ 189] +base[ 190] 3410 Export RVA
+	[ 190] +base[ 191] 3420 Export RVA
+	[ 191] +base[ 192] 3430 Export RVA
+	[ 192] +base[ 193] 3440 Export RVA
+	[ 193] +base[ 194] 3450 Export RVA
+	[ 194] +base[ 195] 3460 Export RVA
+	[ 195] +base[ 196] 3470 Export RVA
+	[ 196] +base[ 197] 3480 Export RVA
+	[ 197] +base[ 198] 3490 Export RVA
+	[ 198] +base[ 199] 34a0 Export RVA
+	[ 199] +base[ 200] 34b0 Export RVA
+	[ 200] +base[ 201] 34c0 Export RVA
+	[ 201] +base[ 202] 34d0 Export RVA
+	[ 202] +base[ 203] 34e0 Export RVA
+	[ 203] +base[ 204] 34f0 Export RVA
+	[ 204] +base[ 205] 3500 Export RVA
+	[ 205] +base[ 206] 3510 Export RVA
+	[ 206] +base[ 207] 3520 Export RVA
+	[ 207] +base[ 208] 3530 Export RVA
+	[ 208] +base[ 209] 3540 Export RVA
+	[ 209] +base[ 210] 3550 Export RVA
+	[ 210] +base[ 211] 3560 Export RVA
+	[ 211] +base[ 212] 3570 Export RVA
+	[ 212] +base[ 213] 3580 Export RVA
+	[ 213] +base[ 214] 3590 Export RVA
+	[ 214] +base[ 215] 35a0 Export RVA
+	[ 215] +base[ 216] 35b0 Export RVA
+	[ 216] +base[ 217] 35c0 Export RVA
+	[ 217] +base[ 218] 35d0 Export RVA
+	[ 218] +base[ 219] 35e0 Export RVA
+	[ 219] +base[ 220] 35f0 Export RVA
+	[ 220] +base[ 221] 3600 Export RVA
+	[ 221] +base[ 222] 3610 Export RVA
+	[ 222] +base[ 223] 3620 Export RVA
+	[ 223] +base[ 224] 3630 Export RVA
+	[ 224] +base[ 225] 3640 Export RVA
+	[ 225] +base[ 226] 3650 Export RVA
+	[ 226] +base[ 227] 3660 Export RVA
+	[ 227] +base[ 228] 3670 Export RVA
+	[ 228] +base[ 229] 3680 Export RVA
+	[ 229] +base[ 230] 3690 Export RVA
+	[ 230] +base[ 231] 36a0 Export RVA
+	[ 231] +base[ 232] 36b0 Export RVA
+	[ 232] +base[ 233] 36c0 Export RVA
+	[ 233] +base[ 234] 36d0 Export RVA
+	[ 234] +base[ 235] 36e0 Export RVA
+	[ 235] +base[ 236] 36f0 Export RVA
+	[ 236] +base[ 237] 3700 Export RVA
+	[ 237] +base[ 238] 3710 Export RVA
+	[ 238] +base[ 239] 3720 Export RVA
+	[ 239] +base[ 240] 3730 Export RVA
+	[ 240] +base[ 241] 3740 Export RVA
+	[ 241] +base[ 242] 3750 Export RVA
+	[ 242] +base[ 243] 3760 Export RVA
+	[ 243] +base[ 244] 3770 Export RVA
+	[ 244] +base[ 245] 3780 Export RVA
+	[ 245] +base[ 246] 3790 Export RVA
+	[ 246] +base[ 247] 37a0 Export RVA
+	[ 247] +base[ 248] 37b0 Export RVA
+	[ 248] +base[ 249] 37c0 Export RVA
+	[ 249] +base[ 250] 37d0 Export RVA
+	[ 250] +base[ 251] 37e0 Export RVA
+	[ 251] +base[ 252] 37f0 Export RVA
+	[ 252] +base[ 253] 3800 Export RVA
+	[ 253] +base[ 254] 3810 Export RVA
+	[ 254] +base[ 255] 3820 Export RVA
+	[ 255] +base[ 256] 3830 Export RVA
+	[ 256] +base[ 257] 3840 Export RVA
+	[ 257] +base[ 258] 3850 Export RVA
+	[ 258] +base[ 259] 3860 Export RVA
+	[ 259] +base[ 260] 3870 Export RVA
+	[ 260] +base[ 261] 3880 Export RVA
+	[ 261] +base[ 262] 3890 Export RVA
+	[ 262] +base[ 263] 6ad0 Export RVA
+
+[Ordinal/Name Pointer] Table
+	[   0] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9EEELi207ELi3EE7encryptEc
+	[   1] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi141ELi5EE7encryptEc
+	[   2] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi37ELi13EE7encryptEc
+	[   3] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi39ELi11EE7encryptEc
+	[   4] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi91ELi7EE7encryptEc
+	[   5] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12ELy13EEELi185ELi9EE7encryptEc
+	[   6] __M2FlMzdjYjTS_g
+	[   7] __M2I5ZWU4Y2OA_g
+	[   8] __M2NiYmU1MWQi_g
+	[   9] __M2Q1ZThiNjgZ_g
+	[  10] __M2U3NzdmNTjF_g
+	[  11] __M2Y5NWViZTkb_g
+	[  12] __MDA5N2FkYWJp_g
+	[  13] __MDE0MzlmOWJ__g
+	[  14] __MDI1NWM5YWUL_g
+	[  15] __MDM4N2QzZjkl_g
+	[  16] __MDQ3MmIzOGVR_g
+	[  17] __MDUxMzMwZWNJ_g
+	[  18] __MDYwMTQzOWab_g
+	[  19] __MDdlMTNjYmLl_g
+	[  20] __MDg0MjFjNjI2_g
+	[  21] __MDlmNGExYTZQ_g
+	[  22] __MGE2MDdkYzGJ_g
+	[  23] __MGJjZjQ1YzJN_g
+	[  24] __MGM5Yzc1MDn0_g
+	[  25] __MGRmMzM5MGFg_g
+	[  26] __MGVhMzBmMjY1_g
+	[  27] __MGYyNjM1Zmbv_g
+	[  28] __MTA5NmI5MTLU_g
+	[  29] __MTEwNTEzMzDs_g
+	[  30] __MTJkNDc0ZmIN_g
+	[  31] __MTMzMGVjNDlA_g
+	[  32] __MTRjZGI1Yjht_g
+	[  33] __MTU1MmIxODVa_g
+	[  34] __MTZiYTRjZmQp_g
+	[  35] __MTcwNDcyYjOO_g
+	[  36] __MThkNWUyMmGv_g
+	[  37] __MTk5OWFhZWXq_g
+	[  38] __MWE2MzIxNWJ4_g
+	[  39] __MWJmMDNiOWXo_g
+	[  40] __MWM2MjM2MmRs_g
+	[  41] __MWQyMjgzYTJr_g
+	[  42] __MWU0YjA2MDFD_g
+	[  43] __MWYxZTRiMDYB_g
+	[  44] __MjAzMWMzZjEH_g
+	[  45] __MjE1Yjc4NTeQ_g
+	[  46] __MjI4M2EyNmKP_g
+	[  47] __MjMxZjFlNGIG_g
+	[  48] __MjRkNmE0OWSS_g
+	[  49] __MjVlNzRlZGb6_g
+	[  50] __MjYzNWZmZWaI_g
+	[  51] __Mjc0NzMyOTSC_g
+	[  52] __Mjg3YWE1NWZ2_g
+	[  53] __MjlkZTIzMWYe_g
+	[  54] __MmFhZjVjZjhB_g
+	[  55] __MmJkOTRmYTm2_g
+	[  56] __MmMzN2JlOGOa_g
+	[  57] __MmQ2YzIwMzHD_g
+	[  58] __MmVkY2M3MDOH_g
+	[  59] __MmYzZDVlOGJo_g
+	[  60] __MzBlYzQ5NDCw_g
+	[  61] __MzFjM2YxMDfh_g
+	[  62] __MzI5NDgyNzDd_g
+	[  63] __MzMzZTc3N2ZY_g
+	[  64] __MzQxNTUyYjGF_g
+	[  65] __MzVmZmVmODi9_g
+	[  66] __MzYyZDZjMjAx_g
+	[  67] __MzdiZThjOWFZ_g
+	[  68] __MzgyZjNkNWWL_g
+	[  69] __MzkwYTYwN2TB_g
+	[  70] __N2FhNTVmNzbg_g
+	[  71] __N2I1ZDExMDUT_g
+	[  72] __N2NiNGQyODFU_g
+	[  73] __N2RjMTg5ZmWg_g
+	[  74] __N2VkYTM4MmY9_g
+	[  75] __N2Y1OGM1MTjV_g
+	[  76] __NDBiMDI0ZDak_g
+	[  77] __NDFmMjI4N2Gl_g
+	[  78] __NDIxYzYyMzYt_g
+	[  79] __NDM5ZjliN2Xa_g
+	[  80] __NDQyYzM3YmWM_g
+	[  81] __NDVjMjRkOGGN_g
+	[  82] __NDY3M2IyZTQW_g
+	[  83] __NDczMjk0ODJw_g
+	[  84] __NDhkODUzNGGn_g
+	[  85] __NDk0MGIwMjTW_g
+	[  86] __NGFhNzQ2NzOy_g
+	[  87] __NGIwNjAxNDOf_g
+	[  88] __NGNmZDI5ZGUj_g
+	[  89] __NGQ4YThkNTb1_g
+	[  90] __NGVkZmZhNmbE_g
+	[  91] __NGZhOWI2YWNh_g
+	[  92] __NTBjODM0MTVS_g
+	[  93] __NTEyZWRjYzcD_g
+	[  94] __NTJiMTg1NWEO_g
+	[  95] __NTM0YWE3NDZz_g
+	[  96] __NTRiZjE3MDRy_g
+	[  97] __NTVjOWFlMGLP_g
+	[  98] __NTZmNTc5YzCT_g
+	[  99] __NTc5MGY2M2aV_g
+	[ 100] __NThjNTE4ZDXi_g
+	[ 101] __NTlmNzQ4ZDhT_g
+	[ 102] __NWEwZWEzMGYm_g
+	[ 103] __NWI3ODU3OTD2_g
+	[ 104] __NWNmODQxZjIo_g
+	[ 105] __NWQxMTA1MTMw_g
+	[ 106] __NWU4YjY4MTmZ_g
+	[ 107] __NWY3NmUwOTGY_g
+	[ 108] __NjA3ZGMxODn__g
+	[ 109] __NjE3MTI3NDcy_g
+	[ 110] __NjIzNjJkNmMg_g
+	[ 111] __NjMyMTViNzhX_g
+	[ 112] __NjRkNzg0NjUr_g
+	[ 113] __NjUyYmQ5NGap_g
+	[ 114] __NjY2ZTFhNjMh_g
+	[ 115] __NjcwMjU1Yzmu_g
+	[ 116] __NjgxOTk5YWHu_g
+	[ 117] __NjkwYzljNzUJ_g
+	[ 118] __NmE3YjVkMTEF_g
+	[ 119] __NmI4Zjg2NjcC_g
+	[ 120] __NmMyMDMxYzPx_g
+	[ 121] __NmRiNzY2NmUa_g
+	[ 122] __NmUxYTYzMjFb_g
+	[ 123] __NmZjNGVkMDhC_g
+	[ 124] __NzBkZGE4ZGL8_g
+	[ 125] __NzEyNzQ3MzKU_g
+	[ 126] __NzJiMzhlNTEu_g
+	[ 127] __NzNiMmU0MTa6_g
+	[ 128] __NzRmYjBkZjM5_g
+	[ 129] __NzUwOWY0YTGm_g
+	[ 130] __NzZlMDkxOTgA_g
+	[ 131] __Nzc3ZjU4YzUY_g
+	[ 132] __Nzg1NzkwZjY__g
+	[ 133] __NzljMDkzZDHK_g
+	[ 134] __ODA2YTdiNWQR_g
+	[ 135] __ODE1NGJmMTcE_g
+	[ 136] __ODI3MGRkYTjb_g
+	[ 137] __ODNhMjZiOGaG_g
+	[ 138] __ODQ2NTJiZDlP_g
+	[ 139] __ODU1YTBlYTMP_g
+	[ 140] __ODY2NzAyNTXJ_g
+	[ 141] __ODdkM2Y5MjXn_g
+	[ 142] __ODhiZGNiZTY6_g
+	[ 143] __ODlmZWEwMTTN_g
+	[ 144] __OGE4ZDU2ZjV5_g
+	[ 145] __OGI2ODE5OTmq_g
+	[ 146] __OGM5YTU5ZjdI_g
+	[ 147] __OGQ1NmY1NznA_g
+	[ 148] __OGU1MTJlZGPH_g
+	[ 149] __OGY4NjY3MDJV_g
+	[ 150] __OTBmNjNmOTXr_g
+	[ 151] __OTE5ODAwOTet_g
+	[ 152] __OTIzMzNlNzd__g
+	[ 153] __OTNkMWNhY2Vk_g
+	[ 154] __OTQ4MjcwZGSo_g
+	[ 155] __OTVlYmU5MWLw_g
+	[ 156] __OTZiOTEyZDR0_g
+	[ 157] __OTdhZGFiNjkM_g
+	[ 158] __OTgwMDk3YWSr_g
+	[ 159] __OTlhYWVlZWG8_g
+	[ 160] __OWE1OWY3NDjY_g
+	[ 161] __OWI3ZWRhMzgv_g
+	[ 162] __OWM3NTA5ZjSh_g
+	[ 163] __OWQ5MjMzM2V3_g
+	[ 164] __OWVlOGNjODBq_g
+	[ 165] __OWY5YjdlZGE4_g
+	[ 166] __Y2FjZTY0ZDeE_g
+	[ 167] __Y2JlNjNhZTN8_g
+	[ 168] __Y2M4MDZhN2Jd_g
+	[ 169] __Y2RiNWI4NmS3_g
+	[ 170] __Y2U2NGQ3ODRl_g
+	[ 171] __Y2Y0NWMyNGSK_g
+	[ 172] __YTAxNGNkYjW4_g
+	[ 173] __YTFhNjUwYzg0_g
+	[ 174] __YTI2YjhmODZn_g
+	[ 175] __YTMwZjI2MzX__g
+	[ 176] __YTQ5ZDkyMzM__g
+	[ 177] __YTU1Zjc2ZTCR_g
+	[ 178] __YTY1MGM4MzQV_g
+	[ 179] __YTc0NjczYjLk_g
+	[ 180] __YThkYmZjYzZE_g
+	[ 181] __YTliNmFjNjFx_g
+	[ 182] __YWFlZWVhYmPQ_g
+	[ 183] __YWI2OTBjOWN1_g
+	[ 184] __YWM2MTcxMjdH_g
+	[ 185] __YWRhYjY5MGOc_g
+	[ 186] __YWUwYmNmNDXC_g
+	[ 187] __YWY1Y2Y4NDHy_g
+	[ 188] __YjAyNGQ2YTSd_g
+	[ 189] __YjE4NTVhMGWj_g
+	[ 190] __YjJlNDE2YmFM_g
+	[ 191] __YjM4ZTUxMmXc_g
+	[ 192] __YjRkMjgxNTS__g
+	[ 193] __YjViODZkYjdm_g
+	[ 194] __YjZhYzYxNzEn_g
+	[ 195] __Yjc2NjZlMWFj_g
+	[ 196] __Yjg2ZGI3NjZu_g
+	[ 197] __YjkxMmQ0NzT7_g
+	[ 198] __YmE0Y2ZkMjne_g
+	[ 199] __YmJlNTFkMjKD_g
+	[ 200] __YmNkMDEwOTa5_g
+	[ 201] __YmRjYmU2M2Hj_g
+	[ 202] __YmU4YzlhNTn3_g
+	[ 203] __YmYxNzA0NzKz_g
+	[ 204] __YzA5M2QxY2HO_g
+	[ 205] __YzE4OWZlYTAU_g
+	[ 206] __YzI0ZDhhOGRW_g
+	[ 207] __YzNmMTA3ZTE8_g
+	[ 208] __YzRlZDA4NDIc_g
+	[ 209] __YzUxOGQ1ZTIq_g
+	[ 210] __YzY0NDJjMze__g
+	[ 211] __YzcwMzg3ZDP5_g
+	[ 212] __YzgzNDE1NTKx_g
+	[ 213] __YzlhZTBiY2ZF_g
+	[ 214] __ZDAxMDk2YjkS_g
+	[ 215] __ZDFjYWNlNjTX_g
+	[ 216] __ZDI4MTU0YmYX_g
+	[ 217] __ZDNmOTI1ZTdO_g
+	[ 218] __ZDQ3NGZiMGTz_g
+	[ 219] __ZDVlMjJhYWZc_g
+	[ 220] __ZDZhNDlkOTIz_g
+	[ 221] __ZDc4NDY1MmLZ_g
+	[ 222] __ZDg1MzRhYTdG_g
+	[ 223] __ZDk0ZmE5Yjas_g
+	[ 224] __ZGEzODJmM2Re_g
+	[ 225] __ZGJmY2M2NDQs_g
+	[ 226] __ZGNjNzAzODfT_g
+	[ 227] __ZGRhOGRiZmPG_g
+	[ 228] __ZGUyMzFmMWVL_g
+	[ 229] __ZGZmYTZmYzTt_g
+	[ 230] __ZTA5MTk4MDCX_g
+	[ 231] __ZTEzY2JiZTUd_g
+	[ 232] __ZTIyYWFmNWP4_g
+	[ 233] __ZTM3Y2I0ZDKB_g
+	[ 234] __ZTQxNmJhNGP9_g
+	[ 235] __ZTUxZDIyODOi_g
+	[ 236] __ZTYzYWUzN2O0_g
+	[ 237] __ZTc0ZWRmZmFv_g
+	[ 238] __ZThjYzgwNmF7_g
+	[ 239] __ZTkxYmYwM2Ke_g
+	[ 240] __ZWFiY2QwMTCW_g
+	[ 241] __ZWJlOTFiZjA7_g
+	[ 242] __ZWM0OTQwYjAk_g
+	[ 243] __ZWQwODQyMWNi_g
+	[ 244] __ZWVlYWJjZDAQ_g
+	[ 245] __ZWY4OGJkY2Lm_g
+	[ 246] __ZjAzYjllZTjM_g
+	[ 247] __ZjEwN2UxM2O7_g
+	[ 248] __ZjIyODdhYTVf_g
+	[ 249] __ZjMzOTBhNjB9_g
+	[ 250] __ZjRhMWE2NTDI_g
+	[ 251] __ZjU3OWMwOTPR_g
+	[ 252] __ZjYzZjk1ZWLp_g
+	[ 253] __Zjc0OGQ4NTNK_g
+	[ 254] __Zjg0MWYyMjh6_g
+	[ 255] __ZjkyNWU3NGXf_g
+	[ 256] __ZmE2ZmM0ZWQI_g
+	[ 257] __ZmIwZGYzMzkK_g
+	[ 258] __ZmNjNjQ0MmM3_g
+	[ 259] __ZmQyOWRlMjMf_g
+	[ 260] __ZmVhMDE0Y2S1_g
+	[ 261] __ZmZlZjg4YmTL_g
+	[ 262] start
+
+
+PE File Base Relocations (interpreted .reloc section contents)
+
+Virtual Address: 00009000 Chunk size 520 (0x208) Number of fixups 256
+	reloc    0 offset  5c0 [95c0] DIR64
+	reloc    1 offset  5c8 [95c8] DIR64
+	reloc    2 offset  5d0 [95d0] DIR64
+	reloc    3 offset  5d8 [95d8] DIR64
+	reloc    4 offset  5e0 [95e0] DIR64
+	reloc    5 offset  5e8 [95e8] DIR64
+	reloc    6 offset  5f0 [95f0] DIR64
+	reloc    7 offset  5f8 [95f8] DIR64
+	reloc    8 offset  600 [9600] DIR64
+	reloc    9 offset  608 [9608] DIR64
+	reloc   10 offset  610 [9610] DIR64
+	reloc   11 offset  618 [9618] DIR64
+	reloc   12 offset  620 [9620] DIR64
+	reloc   13 offset  628 [9628] DIR64
+	reloc   14 offset  630 [9630] DIR64
+	reloc   15 offset  638 [9638] DIR64
+	reloc   16 offset  640 [9640] DIR64
+	reloc   17 offset  648 [9648] DIR64
+	reloc   18 offset  650 [9650] DIR64
+	reloc   19 offset  658 [9658] DIR64
+	reloc   20 offset  660 [9660] DIR64
+	reloc   21 offset  668 [9668] DIR64
+	reloc   22 offset  670 [9670] DIR64
+	reloc   23 offset  678 [9678] DIR64
+	reloc   24 offset  680 [9680] DIR64
+	reloc   25 offset  688 [9688] DIR64
+	reloc   26 offset  690 [9690] DIR64
+	reloc   27 offset  698 [9698] DIR64
+	reloc   28 offset  6a0 [96a0] DIR64
+	reloc   29 offset  6a8 [96a8] DIR64
+	reloc   30 offset  6b0 [96b0] DIR64
+	reloc   31 offset  6b8 [96b8] DIR64
+	reloc   32 offset  6c0 [96c0] DIR64
+	reloc   33 offset  6c8 [96c8] DIR64
+	reloc   34 offset  6d0 [96d0] DIR64
+	reloc   35 offset  6d8 [96d8] DIR64
+	reloc   36 offset  6e0 [96e0] DIR64
+	reloc   37 offset  6e8 [96e8] DIR64
+	reloc   38 offset  6f0 [96f0] DIR64
+	reloc   39 offset  6f8 [96f8] DIR64
+	reloc   40 offset  700 [9700] DIR64
+	reloc   41 offset  708 [9708] DIR64
+	reloc   42 offset  710 [9710] DIR64
+	reloc   43 offset  718 [9718] DIR64
+	reloc   44 offset  720 [9720] DIR64
+	reloc   45 offset  728 [9728] DIR64
+	reloc   46 offset  730 [9730] DIR64
+	reloc   47 offset  738 [9738] DIR64
+	reloc   48 offset  740 [9740] DIR64
+	reloc   49 offset  748 [9748] DIR64
+	reloc   50 offset  750 [9750] DIR64
+	reloc   51 offset  758 [9758] DIR64
+	reloc   52 offset  760 [9760] DIR64
+	reloc   53 offset  768 [9768] DIR64
+	reloc   54 offset  770 [9770] DIR64
+	reloc   55 offset  778 [9778] DIR64
+	reloc   56 offset  780 [9780] DIR64
+	reloc   57 offset  788 [9788] DIR64
+	reloc   58 offset  790 [9790] DIR64
+	reloc   59 offset  798 [9798] DIR64
+	reloc   60 offset  7a0 [97a0] DIR64
+	reloc   61 offset  7a8 [97a8] DIR64
+	reloc   62 offset  7b0 [97b0] DIR64
+	reloc   63 offset  7b8 [97b8] DIR64
+	reloc   64 offset  7c0 [97c0] DIR64
+	reloc   65 offset  7c8 [97c8] DIR64
+	reloc   66 offset  7d0 [97d0] DIR64
+	reloc   67 offset  7d8 [97d8] DIR64
+	reloc   68 offset  7e0 [97e0] DIR64
+	reloc   69 offset  7e8 [97e8] DIR64
+	reloc   70 offset  7f0 [97f0] DIR64
+	reloc   71 offset  7f8 [97f8] DIR64
+	reloc   72 offset  800 [9800] DIR64
+	reloc   73 offset  808 [9808] DIR64
+	reloc   74 offset  810 [9810] DIR64
+	reloc   75 offset  818 [9818] DIR64
+	reloc   76 offset  820 [9820] DIR64
+	reloc   77 offset  828 [9828] DIR64
+	reloc   78 offset  830 [9830] DIR64
+	reloc   79 offset  838 [9838] DIR64
+	reloc   80 offset  840 [9840] DIR64
+	reloc   81 offset  848 [9848] DIR64
+	reloc   82 offset  850 [9850] DIR64
+	reloc   83 offset  858 [9858] DIR64
+	reloc   84 offset  860 [9860] DIR64
+	reloc   85 offset  868 [9868] DIR64
+	reloc   86 offset  870 [9870] DIR64
+	reloc   87 offset  878 [9878] DIR64
+	reloc   88 offset  880 [9880] DIR64
+	reloc   89 offset  888 [9888] DIR64
+	reloc   90 offset  890 [9890] DIR64
+	reloc   91 offset  898 [9898] DIR64
+	reloc   92 offset  8a0 [98a0] DIR64
+	reloc   93 offset  8a8 [98a8] DIR64
+	reloc   94 offset  8b0 [98b0] DIR64
+	reloc   95 offset  8b8 [98b8] DIR64
+	reloc   96 offset  8c0 [98c0] DIR64
+	reloc   97 offset  8c8 [98c8] DIR64
+	reloc   98 offset  8d0 [98d0] DIR64
+	reloc   99 offset  8d8 [98d8] DIR64
+	reloc  100 offset  8e0 [98e0] DIR64
+	reloc  101 offset  8e8 [98e8] DIR64
+	reloc  102 offset  8f0 [98f0] DIR64
+	reloc  103 offset  8f8 [98f8] DIR64
+	reloc  104 offset  900 [9900] DIR64
+	reloc  105 offset  908 [9908] DIR64
+	reloc  106 offset  910 [9910] DIR64
+	reloc  107 offset  918 [9918] DIR64
+	reloc  108 offset  920 [9920] DIR64
+	reloc  109 offset  928 [9928] DIR64
+	reloc  110 offset  930 [9930] DIR64
+	reloc  111 offset  938 [9938] DIR64
+	reloc  112 offset  940 [9940] DIR64
+	reloc  113 offset  948 [9948] DIR64
+	reloc  114 offset  950 [9950] DIR64
+	reloc  115 offset  958 [9958] DIR64
+	reloc  116 offset  960 [9960] DIR64
+	reloc  117 offset  968 [9968] DIR64
+	reloc  118 offset  970 [9970] DIR64
+	reloc  119 offset  978 [9978] DIR64
+	reloc  120 offset  980 [9980] DIR64
+	reloc  121 offset  988 [9988] DIR64
+	reloc  122 offset  990 [9990] DIR64
+	reloc  123 offset  998 [9998] DIR64
+	reloc  124 offset  9a0 [99a0] DIR64
+	reloc  125 offset  9a8 [99a8] DIR64
+	reloc  126 offset  9b0 [99b0] DIR64
+	reloc  127 offset  9b8 [99b8] DIR64
+	reloc  128 offset  9c0 [99c0] DIR64
+	reloc  129 offset  9c8 [99c8] DIR64
+	reloc  130 offset  9d0 [99d0] DIR64
+	reloc  131 offset  9d8 [99d8] DIR64
+	reloc  132 offset  9e0 [99e0] DIR64
+	reloc  133 offset  9e8 [99e8] DIR64
+	reloc  134 offset  9f0 [99f0] DIR64
+	reloc  135 offset  9f8 [99f8] DIR64
+	reloc  136 offset  a00 [9a00] DIR64
+	reloc  137 offset  a08 [9a08] DIR64
+	reloc  138 offset  a10 [9a10] DIR64
+	reloc  139 offset  a18 [9a18] DIR64
+	reloc  140 offset  a20 [9a20] DIR64
+	reloc  141 offset  a28 [9a28] DIR64
+	reloc  142 offset  a30 [9a30] DIR64
+	reloc  143 offset  a38 [9a38] DIR64
+	reloc  144 offset  a40 [9a40] DIR64
+	reloc  145 offset  a48 [9a48] DIR64
+	reloc  146 offset  a50 [9a50] DIR64
+	reloc  147 offset  a58 [9a58] DIR64
+	reloc  148 offset  a60 [9a60] DIR64
+	reloc  149 offset  a68 [9a68] DIR64
+	reloc  150 offset  a70 [9a70] DIR64
+	reloc  151 offset  a78 [9a78] DIR64
+	reloc  152 offset  a80 [9a80] DIR64
+	reloc  153 offset  a88 [9a88] DIR64
+	reloc  154 offset  a90 [9a90] DIR64
+	reloc  155 offset  a98 [9a98] DIR64
+	reloc  156 offset  aa0 [9aa0] DIR64
+	reloc  157 offset  aa8 [9aa8] DIR64
+	reloc  158 offset  ab0 [9ab0] DIR64
+	reloc  159 offset  ab8 [9ab8] DIR64
+	reloc  160 offset  ac0 [9ac0] DIR64
+	reloc  161 offset  ac8 [9ac8] DIR64
+	reloc  162 offset  ad0 [9ad0] DIR64
+	reloc  163 offset  ad8 [9ad8] DIR64
+	reloc  164 offset  ae0 [9ae0] DIR64
+	reloc  165 offset  ae8 [9ae8] DIR64
+	reloc  166 offset  af0 [9af0] DIR64
+	reloc  167 offset  af8 [9af8] DIR64
+	reloc  168 offset  b00 [9b00] DIR64
+	reloc  169 offset  b08 [9b08] DIR64
+	reloc  170 offset  b10 [9b10] DIR64
+	reloc  171 offset  b18 [9b18] DIR64
+	reloc  172 offset  b20 [9b20] DIR64
+	reloc  173 offset  b28 [9b28] DIR64
+	reloc  174 offset  b30 [9b30] DIR64
+	reloc  175 offset  b38 [9b38] DIR64
+	reloc  176 offset  b40 [9b40] DIR64
+	reloc  177 offset  b48 [9b48] DIR64
+	reloc  178 offset  b50 [9b50] DIR64
+	reloc  179 offset  b58 [9b58] DIR64
+	reloc  180 offset  b60 [9b60] DIR64
+	reloc  181 offset  b68 [9b68] DIR64
+	reloc  182 offset  b70 [9b70] DIR64
+	reloc  183 offset  b78 [9b78] DIR64
+	reloc  184 offset  b80 [9b80] DIR64
+	reloc  185 offset  b88 [9b88] DIR64
+	reloc  186 offset  b90 [9b90] DIR64
+	reloc  187 offset  b98 [9b98] DIR64
+	reloc  188 offset  ba0 [9ba0] DIR64
+	reloc  189 offset  ba8 [9ba8] DIR64
+	reloc  190 offset  bb0 [9bb0] DIR64
+	reloc  191 offset  bb8 [9bb8] DIR64
+	reloc  192 offset  bc0 [9bc0] DIR64
+	reloc  193 offset  bc8 [9bc8] DIR64
+	reloc  194 offset  bd0 [9bd0] DIR64
+	reloc  195 offset  bd8 [9bd8] DIR64
+	reloc  196 offset  be0 [9be0] DIR64
+	reloc  197 offset  be8 [9be8] DIR64
+	reloc  198 offset  bf0 [9bf0] DIR64
+	reloc  199 offset  bf8 [9bf8] DIR64
+	reloc  200 offset  c00 [9c00] DIR64
+	reloc  201 offset  c08 [9c08] DIR64
+	reloc  202 offset  c10 [9c10] DIR64
+	reloc  203 offset  c18 [9c18] DIR64
+	reloc  204 offset  c20 [9c20] DIR64
+	reloc  205 offset  c28 [9c28] DIR64
+	reloc  206 offset  c30 [9c30] DIR64
+	reloc  207 offset  c38 [9c38] DIR64
+	reloc  208 offset  c40 [9c40] DIR64
+	reloc  209 offset  c48 [9c48] DIR64
+	reloc  210 offset  c50 [9c50] DIR64
+	reloc  211 offset  c58 [9c58] DIR64
+	reloc  212 offset  c60 [9c60] DIR64
+	reloc  213 offset  c68 [9c68] DIR64
+	reloc  214 offset  c70 [9c70] DIR64
+	reloc  215 offset  c78 [9c78] DIR64
+	reloc  216 offset  c80 [9c80] DIR64
+	reloc  217 offset  c88 [9c88] DIR64
+	reloc  218 offset  c90 [9c90] DIR64
+	reloc  219 offset  c98 [9c98] DIR64
+	reloc  220 offset  ca0 [9ca0] DIR64
+	reloc  221 offset  ca8 [9ca8] DIR64
+	reloc  222 offset  cb0 [9cb0] DIR64
+	reloc  223 offset  cb8 [9cb8] DIR64
+	reloc  224 offset  cc0 [9cc0] DIR64
+	reloc  225 offset  cc8 [9cc8] DIR64
+	reloc  226 offset  cd0 [9cd0] DIR64
+	reloc  227 offset  cd8 [9cd8] DIR64
+	reloc  228 offset  ce0 [9ce0] DIR64
+	reloc  229 offset  ce8 [9ce8] DIR64
+	reloc  230 offset  cf0 [9cf0] DIR64
+	reloc  231 offset  cf8 [9cf8] DIR64
+	reloc  232 offset  d00 [9d00] DIR64
+	reloc  233 offset  d08 [9d08] DIR64
+	reloc  234 offset  d10 [9d10] DIR64
+	reloc  235 offset  d18 [9d18] DIR64
+	reloc  236 offset  d20 [9d20] DIR64
+	reloc  237 offset  d28 [9d28] DIR64
+	reloc  238 offset  d30 [9d30] DIR64
+	reloc  239 offset  d38 [9d38] DIR64
+	reloc  240 offset  d40 [9d40] DIR64
+	reloc  241 offset  d48 [9d48] DIR64
+	reloc  242 offset  d50 [9d50] DIR64
+	reloc  243 offset  d58 [9d58] DIR64
+	reloc  244 offset  d60 [9d60] DIR64
+	reloc  245 offset  d68 [9d68] DIR64
+	reloc  246 offset  d70 [9d70] DIR64
+	reloc  247 offset  d78 [9d78] DIR64
+	reloc  248 offset  d80 [9d80] DIR64
+	reloc  249 offset  d88 [9d88] DIR64
+	reloc  250 offset  d90 [9d90] DIR64
+	reloc  251 offset  d98 [9d98] DIR64
+	reloc  252 offset  da0 [9da0] DIR64
+	reloc  253 offset  da8 [9da8] DIR64
+	reloc  254 offset  db0 [9db0] DIR64
+	reloc  255 offset  db8 [9db8] DIR64
+
+There is a debug directory in .buildid at 0x40a000
+
+Type                Size     Rva      Offset
+  2        CodeView 00000019 0000a01c 0000801c
+(format RSDS signature 0cbc8f6992dc50751cb2bb5607548beb age 1)
+
+The .rsrc Resource Directory section:
+000  Type Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 4
+010   Entry: ID: 0x000003, Value: 0x80000030
+030    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+040     Entry: ID: 0x000001, Value: 0x80000048
+048      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+058       Entry: ID: 00000000, Value: 0x0000f0
+0f0        Leaf: Addr: 0x00e130, Size: 0x000ea8, Codepage: 0
+018   Entry: ID: 0x00000a, Value: 0x80000060
+060    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+070     Entry: ID: 0x000010, Value: 0x80000078
+078      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+088       Entry: ID: 00000000, Value: 0x000100
+100        Leaf: Addr: 0x00efd8, Size: 0x07e936, Codepage: 0
+020   Entry: ID: 0x00000e, Value: 0x80000090
+090    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+0a0     Entry: ID: 0x000065, Value: 0x800000a8
+0a8      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+0b8       Entry: ID: 00000000, Value: 0x000110
+110        Leaf: Addr: 0x08d910, Size: 0x000014, Codepage: 0
+028   Entry: ID: 0x000010, Value: 0x800000c0
+0c0    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+0d0     Entry: ID: 0x000001, Value: 0x800000d8
+0d8      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
+0e8       Entry: ID: 00000000, Value: 0x000120
+120        Leaf: Addr: 0x08d928, Size: 0x00022c, Codepage: 0
+ Resources start at offset: 0x130
+
+Sections:
+Idx Name          Size      VMA               LMA               File off  Algn
+  0 .text         000064a0  0000000000401000  0000000000401000  00000400  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         000007a0  0000000000408000  0000000000408000  00006a00  2**5
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .rdata        00000df0  0000000000409000  0000000000409000  00007200  2**5
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  3 .buildid      00000035  000000000040a000  000000000040a000  00008000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .edata        00001e5e  000000000040b000  000000000040b000  00008200  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  5 .idata        000003cc  000000000040d000  000000000040d000  0000a200  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  6 .rsrc         0007fb58  000000000040e000  000000000040e000  0000a600  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  7 .reloc        00000208  000000000048e000  000000000048e000  0008a200  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+SYMBOL TABLE:
+no symbols
+
+

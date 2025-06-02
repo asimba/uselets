@@ -3,8 +3,10 @@ $apps=@(
 "Microsoft.Appconnector"
 "Microsoft.BingFinance"
 "Microsoft.BingNews"
+"Microsoft.BingSearch"
 "Microsoft.BingSports"
 "Microsoft.BingWeather"
+"Microsoft.Edge.GameAssist"
 "Microsoft.Getstarted"
 "Microsoft.MicrosoftOfficeHub"
 "Microsoft.MicrosoftSolitaireCollection"
@@ -86,6 +88,7 @@ $apps=@(
 "*dolbyaccess*"
 "Microsoft.Services.Store.Engagement*"
 "MicrosoftWindows.Client.WebExperience*"
+"MicrosoftWindows.CrossDevice*"
 )
 
 $caps=@(

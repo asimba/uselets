@@ -641,9 +641,7 @@ static uint32_t hlp;
 static uint32_t range;
 static char *lowp;
 static char *hlpp;
-static uint8_t *cpos;
 static uint8_t rle_flag;
-static uint8_t scntx;
 
 static uint32_t dptr;
 static uint32_t dsize;
@@ -687,53 +685,32 @@ __fdecl uint8_t rc32_getc(uint8_t *c,uint8_t cntx){
 __fdecl uint8_t unpack_file(){
   for(;;){
     if(length){
-      if(rle_flag==0) symbol=vocbuf[offset++];
-      vocbuf[vocroot++]=symbol;
+      if(rle_flag) vocbuf[vocroot++]=symbol=offset;
+      else symbol=vocbuf[vocroot++]=vocbuf[offset++];
       length--;
       return 0;
-    }
-    else{
-      if(flags==0){
-        cpos=cbuffer;
-        if(rc32_getc(cpos++,0)) return 1;
-        for(uint8_t c=~*cbuffer;c;flags++) c&=c-1;
-        uint8_t cflags=*cbuffer;
-        flags=8+(flags<<1);
-        for(uint8_t c=0;c<flags;){
-          if(cflags&0x80) cntxs[c++]=4;
-          else{
-            *(uint32_t*)(cntxs+c)=0x00030201;
-            c+=3;
-          };
-          cflags<<=1;
-        };
-        for(uint8_t c=0;c<flags;c++){
-          if(cntxs[c]==4){
-            if(rc32_getc(cpos,scntx)) return 1;
-            scntx=*cpos++;
-          }
-          else{
-            if(rc32_getc(cpos++,cntxs[c])) return 1;
-          };
-        };
-        cpos=&cbuffer[1];
-        flags=8;
-      };
+    };
+    if(flags){
       length=rle_flag=1;
-      if(*cbuffer&0x80) symbol=*cpos;
+      if(*cbuffer&0x80){
+        if(rc32_getc((uint8_t *)&offset,vocbuf[(uint16_t)(vocroot-1)])) return 1;
+      }
       else{
-        length=LZ_MIN_MATCH+1+*cpos++;
-        if((offset=*(uint16_t*)cpos++)<0x0100) symbol=(uint8_t)(offset);
-        else{
-          if(offset==0x0100) break;
-          offset=~offset+(uint16_t)(vocroot+LZ_BUF_SIZE);
+        for(uint8_t c=1;c<4;c++)
+          if(rc32_getc(cbuffer+c,c)) return 1;
+        length=LZ_MIN_MATCH+1+cbuffer[1];
+        if((offset=*(uint16_t*)(cbuffer+2))>=0x0100){
+          if(offset==0x0100) return 1;
+          offset=~offset+vocroot+LZ_BUF_SIZE;
           rle_flag=0;
         };
       };
-      *cbuffer<<=1;
-      cpos++;
-      flags--;
+      cbuffer[0]<<=1;
+      flags<<=1;
+      continue;
     };
+    if(rc32_getc(cbuffer,0)) return 1;
+    flags=0xff;
   };
   return 0;
 }
@@ -774,7 +751,6 @@ __fdecl void init_unpack(const uint32_t data_size_in){
   offset=range=0xffffffff;
   lowp=&((char *)&low)[3];
   hlpp=&((char *)&hlp)[0];
-  scntx=0xff;
   uint32_t i;
   for(i=0;i<256;i++){
     for(int j=0;j<256;j++) frequency[i][j]=1;
@@ -1054,6 +1030,7 @@ extern "C" void __stdcall start(){
       image[i]=(uint8_t)symbol;
       if(dptr==dsize) break;
     };
+    while(dptr!=dsize) dgetc();
     int c=0;
     LPWSTR *argv=((CLTAW)_f(cltaw))(((GCW)_f(gcw))(),&c);
     if(argv){
