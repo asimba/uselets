@@ -1,9 +1,5 @@
 #include <stdint.h>
-#include <stdio.h>
-#include <fcntl.h>
-#ifndef _WIN32
-  #include <unistd.h>
-#endif
+#include <windows.h>
 
 /***********************************************************************************************************/
 //Базовая реализация упаковки/распаковки файла по упрощённому алгоритму LZSS+RLE+RC32
@@ -12,6 +8,9 @@
 #define LZ_BUF_SIZE 259
 #define LZ_CAPACITY 24
 #define LZ_MIN_MATCH 3
+
+HANDLE winout;
+void msg(LPCSTR text){ WriteConsoleA(winout,text,lstrlenA(text),NULL,NULL); }
 
 typedef union{
   struct{
@@ -23,7 +22,7 @@ typedef union{
 
 uint8_t ibuf[0x10000];
 uint8_t obuf[0x10000];
-uint32_t icbuf;
+long unsigned int icbuf;
 uint32_t wpos;
 uint32_t rpos;
 uint8_t flags;
@@ -46,9 +45,12 @@ uint32_t hlp;
 uint32_t range;
 uint8_t *lowp;
 uint8_t *hlpp;
+DWORD wout,*pwout;
+HANDLE ifile,ofile;
 
 void pack_initialize(){
   cntxs[0]=flags=buf_size=vocroot=low=hlp=icbuf=wpos=rpos=0;
+  pwout=&wout;
   voclast=0xfffc;
   range=0xffffffff;
   lowp=&((uint8_t *)&low)[3];
@@ -74,13 +76,13 @@ void pack_initialize(){
   vocarea[0xffff]=0xffff;
 }
 
-void wbuf(uint8_t c,FILE *ofile){
-  if(wpos==0x10000&&(wpos=0,fwrite(obuf,1,0x10000,ofile)!=0x10000)) return;
+void wbuf(const uint8_t c){
+  if(wpos==0x10000&&(wpos=0,!WriteFile(ofile,obuf,0x10000,pwout,NULL))) return;
   obuf[wpos++]=c;
 }
 
-void rbuf(uint8_t *c,FILE *ifile){
-  if(rpos==icbuf&&!(rpos=0,icbuf=fread(ibuf,1,0x10000,ifile))) return;
+void rbuf(uint8_t *c){
+  if(rpos==icbuf&&!(rpos=0,ReadFile(ifile,ibuf,0x10000,&icbuf,NULL),icbuf)) return;
   *c=ibuf[rpos++];
 }
 
@@ -93,30 +95,32 @@ void rbuf(uint8_t *c,FILE *ifile){
     fcs[cntx]=fc;\
     return 0;
 
-#define rc32_shift() low<<=8;if((uint32_t)((range<<=8)+low)<low) range=~low;
+#define rc32_shift() low<<=8; range<<=8; if(range>~low) range=~low;
 
-uint32_t rc32_getc(uint8_t *c,FILE *ifile,uint8_t cntx){
-  while(hlp<low||(low^(low+range))<0x1000000||range<0x10000){
+uint32_t rc32_getc(uint8_t *c,const uint8_t cntx){
+  uint16_t fc=fcs[cntx];
+  while(hlp<low||(low^(low+range))<0x1000000||range<fc){
     hlp<<=8;
-    if(!(rbuf(hlpp,ifile),rpos)) return 0;
+    if(!(rbuf(hlpp),rpos)) return 0;
     rc32_shift();
   };
-  uint16_t *f=frequency[cntx],fc=fcs[cntx];
   uint32_t i;
   if((i=(hlp-low)/(range/=fc))>=fc) return 1;
-  register uint32_t s=0;
+  uint16_t *f=frequency[cntx];
+  register uint64_t s=0;
   while((s+=*f)<=i) f++;
   low+=(s-*f)*range;
   *c=f-frequency[cntx];
   rc32_rescale();
 }
 
-inline uint32_t rc32_putc(uint32_t c,FILE *ofile,uint8_t cntx){
-  while((low^(low+range))<0x1000000||range<0x10000){
-    if(!(wbuf(*lowp,ofile),wpos)) return 1;
+uint32_t rc32_putc(uint8_t c,const uint8_t cntx){
+  uint16_t fc=fcs[cntx];
+  while((low^(low+range))<0x1000000||range<fc){
+    if(!(wbuf(*lowp),wpos)) return 1;
     rc32_shift();
   };
-  uint16_t *f=_frequency[cntx]+(c&3),fc=fcs[cntx];
+  uint16_t *f=_frequency[cntx]+(c&3);
   register uint64_t s=0;
   c=(c>>2)+1;
   while(c--) s+=*(uint64_t *)f,f+=4;
@@ -125,12 +129,12 @@ inline uint32_t rc32_putc(uint32_t c,FILE *ofile,uint8_t cntx){
   rc32_rescale();
 }
 
-void pack_file(FILE *ifile,FILE *ofile){
+void pack_file(){
   uint8_t *cpos=&cbuffer[1],*npos=&cntxs[1],eoff=0;
   flags=8;
   for(;;){
     if(!eoff&&buf_size!=LZ_BUF_SIZE){
-      if((rbuf(&vocbuf[vocroot],ifile),rpos)){
+      if((rbuf(&vocbuf[vocroot]),rpos)){
         if(vocarea[vocroot]==vocroot) vocindx[hashes[vocroot]].val=1;
         else vocindx[hashes[vocroot]].in=vocarea[vocroot];
         vocarea[vocroot]=vocroot;
@@ -196,13 +200,13 @@ void pack_file(FILE *ifile,FILE *ofile){
     if(--flags&&length) continue;
     *cbuffer<<=flags;
     for(int i=0;i<cpos-cbuffer;i++)
-      if(rc32_putc(cbuffer[i],ofile,cntxs[i])) return;
+      if(rc32_putc(cbuffer[i],cntxs[i])) return;
     if(!length){
       for(int i=4;i;i--){
-        if(!(wbuf(*lowp,ofile),wpos)) return;
+        if(!(wbuf(*lowp),wpos)) return;
         low<<=8;
       };
-      fwrite(obuf,1,wpos,ofile);
+      WriteFile(ofile,obuf,wpos,pwout,NULL);
       break;
     };
     cpos=&cbuffer[1];
@@ -211,29 +215,29 @@ void pack_file(FILE *ifile,FILE *ofile){
   };
 }
 
-void unpack_file(FILE *ifile, FILE *ofile){
+void unpack_file(){
   uint8_t c,rle_flag=0,cflags=0;
   length=0;
   for(c=0;c<4;c++){
     hlp<<=8;
-    if(!(rbuf(hlpp,ifile),rpos)) return;
+    if(!(rbuf(hlpp),rpos)) return;
   }
   for(;;){
     if(length){
       if(rle_flag) vocbuf[vocroot++]=offset;
       else vocbuf[vocroot++]=vocbuf[offset++];
       length--;
-      if(!vocroot&&(fwrite(vocbuf,1,0x10000,ofile)<0x10000)) break;
+      if(!vocroot&&(!WriteFile(ofile,vocbuf,0x10000,pwout,NULL))) break;
       continue;
     };
     if(flags){
       length=rle_flag=1;
       if(cflags&0x80){
-        if(rc32_getc((uint8_t *)&offset,ifile,vocbuf[(uint16_t)(vocroot-1)])) return;
+        if(rc32_getc((uint8_t *)&offset,vocbuf[(uint16_t)(vocroot-1)])) return;
       }
       else{
         for(c=1;c<4;c++)
-          if(rc32_getc(cbuffer+c-1,ifile,c)) return;
+          if(rc32_getc(cbuffer+c-1,c)) return;
         length=LZ_MIN_MATCH+1+*cbuffer;
         if((offset=*(uint16_t*)(cbuffer+1))>=0x0100){
           if(offset==0x0100) break;
@@ -245,32 +249,37 @@ void unpack_file(FILE *ifile, FILE *ofile){
       flags<<=1;
       continue;
     };
-    if(rc32_getc(&cflags,ifile,0)) break;
+    if(rc32_getc(&cflags,0)) break;
     flags=0xff;
   };
-  if(length) fwrite(vocbuf,1,vocroot?vocroot:0x10000,ofile);
+  if(length) WriteFile(ofile,vocbuf,vocroot?vocroot:0x10000,pwout,NULL);
 }
 
 /***********************************************************************************************************/
 
-int main(int argc, char *argv[]){
-  if((argc<4)||((argv[1][0]!='c')&&(argv[1][0]!='d'))){
-    printf("qbp file compressor\n\nto   compress use: qbp c input output\nto decompress use: qbp d input output\n");
-    goto rpoint00;
+void __stdcall start(){
+  const LPCSTR msg_a="qbp file compressor\n\nto   compress use: qbp c input output\nto decompress use: qbp d input output\n";
+  const LPCSTR msg_b="Error: unable to open input file!\n";
+  const LPCSTR msg_c="Error: unable to open output file or output file already exists!\n";
+  winout=GetStdHandle(STD_OUTPUT_HANDLE);
+  int argc=0;
+  LPWSTR *argv=CommandLineToArgvW(GetCommandLineW(),&argc);
+  if(argv){
+    if(argc>3&&((argv[1][0]==L'c')||(argv[1][0]==L'd'))){
+      if((ifile=CreateFileW(argv[2],GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL))!=INVALID_HANDLE_VALUE){
+        if((ofile=CreateFileW(argv[3],GENERIC_WRITE,0,NULL,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,NULL))!=INVALID_HANDLE_VALUE){
+          pack_initialize();
+          SetProcessWorkingSetSize(GetCurrentProcess(),(SIZE_T)-1,(SIZE_T)-1);
+          if(argv[1][0]==L'c') pack_file();
+          else unpack_file();
+          CloseHandle(ofile);
+        }
+        else msg(msg_c);
+        CloseHandle(ifile);
+      }
+      else msg(msg_b);
+    }
+    else msg(msg_a);
+    LocalFree(argv);
   };
-  if(access(argv[3],0)==0){
-    printf("Error: output file already exists!\n");
-    goto rpoint00;
-  };
-  FILE *ifile,*ofile;
-  if(!(ifile=fopen(argv[2],"rb"))) goto rpoint00;
-  if(!(ofile=fopen(argv[3],"wb"))) goto rpoint01;
-  pack_initialize();
-  if(argv[1][0]=='c') pack_file(ifile,ofile);
-  else unpack_file(ifile,ofile);
-  fclose(ofile);
-rpoint01:
-  fclose(ifile);
-rpoint00:
-  return 0;
 }

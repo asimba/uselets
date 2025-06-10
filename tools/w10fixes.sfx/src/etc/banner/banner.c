@@ -37,12 +37,12 @@ static HBRUSH hbrush;
 static uint8_t rc32_getc(uint8_t *c,uint8_t cntx){
   uint16_t *f=frequency[cntx],fc=fcs[cntx];
   uint32_t s=0,i;
-  while(hlp<low||(low^(low+range))<0x1000000||range<0x10000){
+  while(hlp<low||(low^(low+range))<0x1000000||range<fc){
     hlp<<=8;
     *hlpp=*dptr++;
     low<<=8;
     range<<=8;
-    if((uint32_t)(range+low)<low) range=~low;
+    if(range>~low) range=~low;
   };
   if((i=(hlp-low)/(range/=fc))<fc){
     while((s+=*f)<=i) f++;

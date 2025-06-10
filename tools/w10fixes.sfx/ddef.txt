@@ -3,7 +3,7 @@ ddef.exe:     file format pei-x86-64
 ddef.exe
 architecture: i386:x86-64, flags 0x00000103:
 HAS_RELOC, EXEC_P, D_PAGED
-start address 0x0000000000406f10
+start address 0x0000000000406f00
 
 Characteristics 0x22e
 	executable
@@ -19,7 +19,7 @@ MinorLinkerVersion	33
 SizeOfCode		0000000000006800
 SizeOfInitializedData	000000000013f400
 SizeOfUninitializedData	0000000000000000
-AddressOfEntryPoint	0000000000006f10
+AddressOfEntryPoint	0000000000006f00
 BaseOfCode		0000000000001000
 ImageBase		0000000000400000
 SectionAlignment	00001000
@@ -33,7 +33,7 @@ MinorSubsystemVersion	2
 Win32Version		00000000
 SizeOfImage		0014a000
 SizeOfHeaders		00000400
-CheckSum		0014b545
+CheckSum		0014b142
 Subsystem		00000002	(Windows GUI)
 DllCharacteristics	00000140
 SizeOfStackReserve	0000000000200000
@@ -44,7 +44,7 @@ LoaderFlags		00000000
 NumberOfRvaAndSizes	00000010
 
 The Data Directory
-Entry 0 000000000000b000 00001ec7 Export Directory [.edata (or where ever we found it)]
+Entry 0 000000000000b000 00001ec2 Export Directory [.edata (or where ever we found it)]
 Entry 1 000000000000d000 000003a8 Import Directory [parts of .idata]
 Entry 2 000000000000e000 0013aea8 Resource Directory [.rsrc]
 Entry 3 0000000000000000 00000000 Exception Directory [.pdata]
@@ -111,7 +111,7 @@ The Export Tables (interpreted .edata section contents)
 Export Flags 			0
 Time/Date stamp 		0
 Major/Minor 			0/0
-Name 				000000000000ba78 cmubzhlj.exe
+Name 				000000000000ba78 vnwsmydy.exe
 Ordinal Base 			1
 Number in:
 	Export Address Table 		00000108
@@ -385,272 +385,272 @@ Export Address Table -- Ordinal Base 1
 	[ 260] +base[ 261] 3bc0 Export RVA
 	[ 261] +base[ 262] 3bd0 Export RVA
 	[ 262] +base[ 263] 3be0 Export RVA
-	[ 263] +base[ 264] 6f10 Export RVA
+	[ 263] +base[ 264] 6f00 Export RVA
 
 [Ordinal/Name Pointer] Table
-	[   0] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5EEELi238ELi3EE7encryptEc
-	[   1] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9EEELi180ELi5EE7encryptEc
-	[   2] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi194ELi15EE7encryptEc
-	[   3] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi236ELi13EE7encryptEc
-	[   4] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi48ELi9EE7encryptEc
-	[   5] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi74ELi7EE7encryptEc
-	[   6] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12ELy13EEELi230ELi11EE7encryptEc
-	[   7] __M2EyNmJjYTTP_g
-	[   8] __M2JiYjc4N2JE_g
-	[   9] __M2NhYTg3Mjmh_g
-	[  10] __M2RjMDcxZjcC_g
-	[  11] __M2U5YjgxOWGL_g
-	[  12] __M2Y3MjdmZjZF_g
-	[  13] __MDA2MzNkYzBx_g
-	[  14] __MDEzOWU3OWRQ_g
-	[  15] __MDI3NjhmZDDj_g
-	[  16] __MDNjNjZmZWER_g
-	[  17] __MDQzM2M0NDZY_g
-	[  18] __MDVmYjJmMTTm_g
-	[  19] __MDZiN2M1ZjMf_g
-	[  20] __MDdhNjk4MzLL_g
-	[  21] __MDgxZTgwNWW0_g
-	[  22] __MDlhZmVkYmEi_g
-	[  23] __MGE0MDVkOGFw_g
-	[  24] __MGJkYTU0NmHl_g
-	[  25] __MGM3ZDEzMDmv_g
-	[  26] __MGQ1OWQzZGK__g
-	[  27] __MGU2NTJjNjaw_g
-	[  28] __MGY2MTJlOTAW_g
-	[  29] __MTBlMTVmMTU__g
-	[  30] __MTEzY2FhODcp_g
-	[  31] __MTI0YzVhOGTv_g
-	[  32] __MTMwOWFmZWS6_g
-	[  33] __MTRlNmFjNjmg_g
-	[  34] __MTUzZjcyN2b2_g
-	[  35] __MTZkNTMxZmOx_g
-	[  36] __MTdlYjI3MzCu_g
-	[  37] __MTgyYWQyOGVD_g
-	[  38] __MTkxN2ViMjcw_g
-	[  39] __MWFjNzM3ZTT6_g
-	[  40] __MWI5ZjAxMznn_g
-	[  41] __MWMwM2M2Nmbq_g
-	[  42] __MWQwYmRhNTRq_g
-	[  43] __MWU4MDVlYjS9_g
-	[  44] __MWY0OTA0MzPE_g
-	[  45] __MjBjMmRkMzTR_g
-	[  46] __MjFiOGYwMDem_g
-	[  47] __MjI5MjYyNmW2_g
-	[  48] __MjM4NDBhNDBd_g
-	[  49] __MjQ4Y2Y0MWMD_g
-	[  50] __MjU2ZGFkM2Wb_g
-	[  51] __MjZiY2E0Y2aU_g
-	[  52] __MjczMGFlMGN9_g
-	[  53] __MjhkODQ3NTOW_g
-	[  54] __MjlhMTRlMGRZ_g
-	[  55] __MmFkMjhlNDOi_g
-	[  56] __MmJmZDY0MDBj_g
-	[  57] __MmM2NmIwZTj4_g
-	[  58] __MmRkNGE1NzXM_g
-	[  59] __MmU5MDE2ZDUx_g
-	[  60] __MmYxNGU2YWNp_g
-	[  61] __MzBhZTBjN2QT_g
-	[  62] __MzFmY2IxY2Uk_g
-	[  63] __MzJjYmYxYjLW_g
-	[  64] __MzNjNDQ2NTgj_g
-	[  65] __MzRkMTFkMGLa_g
-	[  66] __MzUzNjY4Njdz_g
-	[  67] __MzY2ODY3NzMr_g
-	[  68] __MzdlNGZhYmXB_g
-	[  69] __MzgxOTE3ZWIn_g
-	[  70] __MzllNzlkNTBg_g
-	[  71] __N2EyMWI4ZjAH_g
-	[  72] __N2I0NGEzYWKp_g
-	[  73] __N2NkNzljOWWX_g
-	[  74] __N2QxMzA5YWbt_g
-	[  75] __N2VmOWU5NzfZ_g
-	[  76] __N2ZmNjQ1MWHH_g
-	[  77] __NDA1ZDhhNzB5_g
-	[  78] __NDE2YjZjNGZb_g
-	[  79] __NDJmNTIwYzLd_g
-	[  80] __NDNhMjU3M2K7_g
-	[  81] __NDRhM2FiYTmn_g
-	[  82] __NDUxYWM3Mzfk_g
-	[  83] __NDY1ODIzODQK_g
-	[  84] __NDc1Mzk2OTXK_g
-	[  85] __NDhiNTBmNjEu_g
-	[  86] __NDkwNDMzYzRG_g
-	[  87] __NGEzNTM2Njhn_g
-	[  88] __NGI0ZDA1ZmIv_g
-	[  89] __NGM1YThkZWZc_g
-	[  90] __NGQwNWZiMmYU_g
-	[  91] __NGUwZDU5ZDPb_g
-	[  92] __NGY1YjkxNTLy_g
-	[  93] __NTA2MDdjZDec_g
-	[  94] __NTE0YjRkMDX7_g
-	[  95] __NTJmMjg1ZTCo_g
-	[  96] __NTM5Njk1Y2F__g
-	[  97] __NTQ2YWU1YjMo_g
-	[  98] __NTU5MzdhMjG4_g
-	[  99] __NTYxYjlmMDE5_g
-	[ 100] __NTczYmJiNzh7_g
-	[ 101] __NTgyMzg0MGFA_g
-	[ 102] __NTlkM2RiYmY4_g
-	[ 103] __NWE4ZGVmNWPN_g
-	[ 104] __NWI5MTUyZjKF_g
-	[ 105] __NWNjZGRlNzTf_g
-	[ 106] __NWQ4YTcwNzkt_g
-	[ 107] __NWViNGJkODkl_g
-	[ 108] __NWYxNTNmNzJ__g
-	[ 109] __NjA3Y2Q3OWOe_g
-	[ 110] __NjEyZTkwMTbV_g
-	[ 111] __NjI2ZWI2ZWXs_g
-	[ 112] __NjMzZGMwNzH3_g
-	[ 113] __NjQwMDYzM2TA_g
-	[ 114] __NjUyYzY2YjDo_g
-	[ 115] __NjZiMGU4ZjiI_g
-	[ 116] __Njc3MzJiZmRk_g
-	[ 117] __Njg2NzczMmL9_g
-	[ 118] __NjlhMGRjNDi1_g
-	[ 119] __NmFlNWIzMjjY_g
-	[ 120] __NmI2YzRmNWKR_g
-	[ 121] __NmM0ZjViOTFS_g
-	[ 122] __NmRhZDNlOWKB_g
-	[ 123] __NmViNmVlZWMQ_g
-	[ 124] __NmZlYTExM2Oq_g
-	[ 125] __NzA3OTJkZDSl_g
-	[ 126] __NzFmNzAyNzaP_g
-	[ 127] __NzI3ZmY2NDUa_g
-	[ 128] __NzMyYmZkNjQA_g
-	[ 129] __NzRkZjgzZmaG_g
-	[ 130] __NzVjYzEyNGNa_g
-	[ 131] __NzY4ZmQwZTMY_g
-	[ 132] __NzdkOTk5NTWT_g
-	[ 133] __Nzg3YjQ0YTOr_g
-	[ 134] __NzkyZGQ0YTV1_g
-	[ 135] __ODA1ZWI0YmSJ_g
-	[ 136] __ODE5YThiMDa3_g
-	[ 137] __ODJmZTQxNmJs_g
-	[ 138] __ODNmZjg2ODL__g
-	[ 139] __ODQwYTQwNWSK_g
-	[ 140] __ODVlMGE4NGE1_g
-	[ 141] __ODY4MmZlNDFr_g
-	[ 142] __ODcyOWExNGUN_g
-	[ 143] __ODgwODFlODBe_g
-	[ 144] __ODkyNTZkYWQ__g
-	[ 145] __OGE3MDc5MmTU_g
-	[ 146] __OGIwNmI3YzXz_g
-	[ 147] __OGNmNDFjMDPG_g
-	[ 148] __OGRlZjVjY2Te_g
-	[ 149] __OGU0M2EyNTc7_g
-	[ 150] __OGZkMGUzMTgq_g
-	[ 151] __OTAxNmQ1MzH8_g
-	[ 152] __OTE1MmYyODXg_g
-	[ 153] __OTI2MjZlYjbu_g
-	[ 154] __OTM3YTIxYjjw_g
-	[ 155] __OTQ0MmY1MjDC_g
-	[ 156] __OTVjYTdlZjnp_g
-	[ 157] __OTY5NWNhN2X5_g
-	[ 158] __OTdjMzNhMja8_g
-	[ 159] __OTgzMmNiZjGy_g
-	[ 160] __OTk1NTkzN2Eh_g
-	[ 161] __OWE4YjA2YjfF_g
-	[ 162] __OWI4MTlhOGIG_g
-	[ 163] __OWM5ZTk3YzM6_g
-	[ 164] __OWQ1MDYwN2PX_g
-	[ 165] __OWU5N2MzM2Em_g
-	[ 166] __OWYwMTM5ZTed_g
-	[ 167] __Y2E3ZWY5ZTl3_g
-	[ 168] __Y2JmMWIyZDbI_g
-	[ 169] __Y2MxMjRjNWGN_g
-	[ 170] __Y2RkZTc0ZGaD_g
-	[ 171] __Y2UyNDhjZjQc_g
-	[ 172] __Y2Y5NDQyZjUg_g
-	[ 173] __YTBkYzQ4YjUP_g
-	[ 174] __YTE0ZTBkNTnT_g
-	[ 175] __YTI1NzNiYmJ4_g
-	[ 176] __YTNhYmE5YTdW_g
-	[ 177] __YTRjZjk0NDL1_g
-	[ 178] __YTU3NWNjMTJM_g
-	[ 179] __YTY5ODMyY2Lx_g
-	[ 180] __YTc1NjFiOWYB_g
-	[ 181] __YTg0YTM1MzZo_g
-	[ 182] __YTlhNzU2MWKf_g
-	[ 183] __YWE4NzI5YTFO_g
-	[ 184] __YWJhOWE3NTYb_g
-	[ 185] __YWM2OWEwZGNI_g
-	[ 186] __YWQzZTliODGa_g
-	[ 187] __YWUwYzdkMTMJ_g
-	[ 188] __YWZlZGJhMjKS_g
-	[ 189] __YjBlOGY4ODgI_g
-	[ 190] __YjFjZTI0OGP0_g
-	[ 191] __YjJkNmM4ZTK5_g
-	[ 192] __YjMyOGQ4NDdT_g
-	[ 193] __YjRiZDg5MjVt_g
-	[ 194] __YjUwZjYxMmWQ_g
-	[ 195] __YjZlZWVjMTDh_g
-	[ 196] __YjdjNWYzMWZJ_g
-	[ 197] __YjhmMDA3YTaY_g
-	[ 198] __YjljOTUxNGJN_g
-	[ 199] __YmEyMjkyNjJu_g
-	[ 200] __YmI3ODdiNDSj_g
-	[ 201] __YmNhNGNmOTRC_g
-	[ 202] __YmQ4OTI1NmSt_g
-	[ 203] __YmVjMTBlNjUs_g
-	[ 204] __YmYzODE5MTfr_g
-	[ 205] __YzA3MWY3MDJ2_g
-	[ 206] __YzEwZTY1MmNm_g
-	[ 207] __YzJkZDM0ZDEd_g
-	[ 208] __YzMzYTI2YmOk_g
-	[ 209] __YzQ0NjU4MjOE_g
-	[ 210] __YzVmMzFmNDkE_g
-	[ 211] __YzY2ZmVhMTE8_g
-	[ 212] __YzczN2U0ZmG__g
-	[ 213] __YzhlMmI5YzlR_g
-	[ 214] __Yzk1MTRiNGQF_g
-	[ 215] __ZDBlMzE4MmHS_g
-	[ 216] __ZDExZDBiZGFU_g
-	[ 217] __ZDI4ZTQzYTJX_g
-	[ 218] __ZDNkYmJmMzgZ_g
-	[ 219] __ZDRhNTc1Y2MS_g
-	[ 220] __ZDUzMWZjYjHO_g
-	[ 221] __ZDZjOGUyYjnJ_g
-	[ 222] __ZDc5YzllOTfD_g
-	[ 223] __ZDg0NzUzOTaV_g
-	[ 224] __ZDk5OTU1OTN6_g
-	[ 225] __ZGE1NDZhZTWz_g
-	[ 226] __ZGJiZjM4MTkX_g
-	[ 227] __ZGM0OGI1MGZh_g
-	[ 228] __ZGQzNGQxMWQL_g
-	[ 229] __ZGU3NGRmODP__g
-	[ 230] __ZGY4M2ZmODaC_g
-	[ 231] __ZTBhODRhMzU2_g
-	[ 232] __ZTE1ZjE1M2Zy_g
-	[ 233] __ZTJiOWM5NTFL_g
-	[ 234] __ZTMxODJhZDKO_g
-	[ 235] __ZTRmYWJlYzEO_g
-	[ 236] __ZTViMzI4ZDhH_g
-	[ 237] __ZTZhYzY5YTDc_g
-	[ 238] __ZTc5ZDUwNjB8_g
-	[ 239] __ZThmODg4MDge_g
-	[ 240] __ZTk3N2Q5OTlV_g
-	[ 241] __ZWExMTNjYWGH_g
-	[ 242] __ZWIyNzMwYWUM_g
-	[ 243] __ZWMxMGUxNWYV_g
-	[ 244] __ZWRiYTIyOTJi_g
-	[ 245] __ZWVlYzEwZTFf_g
-	[ 246] __ZWY1Y2NkZGV0_g
-	[ 247] __ZjAwN2E2OTgy_g
-	[ 248] __ZjFiMmQ2Yzji_g
-	[ 249] __ZjI4NWUwYThK_g
-	[ 250] __ZjMxZjQ5MDQz_g
-	[ 251] __ZjQxYzAzYzZv_g
-	[ 252] __ZjUyMGMyZGQ0_g
-	[ 253] __ZjY0NTFhYzc3_g
-	[ 254] __ZjcwMjc2OGbQ_g
-	[ 255] __Zjg4ODA4MWWA_g
-	[ 256] __ZjllOTc3ZDmZ_g
-	[ 257] __ZmFiZWMxMGVl_g
-	[ 258] __ZmIyZjE0ZTas_g
-	[ 259] __ZmNiMWNlMjSM_g
-	[ 260] __ZmQ2NDAwNjM9_g
-	[ 261] __ZmU0MTZiNmNP_g
-	[ 262] __ZmY4NjgyZmVB_g
+	[   0] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5EEELi9ELi3EE7encryptEc
+	[   1] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9EEELi247ELi5EE7encryptEc
+	[   2] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi117ELi7EE7encryptEc
+	[   3] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi13ELi15EE7encryptEc
+	[   4] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi3ELi9EE7encryptEc
+	[   5] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi79ELi13EE7encryptEc
+	[   6] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12ELy13EEELi33ELi11EE7encryptEc
+	[   7] __M2FmZWExNTJF_g
+	[   8] __M2I4ZDg0ZjKH_g
+	[   9] __M2M2NGZmM2KN_g
+	[  10] __M2QwNTVkMzle_g
+	[  11] __M2VjODRmYzJu_g
+	[  12] __M2ZhYzA5YWJw_g
+	[  13] __MDA1MDVjYmV2_g
+	[  14] __MDE2MzI1OGNT_g
+	[  15] __MDI3ZDEwZDNs_g
+	[  16] __MDMwZTMwZTkX_g
+	[  17] __MDQ4MTUxMDZA_g
+	[  18] __MDU1ZDM5NWUo_g
+	[  19] __MDY0MGQ1Zjgk_g
+	[  20] __MDc3Y2IzMmOa_g
+	[  21] __MDg4MmRkMWMa_g
+	[  22] __MDlhYjcwMTHA_g
+	[  23] __MGFmNWZjY2Ho_g
+	[  24] __MGI0OTM3YzVr_g
+	[  25] __MGMzNmI1ZGbR_g
+	[  26] __MGRlZDI5YTfs_g
+	[  27] __MGUzMGU5MTcS_g
+	[  28] __MGZkMDdlOTED_g
+	[  29] __MTBkMzZjYTWb_g
+	[  30] __MTFjMGUxZmFy_g
+	[  31] __MTI0NjE0ZjHX_g
+	[  32] __MTMzZWM4NGbC_g
+	[  33] __MTRmMWQ3NGRD_g
+	[  34] __MTVjYzU0YzcB_g
+	[  35] __MTZjYjk1YzG5_g
+	[  36] __MTcxMjQ2MTTx_g
+	[  37] __MThlNTU2ZWG9_g
+	[  38] __MTkwMDUwNWO__g
+	[  39] __MWE0NzIyMjcd_g
+	[  40] __MWJhZGRlOWPz_g
+	[  41] __MWMxYTQ3MjIn_g
+	[  42] __MWQ5MGU3ZDbk_g
+	[  43] __MWUxMzNlYzhP_g
+	[  44] __MWZiY2RhN2b0_g
+	[  45] __MjBlNjNhZmWh_g
+	[  46] __MjFmOTBjMza1_g
+	[  47] __MjIyNzFkOTDn_g
+	[  48] __MjMzMjM4OGXE_g
+	[  49] __MjQ3NGZiMjDm_g
+	[  50] __MjU4YzUzNGKx_g
+	[  51] __MjY5OTA0ODFR_g
+	[  52] __MjcxZDkwZTfW_g
+	[  53] __MjhhODcxYWX2_g
+	[  54] __MjlhN2VjMTXM_g
+	[  55] __MmExZmJjZGF__g
+	[  56] __MmI0MmVlOGHY_g
+	[  57] __MmM5YWIwZDk0_g
+	[  58] __MmQ3ODE4ZTVW_g
+	[  59] __MmU3YTBmZDB__g
+	[  60] __MmZiYTlkOTSP_g
+	[  61] __MzBlOTE3MTJG_g
+	[  62] __MzFjZDJlN2EP_g
+	[  63] __MzIzODhlYzQL_g
+	[  64] __MzM5ZjE2Y2KV_g
+	[  65] __MzRlMjY1N2IN_g
+	[  66] __MzVjM2I4ZGMr_g
+	[  67] __MzZiNWRmZDGq_g
+	[  68] __MzdjNTZiNjCW_g
+	[  69] __Mzg4ZWM0MGJJ_g
+	[  70] __Mzk1ZTI4YThx_g
+	[  71] __N2EwZmQwN2WR_g
+	[  72] __N2IwZGVkMjmn_g
+	[  73] __N2NiMzJjOWGw_g
+	[  74] __N2QxMGQzNmOl_g
+	[  75] __N2U5MTAzMGUw_g
+	[  76] __N2ZmNGUwMzXD_g
+	[  77] __NDBkNWY4MjR0_g
+	[  78] __NDE1YThiNmRY_g
+	[  79] __NDJlZThhZDhE_g
+	[  80] __NDMzZDA1NWQ5_g
+	[  81] __NDQ1OTMxY2Qu_g
+	[  82] __NDUwNzdjYjMs_g
+	[  83] __NDYxNGYxZDdN_g
+	[  84] __NDcyMjI3MWSQ_g
+	[  85] __NDg1YjQxNWGL_g
+	[  86] __NDkzN2M1NmJg_g
+	[  87] __NGFhOWJmNDhb_g
+	[  88] __NGJiMTkzMDiC_g
+	[  89] __NGM4NjAyN2QQ_g
+	[  90] __NGQ0MzNkMDVd_g
+	[  91] __NGVkNGFmM2as_g
+	[  92] __NGZjMjZlNjd3_g
+	[  93] __NTA1Y2JlNzYz_g
+	[  94] __NTEwNjQwZDX4_g
+	[  95] __NTI0NTA3N2Oz_g
+	[  96] __NTM0YmIxOTMI_g
+	[  97] __NTRjNzAxNjMl_g
+	[  98] __NTU2OGIyYTLb_g
+	[  99] __NTZlYWJkYjSD_g
+	[ 100] __NTc2ZmI3OTJh_g
+	[ 101] __NTg2YTU1Njiy_g
+	[ 102] __NTkzMWNkMmV6_g
+	[ 103] __NWE4YjZkNThq_g
+	[ 104] __NWI0MTVhOGJt_g
+	[ 105] __NWNiZTc2MzOf_g
+	[ 106] __NWQzOTVlMjio_g
+	[ 107] __NWUyOGE4NzGu_g
+	[ 108] __NWZlMzk3NGOG_g
+	[ 109] __NjA5Njg5Yzme_g
+	[ 110] __NjE0ZWQ0YWY__g
+	[ 111] __NjJjZjczYzZ5_g
+	[ 112] __NjMyNThjNTNL_g
+	[ 113] __NjRmZjNiOGSE_g
+	[ 114] __NjU3YjBkZWQp_g
+	[ 115] __NjYzYzY0ZmY7_g
+	[ 116] __Njc3NzgwYTRp_g
+	[ 117] __NjhiMmEyZGK2_g
+	[ 118] __Njk2NjNjNjT__g
+	[ 119] __NmE1NTY4YjKi_g
+	[ 120] __NmI2MDk2ODnJ_g
+	[ 121] __NmNhNTliZjd1_g
+	[ 122] __NmQ1ODZhNTVo_g
+	[ 123] __NmU2Nzc3ODCk_g
+	[ 124] __NmZiNzkyNjFO_g
+	[ 125] __NzAxMWMwZTH6_g
+	[ 126] __NzFhZWY2Y2Ub_g
+	[ 127] __NzJkMmVmYTaj_g
+	[ 128] __NzNjNjc5MjMy_g
+	[ 129] __NzRmYjIwZTY6_g
+	[ 130] __NzVmMDI2OTkE_g
+	[ 131] __NzYzMzlmMTbL_g
+	[ 132] __Nzc4MGE0Njlm_g
+	[ 133] __NzgxOGU1NTbq_g
+	[ 134] __NzkyMzMyMziO_g
+	[ 135] __ODBhNDY5NjY8_g
+	[ 136] __ODE1MTA2NDDV_g
+	[ 137] __ODJkZDFjMWFH_g
+	[ 138] __ODNmZDIxZjkM_g
+	[ 139] __ODRmMjg3ODVi_g
+	[ 140] __ODU2MmNmNzPG_g
+	[ 141] __ODYwMjdkMTDT_g
+	[ 142] __ODc4NTYyY2Zz_g
+	[ 143] __ODgyZmJhOWSU_g
+	[ 144] __ODljOTllMTkA_g
+	[ 145] __OGFkODQ0NTkx_g
+	[ 146] __OGI2ZDU4NmFV_g
+	[ 147] __OGM1MzRiYjGT_g
+	[ 148] __OGQ4NGYyODeF_g
+	[ 149] __OGVjNDBiNDk3_g
+	[ 150] __OGYxZTEzM2XI_g
+	[ 151] __OTBlN2Q2ZTSg_g
+	[ 152] __OTEwMzBlMzDp_g
+	[ 153] __OTI2MTRlZDSv_g
+	[ 154] __OTMwODgyZGQc_g
+	[ 155] __OTQ4ZjFlMTM__g
+	[ 156] __OTVjMWI5ZWJK_g
+	[ 157] __OTY4OWM5OWUZ_g
+	[ 158] __OTc0Yzg2MDJ9_g
+	[ 159] __OThiYjVmZTOX_g
+	[ 160] __OTkwNDgxNTEG_g
+	[ 161] __OWFiMGQ5MzTi_g
+	[ 162] __OWJmNzc1ZjAm_g
+	[ 163] __OWNmMzg4Mma6_g
+	[ 164] __OWQ5NDhmMWUT_g
+	[ 165] __OWUxOTAwNTBc_g
+	[ 166] __OWYxNmNiOTXB_g
+	[ 167] __Y2FlODU3Nma3_g
+	[ 168] __Y2I5NWMxYjnr_g
+	[ 169] __Y2M1NGM3MDFj_g
+	[ 170] __Y2QyZTdhMGbQ_g
+	[ 171] __Y2UxYmFkZGWc_g
+	[ 172] __Y2Y3M2M2Nzkj_g
+	[ 173] __YTAyZDc4MTjl_g
+	[ 174] __YTE1MjQ1MDd8_g
+	[ 175] __YTJkYmI2MGH1_g
+	[ 176] __YTM5OGJiNWbj_g
+	[ 177] __YTQ2OTY2M2Nk_g
+	[ 178] __YTU5YmY3NzXw_g
+	[ 179] __YTZhMzk4YmJf_g
+	[ 180] __YTdlYzE1Y2NU_g
+	[ 181] __YTg3MWFlZjbO_g
+	[ 182] __YTliZjQ4NWJB_g
+	[ 183] __YWEyYTFmYmPa_g
+	[ 184] __YWI3MDExYzDh_g
+	[ 185] __YWMwOWFiNzAR_g
+	[ 186] __YWRkZTljZjOI_g
+	[ 187] __YWVmNmNlMWKt_g
+	[ 188] __YWYzZmFjMDmr_g
+	[ 189] __YjBkOTM0ZTJl_g
+	[ 190] __YjE5MzA4ODLd_g
+	[ 191] __YjJhMmRiYjYK_g
+	[ 192] __YjMyYzlhYjDZ_g
+	[ 193] __YjQ4M2ZkMjH5_g
+	[ 194] __YjVkZmQxYWEq_g
+	[ 195] __YjYwYWY1ZmPK_g
+	[ 196] __Yjc5MjYxNGXU_g
+	[ 197] __YjhkYzJiNDLu_g
+	[ 198] __YjllYjRhYTm__g
+	[ 199] __YmE5ZDk0OGYe_g
+	[ 200] __YmI1ZmUzOTdM_g
+	[ 201] __YmNkYTdmZjTg_g
+	[ 202] __YmRiNDgzZmQh_g
+	[ 203] __YmU3NjMzOWYW_g
+	[ 204] __YmY0ODViNDFa_g
+	[ 205] __YzBlMWZhNzLS_g
+	[ 206] __YzFiOWViNGGp_g
+	[ 207] __YzI2ZTY3NzeA_g
+	[ 208] __YzNiOGRjMmJC_g
+	[ 209] __YzQwYjQ5MzfF_g
+	[ 210] __YzU2YjYwOTaJ_g
+	[ 211] __YzY3OTIzMzI4_g
+	[ 212] __YzcwMTYzMjWM_g
+	[ 213] __Yzg0ZmMyNmVn_g
+	[ 214] __Yzk5ZTE5MDBQ_g
+	[ 215] __ZDA3ZTkxMDMO_g
+	[ 216] __ZDFhYTJhMWa8_g
+	[ 217] __ZDJlZmE2YTOY_g
+	[ 218] __ZDM2Y2E1OWL3_g
+	[ 219] __ZDRhZjNmYWMJ_g
+	[ 220] __ZDVmODI0NzT7_g
+	[ 221] __ZDZlNGEwMmR4_g
+	[ 222] __ZDc0ZDQzM2QF_g
+	[ 223] __ZDg0NDU5MzHN_g
+	[ 224] __ZDkzNGUyNjV7_g
+	[ 225] __ZGE3ZmY0ZTA1_g
+	[ 226] __ZGJiNjBhZjX8_g
+	[ 227] __ZGMyYjQyZWWK_g
+	[ 228] __ZGQxYzFhNDci_g
+	[ 229] __ZGU5Y2YzODgv_g
+	[ 230] __ZGZkMWFhMmEf_g
+	[ 231] __ZTAzNWMzYjjc_g
+	[ 232] __ZTFmYTcyZDLv_g
+	[ 233] __ZTI2NTdiMGTt_g
+	[ 234] __ZTM5NzRjODYC_g
+	[ 235] __ZTRhMDJkNzgY_g
+	[ 236] __ZTU1NmVhYmS0_g
+	[ 237] __ZTYzYWZlYTFS_g
+	[ 238] __ZTdkNmU0YTAt_g
+	[ 239] __ZTg1NzZmYjeS_g
+	[ 240] __ZTkxNzEyNDYU_g
+	[ 241] __ZWFiZGI0ODP9_g
+	[ 242] __ZWI0YWE5YmZI_g
+	[ 243] __ZWMxNWNjNTTH_g
+	[ 244] __ZWQyOWE3ZWMV_g
+	[ 245] __ZWU4YWQ4NDRZ_g
+	[ 246] __ZWZhNmEzOTi7_g
+	[ 247] __ZjAyNjk5MDSB_g
+	[ 248] __ZjFkNzRkNDM9_g
+	[ 249] __ZjI4Nzg1NjLP_g
+	[ 250] __ZjM4ODJmYmGd_g
+	[ 251] __ZjRlMDM1YzO4_g
+	[ 252] __ZjVmY2NhZThX_g
+	[ 253] __ZjZjZTFiYWTe_g
+	[ 254] __Zjc3NWYwMjaZ_g
+	[ 255] __ZjgyNDc0ZmIg_g
+	[ 256] __ZjkwYzM2YjXf_g
+	[ 257] __ZmE3MmQyZWam_g
+	[ 258] __ZmIyMGU2M2H__g
+	[ 259] __ZmNjYWU4NTdv_g
+	[ 260] __ZmQyMWY5MGM2_g
+	[ 261] __ZmVhMTUyNDUH_g
+	[ 262] __ZmYzYjhkODTy_g
 	[ 263] start
 
 
@@ -918,7 +918,7 @@ There is a debug directory in .buildid at 0x40a000
 
 Type                Size     Rva      Offset
   2        CodeView 00000019 0000a01c 0000861c
-(format RSDS signature 6db5339fb549899d35e94b28fee2cedb age 1)
+(format RSDS signature 1b687a5b0f272d5b5ebca79303d676ea age 1)
 
 The .rsrc Resource Directory section:
 000  Type Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 4
@@ -950,7 +950,7 @@ The .rsrc Resource Directory section:
 
 Sections:
 Idx Name          Size      VMA               LMA               File off  Algn
-  0 .text         000067d0  0000000000401000  0000000000401000  00000400  2**4
+  0 .text         000067c0  0000000000401000  0000000000401000  00000400  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
   1 .data         00000820  0000000000408000  0000000000408000  00006c00  2**5
                   CONTENTS, ALLOC, LOAD, DATA
@@ -958,7 +958,7 @@ Idx Name          Size      VMA               LMA               File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   3 .buildid      00000035  000000000040a000  000000000040a000  00008600  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  4 .edata        00001ec7  000000000040b000  000000000040b000  00008800  2**2
+  4 .edata        00001ec2  000000000040b000  000000000040b000  00008800  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   5 .idata        000003a8  000000000040d000  000000000040d000  0000a800  2**2
                   CONTENTS, ALLOC, LOAD, DATA

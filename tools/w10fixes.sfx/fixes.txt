@@ -3,7 +3,7 @@ fixes.exe:     file format pei-x86-64
 fixes.exe
 architecture: i386:x86-64, flags 0x00000103:
 HAS_RELOC, EXEC_P, D_PAGED
-start address 0x0000000000406ad0
+start address 0x0000000000406ac0
 
 Characteristics 0x22e
 	executable
@@ -19,7 +19,7 @@ MinorLinkerVersion	33
 SizeOfCode		0000000000006600
 SizeOfInitializedData	0000000000083c00
 SizeOfUninitializedData	0000000000000000
-AddressOfEntryPoint	0000000000006ad0
+AddressOfEntryPoint	0000000000006ac0
 BaseOfCode		0000000000001000
 ImageBase		0000000000400000
 SectionAlignment	00001000
@@ -33,7 +33,7 @@ MinorSubsystemVersion	2
 Win32Version		00000000
 SizeOfImage		0008f000
 SizeOfHeaders		00000400
-CheckSum		000925ea
+CheckSum		000956aa
 Subsystem		00000002	(Windows GUI)
 DllCharacteristics	00000140
 SizeOfStackReserve	0000000000200000
@@ -44,7 +44,7 @@ LoaderFlags		00000000
 NumberOfRvaAndSizes	00000010
 
 The Data Directory
-Entry 0 000000000000b000 00001e5e Export Directory [.edata (or where ever we found it)]
+Entry 0 000000000000b000 00001e5f Export Directory [.edata (or where ever we found it)]
 Entry 1 000000000000d000 000003cc Import Directory [parts of .idata]
 Entry 2 000000000000e000 0007fb58 Resource Directory [.rsrc]
 Entry 3 0000000000000000 00000000 Exception Directory [.pdata]
@@ -112,7 +112,7 @@ The Export Tables (interpreted .edata section contents)
 Export Flags 			0
 Time/Date stamp 		0
 Major/Minor 			0/0
-Name 				000000000000ba6e dvgnzkpp.exe
+Name 				000000000000ba6e qgfnhkgg.exe
 Ordinal Base 			1
 Number in:
 	Export Address Table 		00000107
@@ -385,271 +385,271 @@ Export Address Table -- Ordinal Base 1
 	[ 259] +base[ 260] 3870 Export RVA
 	[ 260] +base[ 261] 3880 Export RVA
 	[ 261] +base[ 262] 3890 Export RVA
-	[ 262] +base[ 263] 6ad0 Export RVA
+	[ 262] +base[ 263] 6ac0 Export RVA
 
 [Ordinal/Name Pointer] Table
-	[   0] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9EEELi207ELi3EE7encryptEc
-	[   1] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi141ELi5EE7encryptEc
-	[   2] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi37ELi13EE7encryptEc
-	[   3] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi39ELi11EE7encryptEc
-	[   4] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi91ELi7EE7encryptEc
-	[   5] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12ELy13EEELi185ELi9EE7encryptEc
-	[   6] __M2FlMzdjYjTS_g
-	[   7] __M2I5ZWU4Y2OA_g
-	[   8] __M2NiYmU1MWQi_g
-	[   9] __M2Q1ZThiNjgZ_g
-	[  10] __M2U3NzdmNTjF_g
-	[  11] __M2Y5NWViZTkb_g
-	[  12] __MDA5N2FkYWJp_g
-	[  13] __MDE0MzlmOWJ__g
-	[  14] __MDI1NWM5YWUL_g
-	[  15] __MDM4N2QzZjkl_g
-	[  16] __MDQ3MmIzOGVR_g
-	[  17] __MDUxMzMwZWNJ_g
-	[  18] __MDYwMTQzOWab_g
-	[  19] __MDdlMTNjYmLl_g
-	[  20] __MDg0MjFjNjI2_g
-	[  21] __MDlmNGExYTZQ_g
-	[  22] __MGE2MDdkYzGJ_g
-	[  23] __MGJjZjQ1YzJN_g
-	[  24] __MGM5Yzc1MDn0_g
-	[  25] __MGRmMzM5MGFg_g
-	[  26] __MGVhMzBmMjY1_g
-	[  27] __MGYyNjM1Zmbv_g
-	[  28] __MTA5NmI5MTLU_g
-	[  29] __MTEwNTEzMzDs_g
-	[  30] __MTJkNDc0ZmIN_g
-	[  31] __MTMzMGVjNDlA_g
-	[  32] __MTRjZGI1Yjht_g
-	[  33] __MTU1MmIxODVa_g
-	[  34] __MTZiYTRjZmQp_g
-	[  35] __MTcwNDcyYjOO_g
-	[  36] __MThkNWUyMmGv_g
-	[  37] __MTk5OWFhZWXq_g
-	[  38] __MWE2MzIxNWJ4_g
-	[  39] __MWJmMDNiOWXo_g
-	[  40] __MWM2MjM2MmRs_g
-	[  41] __MWQyMjgzYTJr_g
-	[  42] __MWU0YjA2MDFD_g
-	[  43] __MWYxZTRiMDYB_g
-	[  44] __MjAzMWMzZjEH_g
-	[  45] __MjE1Yjc4NTeQ_g
-	[  46] __MjI4M2EyNmKP_g
-	[  47] __MjMxZjFlNGIG_g
-	[  48] __MjRkNmE0OWSS_g
-	[  49] __MjVlNzRlZGb6_g
-	[  50] __MjYzNWZmZWaI_g
-	[  51] __Mjc0NzMyOTSC_g
-	[  52] __Mjg3YWE1NWZ2_g
-	[  53] __MjlkZTIzMWYe_g
-	[  54] __MmFhZjVjZjhB_g
-	[  55] __MmJkOTRmYTm2_g
-	[  56] __MmMzN2JlOGOa_g
-	[  57] __MmQ2YzIwMzHD_g
-	[  58] __MmVkY2M3MDOH_g
-	[  59] __MmYzZDVlOGJo_g
-	[  60] __MzBlYzQ5NDCw_g
-	[  61] __MzFjM2YxMDfh_g
-	[  62] __MzI5NDgyNzDd_g
-	[  63] __MzMzZTc3N2ZY_g
-	[  64] __MzQxNTUyYjGF_g
-	[  65] __MzVmZmVmODi9_g
-	[  66] __MzYyZDZjMjAx_g
-	[  67] __MzdiZThjOWFZ_g
-	[  68] __MzgyZjNkNWWL_g
-	[  69] __MzkwYTYwN2TB_g
-	[  70] __N2FhNTVmNzbg_g
-	[  71] __N2I1ZDExMDUT_g
-	[  72] __N2NiNGQyODFU_g
-	[  73] __N2RjMTg5ZmWg_g
-	[  74] __N2VkYTM4MmY9_g
-	[  75] __N2Y1OGM1MTjV_g
-	[  76] __NDBiMDI0ZDak_g
-	[  77] __NDFmMjI4N2Gl_g
-	[  78] __NDIxYzYyMzYt_g
-	[  79] __NDM5ZjliN2Xa_g
-	[  80] __NDQyYzM3YmWM_g
-	[  81] __NDVjMjRkOGGN_g
-	[  82] __NDY3M2IyZTQW_g
-	[  83] __NDczMjk0ODJw_g
-	[  84] __NDhkODUzNGGn_g
-	[  85] __NDk0MGIwMjTW_g
-	[  86] __NGFhNzQ2NzOy_g
-	[  87] __NGIwNjAxNDOf_g
-	[  88] __NGNmZDI5ZGUj_g
-	[  89] __NGQ4YThkNTb1_g
-	[  90] __NGVkZmZhNmbE_g
-	[  91] __NGZhOWI2YWNh_g
-	[  92] __NTBjODM0MTVS_g
-	[  93] __NTEyZWRjYzcD_g
-	[  94] __NTJiMTg1NWEO_g
-	[  95] __NTM0YWE3NDZz_g
-	[  96] __NTRiZjE3MDRy_g
-	[  97] __NTVjOWFlMGLP_g
-	[  98] __NTZmNTc5YzCT_g
-	[  99] __NTc5MGY2M2aV_g
-	[ 100] __NThjNTE4ZDXi_g
-	[ 101] __NTlmNzQ4ZDhT_g
-	[ 102] __NWEwZWEzMGYm_g
-	[ 103] __NWI3ODU3OTD2_g
-	[ 104] __NWNmODQxZjIo_g
-	[ 105] __NWQxMTA1MTMw_g
-	[ 106] __NWU4YjY4MTmZ_g
-	[ 107] __NWY3NmUwOTGY_g
-	[ 108] __NjA3ZGMxODn__g
-	[ 109] __NjE3MTI3NDcy_g
-	[ 110] __NjIzNjJkNmMg_g
-	[ 111] __NjMyMTViNzhX_g
-	[ 112] __NjRkNzg0NjUr_g
-	[ 113] __NjUyYmQ5NGap_g
-	[ 114] __NjY2ZTFhNjMh_g
-	[ 115] __NjcwMjU1Yzmu_g
-	[ 116] __NjgxOTk5YWHu_g
-	[ 117] __NjkwYzljNzUJ_g
-	[ 118] __NmE3YjVkMTEF_g
-	[ 119] __NmI4Zjg2NjcC_g
-	[ 120] __NmMyMDMxYzPx_g
-	[ 121] __NmRiNzY2NmUa_g
-	[ 122] __NmUxYTYzMjFb_g
-	[ 123] __NmZjNGVkMDhC_g
-	[ 124] __NzBkZGE4ZGL8_g
-	[ 125] __NzEyNzQ3MzKU_g
-	[ 126] __NzJiMzhlNTEu_g
-	[ 127] __NzNiMmU0MTa6_g
-	[ 128] __NzRmYjBkZjM5_g
-	[ 129] __NzUwOWY0YTGm_g
-	[ 130] __NzZlMDkxOTgA_g
-	[ 131] __Nzc3ZjU4YzUY_g
-	[ 132] __Nzg1NzkwZjY__g
-	[ 133] __NzljMDkzZDHK_g
-	[ 134] __ODA2YTdiNWQR_g
-	[ 135] __ODE1NGJmMTcE_g
-	[ 136] __ODI3MGRkYTjb_g
-	[ 137] __ODNhMjZiOGaG_g
-	[ 138] __ODQ2NTJiZDlP_g
-	[ 139] __ODU1YTBlYTMP_g
-	[ 140] __ODY2NzAyNTXJ_g
-	[ 141] __ODdkM2Y5MjXn_g
-	[ 142] __ODhiZGNiZTY6_g
-	[ 143] __ODlmZWEwMTTN_g
-	[ 144] __OGE4ZDU2ZjV5_g
-	[ 145] __OGI2ODE5OTmq_g
-	[ 146] __OGM5YTU5ZjdI_g
-	[ 147] __OGQ1NmY1NznA_g
-	[ 148] __OGU1MTJlZGPH_g
-	[ 149] __OGY4NjY3MDJV_g
-	[ 150] __OTBmNjNmOTXr_g
-	[ 151] __OTE5ODAwOTet_g
-	[ 152] __OTIzMzNlNzd__g
-	[ 153] __OTNkMWNhY2Vk_g
-	[ 154] __OTQ4MjcwZGSo_g
-	[ 155] __OTVlYmU5MWLw_g
-	[ 156] __OTZiOTEyZDR0_g
-	[ 157] __OTdhZGFiNjkM_g
-	[ 158] __OTgwMDk3YWSr_g
-	[ 159] __OTlhYWVlZWG8_g
-	[ 160] __OWE1OWY3NDjY_g
-	[ 161] __OWI3ZWRhMzgv_g
-	[ 162] __OWM3NTA5ZjSh_g
-	[ 163] __OWQ5MjMzM2V3_g
-	[ 164] __OWVlOGNjODBq_g
-	[ 165] __OWY5YjdlZGE4_g
-	[ 166] __Y2FjZTY0ZDeE_g
-	[ 167] __Y2JlNjNhZTN8_g
-	[ 168] __Y2M4MDZhN2Jd_g
-	[ 169] __Y2RiNWI4NmS3_g
-	[ 170] __Y2U2NGQ3ODRl_g
-	[ 171] __Y2Y0NWMyNGSK_g
-	[ 172] __YTAxNGNkYjW4_g
-	[ 173] __YTFhNjUwYzg0_g
-	[ 174] __YTI2YjhmODZn_g
-	[ 175] __YTMwZjI2MzX__g
-	[ 176] __YTQ5ZDkyMzM__g
-	[ 177] __YTU1Zjc2ZTCR_g
-	[ 178] __YTY1MGM4MzQV_g
-	[ 179] __YTc0NjczYjLk_g
-	[ 180] __YThkYmZjYzZE_g
-	[ 181] __YTliNmFjNjFx_g
-	[ 182] __YWFlZWVhYmPQ_g
-	[ 183] __YWI2OTBjOWN1_g
-	[ 184] __YWM2MTcxMjdH_g
-	[ 185] __YWRhYjY5MGOc_g
-	[ 186] __YWUwYmNmNDXC_g
-	[ 187] __YWY1Y2Y4NDHy_g
-	[ 188] __YjAyNGQ2YTSd_g
-	[ 189] __YjE4NTVhMGWj_g
-	[ 190] __YjJlNDE2YmFM_g
-	[ 191] __YjM4ZTUxMmXc_g
-	[ 192] __YjRkMjgxNTS__g
-	[ 193] __YjViODZkYjdm_g
-	[ 194] __YjZhYzYxNzEn_g
-	[ 195] __Yjc2NjZlMWFj_g
-	[ 196] __Yjg2ZGI3NjZu_g
-	[ 197] __YjkxMmQ0NzT7_g
-	[ 198] __YmE0Y2ZkMjne_g
-	[ 199] __YmJlNTFkMjKD_g
-	[ 200] __YmNkMDEwOTa5_g
-	[ 201] __YmRjYmU2M2Hj_g
-	[ 202] __YmU4YzlhNTn3_g
-	[ 203] __YmYxNzA0NzKz_g
-	[ 204] __YzA5M2QxY2HO_g
-	[ 205] __YzE4OWZlYTAU_g
-	[ 206] __YzI0ZDhhOGRW_g
-	[ 207] __YzNmMTA3ZTE8_g
-	[ 208] __YzRlZDA4NDIc_g
-	[ 209] __YzUxOGQ1ZTIq_g
-	[ 210] __YzY0NDJjMze__g
-	[ 211] __YzcwMzg3ZDP5_g
-	[ 212] __YzgzNDE1NTKx_g
-	[ 213] __YzlhZTBiY2ZF_g
-	[ 214] __ZDAxMDk2YjkS_g
-	[ 215] __ZDFjYWNlNjTX_g
-	[ 216] __ZDI4MTU0YmYX_g
-	[ 217] __ZDNmOTI1ZTdO_g
-	[ 218] __ZDQ3NGZiMGTz_g
-	[ 219] __ZDVlMjJhYWZc_g
-	[ 220] __ZDZhNDlkOTIz_g
-	[ 221] __ZDc4NDY1MmLZ_g
-	[ 222] __ZDg1MzRhYTdG_g
-	[ 223] __ZDk0ZmE5Yjas_g
-	[ 224] __ZGEzODJmM2Re_g
-	[ 225] __ZGJmY2M2NDQs_g
-	[ 226] __ZGNjNzAzODfT_g
-	[ 227] __ZGRhOGRiZmPG_g
-	[ 228] __ZGUyMzFmMWVL_g
-	[ 229] __ZGZmYTZmYzTt_g
-	[ 230] __ZTA5MTk4MDCX_g
-	[ 231] __ZTEzY2JiZTUd_g
-	[ 232] __ZTIyYWFmNWP4_g
-	[ 233] __ZTM3Y2I0ZDKB_g
-	[ 234] __ZTQxNmJhNGP9_g
-	[ 235] __ZTUxZDIyODOi_g
-	[ 236] __ZTYzYWUzN2O0_g
-	[ 237] __ZTc0ZWRmZmFv_g
-	[ 238] __ZThjYzgwNmF7_g
-	[ 239] __ZTkxYmYwM2Ke_g
-	[ 240] __ZWFiY2QwMTCW_g
-	[ 241] __ZWJlOTFiZjA7_g
-	[ 242] __ZWM0OTQwYjAk_g
-	[ 243] __ZWQwODQyMWNi_g
-	[ 244] __ZWVlYWJjZDAQ_g
-	[ 245] __ZWY4OGJkY2Lm_g
-	[ 246] __ZjAzYjllZTjM_g
-	[ 247] __ZjEwN2UxM2O7_g
-	[ 248] __ZjIyODdhYTVf_g
-	[ 249] __ZjMzOTBhNjB9_g
-	[ 250] __ZjRhMWE2NTDI_g
-	[ 251] __ZjU3OWMwOTPR_g
-	[ 252] __ZjYzZjk1ZWLp_g
-	[ 253] __Zjc0OGQ4NTNK_g
-	[ 254] __Zjg0MWYyMjh6_g
-	[ 255] __ZjkyNWU3NGXf_g
-	[ 256] __ZmE2ZmM0ZWQI_g
-	[ 257] __ZmIwZGYzMzkK_g
-	[ 258] __ZmNjNjQ0MmM3_g
-	[ 259] __ZmQyOWRlMjMf_g
-	[ 260] __ZmVhMDE0Y2S1_g
-	[ 261] __ZmZlZjg4YmTL_g
+	[   0] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9EEELi98ELi3EE7encryptEc
+	[   1] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi126ELi7EE7encryptEc
+	[   2] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi136ELi5EE7encryptEc
+	[   3] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi218ELi11EE7encryptEc
+	[   4] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi64ELi13EE7encryptEc
+	[   5] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12ELy13EEELi196ELi9EE7encryptEc
+	[   6] __M2FmYWVhNWa9_g
+	[   7] __M2I1NTFmZTBA_g
+	[   8] __M2NkMjk5YzWf_g
+	[   9] __M2RlMjUwOGbn_g
+	[  10] __M2UyNjYyMDNl_g
+	[  11] __M2ZiYThjNDKk_g
+	[  12] __MDBkZWJiMjM0_g
+	[  13] __MDFjNjAyZGGa_g
+	[  14] __MDJkYTlhY2J7_g
+	[  15] __MDM2NTA2ODEX_g
+	[  16] __MDRkNjMzMDdz_g
+	[  17] __MDU5YmVmNjTh_g
+	[  18] __MDY4MTE3MDHG_g
+	[  19] __MDc3M2UzM2Ti_g
+	[  20] __MDgyOWI0ZWNF_g
+	[  21] __MDkxYzEyNmSY_g
+	[  22] __MGFiMjZmYTf4_g
+	[  23] __MGJiMzQ0YjHR_g
+	[  24] __MGM1OGI4NTJ5_g
+	[  25] __MGQzYWZhZWFf_g
+	[  26] __MGU0ZDEwNGFg_g
+	[  27] __MGYwNTliZWZk_g
+	[  28] __MTA0YTYwMTbu_g
+	[  29] __MTFiZjkzYWRp_g
+	[  30] __MTI2ZDk4ZGLO_g
+	[  31] __MTMyZDYxZjb7_g
+	[  32] __MTRmOTk3NmGG_g
+	[  33] __MTU1NjIxMmNT_g
+	[  34] __MTZlZTY2NzQ7_g
+	[  35] __MTcwMWM2MDLa_g
+	[  36] __MTgwMGRlYmIj_g
+	[  37] __MTlhODBjNTi4_g
+	[  38] __MWFkN2QzNjhe_g
+	[  39] __MWI0OGE5MjAL_g
+	[  40] __MWMxMjZkOTjb_g
+	[  41] __MWQzY2QyOTnF_g
+	[  42] __MWU3ZTQzMTMt_g
+	[  43] __MWZlMDQwMzKj_g
+	[  44] __MjAwYmIzNDSx_g
+	[  45] __MjEyYzUzNGMZ_g
+	[  46] __MjI4OTJhOGIe_g
+	[  47] __MjMzNDJiZThs_g
+	[  48] __MjQ3NmYxNTT0_g
+	[  49] __MjVjMzRmOWOv_g
+	[  50] __MjY2MjAzNjUG_g
+	[  51] __MjdmNTM2YjUd_g
+	[  52] __MjhjMWYyYWLz_g
+	[  53] __MjliNGVjNDUU_g
+	[  54] __MmE4YjFlN2VD_g
+	[  55] __MmJlODZjZWRL_g
+	[  56] __MmM1MzRjMTmo_g
+	[  57] __MmQ2MWY2ZmJX_g
+	[  58] __MmUwYWIyNman_g
+	[  59] __MmZkOTMxODTc_g
+	[  60] __MzBjNzcwZDjw_g
+	[  61] __MzE4NGRjODWQ_g
+	[  62] __MzJhMzllMDTW_g
+	[  63] __MzMwNzczZTM9_g
+	[  64] __MzQyYmU4NmPt_g
+	[  65] __MzUyN2Y1Mza1_g
+	[  66] __MzZiNTFkM2PS_g
+	[  67] __MzcxMWJmOTOt_g
+	[  68] __MzhjYTFhZDfT_g
+	[  69] __Mzk3YThlM2Um_g
+	[  70] __N2E4ZTNlMjZi_g
+	[  71] __N2I4ODA4Mjm0_g
+	[  72] __N2NhMGViODDd_g
+	[  73] __N2Q5NTg3YzJO_g
+	[  74] __N2U0MzEzMmRh_g
+	[  75] __N2ZhMjI4YzHy_g
+	[  76] __NDAzMmEzOWUE_g
+	[  77] __NDEzNTI3ZjU2_g
+	[  78] __NDJhNDI0Nzbx_g
+	[  79] __NDMxMzJkNjH2_g
+	[  80] __NDRiMWQxMGYF_g
+	[  81] __NDUxNGY5OTdq_g
+	[  82] __NDZiNzUxZmOU_g
+	[  83] __NDdjMDBkM2H6_g
+	[  84] __NDhhOTIwMGKz_g
+	[  85] __NDkzOGNhMWHX_g
+	[  86] __NGE2MDE2ZWVm_g
+	[  87] __NGI0MTM1Mjf1_g
+	[  88] __NGMxOWE4MGNY_g
+	[  89] __NGQxMDRhNjAW_g
+	[  90] __NGU5ZDM5N2GO_g
+	[  91] __NGY5Y2FmYzms_g
+	[  92] __NTA4ZmU3MzDH_g
+	[  93] __NTFmYzk0MmbZ_g
+	[  94] __NTI3OWM0NWTI_g
+	[  95] __NTM0YzE5YTgM_g
+	[  96] __NTRmNGQ0Zmbl_g
+	[  97] __NTUxZmUwNDAy_g
+	[  98] __NTYyMTJjNTNM_g
+	[  99] __NTcwZTRkMTBK_g
+	[ 100] __NThiODUyNznE_g
+	[ 101] __NTkxNTU2MjEs_g
+	[ 102] __NWFlNjc4ZGZu_g
+	[ 103] __NWJhZWU0ODP3_g
+	[ 104] __NWNmZGQ1N2ai_g
+	[ 105] __NWRjOGJlY2Za_g
+	[ 106] __NWVmZTc1YjmR_g
+	[ 107] __NWZiZGJjMmUK_g
+	[ 108] __NjAxNmVlNjZ0_g
+	[ 109] __NjFmNmZiNTcO_g
+	[ 110] __NjIwMzY1MDaB_g
+	[ 111] __NjM0N2MwMGQ6_g
+	[ 112] __NjRlMTIyODkq_g
+	[ 113] __NjUwNjgxMTcB_g
+	[ 114] __NjY3NDNiNTUf_g
+	[ 115] __Njc2YjU5MTVW_g
+	[ 116] __Njg1ZWZlNzW5_g
+	[ 117] __NjlhMWE2N2SV_g
+	[ 118] __NmE4NjQ2YjdR_g
+	[ 119] __NmI1OTE1NTYh_g
+	[ 120] __NmNlZDRiNDE1_g
+	[ 121] __NmQ5OGRiY2V3_g
+	[ 122] __NmU5NmFhODKl_g
+	[ 123] __NmZhN2Y4ZDAY_g
+	[ 124] __NzBkOGYwMjXD_g
+	[ 125] __NzE3Y2EwZWKA_g
+	[ 126] __NzI4ZDYzNDfA_g
+	[ 127] __NzNlMzNkZTJQ_g
+	[ 128] __NzQzYjU1MWbg_g
+	[ 129] __NzViOTkxZTkJ_g
+	[ 130] __NzZmMTU0ZjTU_g
+	[ 131] __NzdjZDcxN2Og_g
+	[ 132] __NzhkZjZlOTaq_g
+	[ 133] __NzljNDVkYzi__g
+	[ 134] __ODBkZDkyM2a6_g
+	[ 135] __ODExNzAxYzYC_g
+	[ 136] __ODJhNTViYWXk_g
+	[ 137] __ODNmN2NjNzKN_g
+	[ 138] __ODRkYzg1OTCK_g
+	[ 139] __ODU5MDhhYjAb_g
+	[ 140] __ODY0NmI3NTH8_g
+	[ 141] __ODdjMjRlOWQ5_g
+	[ 142] __ODgwODI5YjTs_g
+	[ 143] __ODkyYThiMWV__g
+	[ 144] __OGFiMDFiNDip_g
+	[ 145] __OGIxZTdlNDMT_g
+	[ 146] __OGM0MmE0MjR2_g
+	[ 147] __OGQ2MzQ3YzAN_g
+	[ 148] __OGUzZTI2NjID_g
+	[ 149] __OGZlNzMwYzdw_g
+	[ 150] __OTA4YWIwMWJI_g
+	[ 151] __OTFlOTA5MWMS_g
+	[ 152] __OTIzZmJhOGNC_g
+	[ 153] __OTNhZDY5YTGm_g
+	[ 154] __OTQyZmQ5MzGE_g
+	[ 155] __OTU4N2MyNGWd_g
+	[ 156] __OTZhYTgyYTVb_g
+	[ 157] __OTc2YTg2NDa3_g
+	[ 158] __OThkYmNlNzfN_g
+	[ 159] __OTljNTlmNWP9_g
+	[ 160] __OWFjYjdiODgI_g
+	[ 161] __OWJlZjY0ZTEi_g
+	[ 162] __OWNhZmM5YWNJ_g
+	[ 163] __OWQzOTdhOGU__g
+	[ 164] __OWUwNGQ2MzMH_g
+	[ 165] __OWY1Y2ZkZDV__g
+	[ 166] __Y2ExYWQ3ZDNo_g
+	[ 167] __Y2I3Yjg4MDgp_g
+	[ 168] __Y2M3MjhkNjNH_g
+	[ 169] __Y2Q3MTdjYTDr_g
+	[ 170] __Y2U3N2NkNzF8_g
+	[ 171] __Y2Y1YWU2Nzjf_g
+	[ 172] __YTBlYjgwZGSS_g
+	[ 173] __YTFhNjdkOTWH_g
+	[ 174] __YTIyOGMxZjKr_g
+	[ 175] __YTM5ZTA0ZDYz_g
+	[ 176] __YTQyNDc2ZjFU_g
+	[ 177] __YTU1YmFlZTSD_g
+	[ 178] __YTY3ZDk1ODfC_g
+	[ 179] __YTdmOGQwMTgA_g
+	[ 180] __YTgwYzU4YjhS_g
+	[ 181] __YTkyMDBiYjNE_g
+	[ 182] __YWE4MmE1NWKu_g
+	[ 183] __YWJmMzM3MTG__g
+	[ 184] __YWM0OTM4Y2Ea_g
+	[ 185] __YWQ2OWExYTZ9_g
+	[ 186] __YWVlNDgzZjfM_g
+	[ 187] __YWZjOWFjNDk4_g
+	[ 188] __YjAxYjQ4YTkg_g
+	[ 189] __YjFkMTBmMDWb_g
+	[ 190] __YjI2ZmE3ZjjQ_g
+	[ 191] __YjM0NGIxZDEP_g
+	[ 192] __YjRlYzQ1MTT5_g
+	[ 193] __YjUxZDNjZDKZ_g
+	[ 194] __YjY2NzZiNTkV_g
+	[ 195] __Yjc1MWZjOTQv_g
+	[ 196] __Yjg1Mjc5YzRd_g
+	[ 197] __Yjk5MWU5MDkc_g
+	[ 198] __YmE4YzQyYTQk_g
+	[ 199] __YmIyMzM0MmLo_g
+	[ 200] __YmMyZTBhYjJv_g
+	[ 201] __YmRiYzJlMGGy_g
+	[ 202] __YmVjZjVhZTZ4_g
+	[ 203] __YmY5M2FkNjmh_g
+	[ 204] __YzAwZDNhZmHq_g
+	[ 205] __YzFmMmFiZjM3_g
+	[ 206] __YzI0ZTlkMzl6_g
+	[ 207] __YzM0ZjljYWbJ_g
+	[ 208] __YzQ1ZGM4YmXP_g
+	[ 209] __YzU5ZjVjZmTV_g
+	[ 210] __YzYwMmRhOWHL_g
+	[ 211] __Yzc3MGQ4ZjAl_g
+	[ 212] __YzhiZWNmNWHm_g
+	[ 213] __YzlhYzQ5MzjK_g
+	[ 214] __ZDAxODAwZGW7_g
+	[ 215] __ZDEwZjA1OWLv_g
+	[ 216] __ZDI5OWM1OWZc_g
+	[ 217] __ZDM2ODVlZmV1_g
+	[ 218] __ZDRmZmU1YjZn_g
+	[ 219] __ZDU3ZmEyMjjB_g
+	[ 220] __ZDYzMzA3NzPj_g
+	[ 221] __ZDdkMzY4NWX__g
+	[ 222] __ZDhmMDI1YzNP_g
+	[ 223] __ZDkzMTg0ZGOF_g
+	[ 224] __ZGE5YWNiN2KI_g
+	[ 225] __ZGJjZTc3Y2Rx_g
+	[ 226] __ZGM4NTkwOGGw_g
+	[ 227] __ZGQ5MjNmYmGM_g
+	[ 228] __ZGViYjIzMzQr_g
+	[ 229] __ZGY2ZTk2YWGC_g
+	[ 230] __ZTA0MDMyYTOe_g
+	[ 231] __ZTEyMjg5MmGL_g
+	[ 232] __ZTI1MDhmZTcw_g
+	[ 233] __ZTMzZGUyNTCP_g
+	[ 234] __ZTQ4M2Y3Y2Ny_g
+	[ 235] __ZTViNjY3NmJZ_g
+	[ 236] __ZTY3OGRmNmWW_g
+	[ 237] __ZTczMGM3NzDY_g
+	[ 238] __ZTg2Y2VkNGJB_g
+	[ 239] __ZTkwOTFjMTJt_g
+	[ 240] __ZWE1ZmJkYmMu_g
+	[ 241] __ZWI4MGRkOTI__g
+	[ 242] __ZWM0NTE0ZjmX_g
+	[ 243] __ZWQ0YjQxMzUn_g
+	[ 244] __ZWU2Njc0M2JV_g
+	[ 245] __ZWY2NGUxMjKJ_g
+	[ 246] __ZjAyNWMzNGac_g
+	[ 247] __ZjE1NGY0ZDT__g
+	[ 248] __ZjJhYmYzMzcR_g
+	[ 249] __ZjMzNzExYmaT_g
+	[ 250] __ZjRkNGZmZTW2_g
+	[ 251] __ZjUzNmI1MWQ8_g
+	[ 252] __ZjZmYjU3MGVN_g
+	[ 253] __ZjdjYzcyOGRj_g
+	[ 254] __ZjhkMDE4MDDe_g
+	[ 255] __Zjk5NzZhODZG_g
+	[ 256] __ZmFlYTVmYmS8_g
+	[ 257] __ZmI1NzBlNGQQ_g
+	[ 258] __ZmM5NDJmZDkx_g
+	[ 259] __ZmRkNTdmYTIo_g
+	[ 260] __ZmU3NWI5OTHp_g
+	[ 261] __ZmZlNWI2Njdr_g
 	[ 262] start
 
 
@@ -917,7 +917,7 @@ There is a debug directory in .buildid at 0x40a000
 
 Type                Size     Rva      Offset
   2        CodeView 00000019 0000a01c 0000801c
-(format RSDS signature 0cbc8f6992dc50751cb2bb5607548beb age 1)
+(format RSDS signature 8ea12d7d1b707452241c46f0fe657b0c age 1)
 
 The .rsrc Resource Directory section:
 000  Type Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 4
@@ -949,7 +949,7 @@ The .rsrc Resource Directory section:
 
 Sections:
 Idx Name          Size      VMA               LMA               File off  Algn
-  0 .text         000064a0  0000000000401000  0000000000401000  00000400  2**4
+  0 .text         00006490  0000000000401000  0000000000401000  00000400  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
   1 .data         000007a0  0000000000408000  0000000000408000  00006a00  2**5
                   CONTENTS, ALLOC, LOAD, DATA
@@ -957,7 +957,7 @@ Idx Name          Size      VMA               LMA               File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   3 .buildid      00000035  000000000040a000  000000000040a000  00008000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  4 .edata        00001e5e  000000000040b000  000000000040b000  00008200  2**2
+  4 .edata        00001e5f  000000000040b000  000000000040b000  00008200  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   5 .idata        000003cc  000000000040d000  000000000040d000  0000a200  2**2
                   CONTENTS, ALLOC, LOAD, DATA
