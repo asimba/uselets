@@ -108,6 +108,7 @@ $tasks=@(
 "\Microsoft\Windows\AppID\SmartScreenSpecific"
 "\Microsoft\Windows\Application Experience\MareBackup"
 "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
+"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser Exp"
 "\Microsoft\Windows\Application Experience\ProgramDataUpdater"
 "\Microsoft\Windows\Autochk\Proxy"
 "\Microsoft\Windows\CloudExperienceHost\CreateObjectTask"
@@ -648,6 +649,7 @@ function fix-root-tasks(){
     $name=$parts[-1]
     Disable-ScheduledTask "$name" "\" -ea 0 *>$null
   }
+  Get-ScheduledTask 'MicrosoftEdgeUpdate*' '\' | Unregister-ScheduledTask -Confirm:$false -ea 0 *>$null
 }
 
 function fix-tasks-files(){

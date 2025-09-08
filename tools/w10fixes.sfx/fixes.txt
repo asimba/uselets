@@ -3,7 +3,7 @@ fixes.exe:     file format pei-x86-64
 fixes.exe
 architecture: i386:x86-64, flags 0x00000103:
 HAS_RELOC, EXEC_P, D_PAGED
-start address 0x0000000000406ac0
+start address 0x0000000140006990
 
 Characteristics 0x22e
 	executable
@@ -15,13 +15,13 @@ Characteristics 0x22e
 Time/Date		Thu Jan 01 03:00:00 1970
 Magic			020b	(PE32+)
 MajorLinkerVersion	2
-MinorLinkerVersion	33
-SizeOfCode		0000000000006600
-SizeOfInitializedData	0000000000083c00
+MinorLinkerVersion	36
+SizeOfCode		0000000000006400
+SizeOfInitializedData	0000000000083800
 SizeOfUninitializedData	0000000000000000
-AddressOfEntryPoint	0000000000006ac0
+AddressOfEntryPoint	0000000000006990
 BaseOfCode		0000000000001000
-ImageBase		0000000000400000
+ImageBase		0000000140000000
 SectionAlignment	00001000
 FileAlignment		00000200
 MajorOSystemVersion	6
@@ -33,9 +33,9 @@ MinorSubsystemVersion	2
 Win32Version		00000000
 SizeOfImage		0008f000
 SizeOfHeaders		00000400
-CheckSum		000956aa
+CheckSum		00092c3a
 Subsystem		00000002	(Windows GUI)
-DllCharacteristics	00000140
+DllCharacteristics	00000160
 SizeOfStackReserve	0000000000200000
 SizeOfStackCommit	0000000000001000
 SizeOfHeapReserve	0000000000100000
@@ -44,7 +44,7 @@ LoaderFlags		00000000
 NumberOfRvaAndSizes	00000010
 
 The Data Directory
-Entry 0 000000000000b000 00001e5f Export Directory [.edata (or where ever we found it)]
+Entry 0 000000000000b000 00001b45 Export Directory [.edata (or where ever we found it)]
 Entry 1 000000000000d000 000003cc Import Directory [parts of .idata]
 Entry 2 000000000000e000 0007fb58 Resource Directory [.rsrc]
 Entry 3 0000000000000000 00000000 Exception Directory [.pdata]
@@ -61,7 +61,7 @@ Entry d 0000000000000000 00000000 Delay Import Directory
 Entry e 0000000000000000 00000000 CLR Runtime Header
 Entry f 0000000000000000 00000000 Reserved
 
-There is an import table in .idata at 0x40d000
+There is an import table in .idata at 0x4000d000
 
 The Import Tables (interpreted .idata section contents)
  vma:            Hint    Time      Forward  DLL       First
@@ -105,552 +105,540 @@ The Import Tables (interpreted .idata section contents)
 
  0000d03c	00000000 00000000 00000000 00000000 00000000
 
-There is an export table in .edata at 0x40b000
+There is an export table in .edata at 0x4000b000
 
 The Export Tables (interpreted .edata section contents)
 
 Export Flags 			0
 Time/Date stamp 		0
 Major/Minor 			0/0
-Name 				000000000000ba6e qgfnhkgg.exe
+Name 				000000000000ba32 ndkynjbr.exe
 Ordinal Base 			1
 Number in:
-	Export Address Table 		00000107
-	[Name Pointer/Ordinal] Table	00000107
+	Export Address Table 		00000101
+	[Name Pointer/Ordinal] Table	00000101
 Table Addresses
 	Export Address Table 		000000000000b028
-	Name Pointer Table 		000000000000b444
-	Ordinal Table 			000000000000b860
+	Name Pointer Table 		000000000000b42c
+	Ordinal Table 			000000000000b830
 
 Export Address Table -- Ordinal Base 1
 	[   0] +base[   1] 27e0 Export RVA
-	[   1] +base[   2] 2800 Export RVA
-	[   2] +base[   3] 2820 Export RVA
-	[   3] +base[   4] 2840 Export RVA
-	[   4] +base[   5] 2860 Export RVA
-	[   5] +base[   6] 2880 Export RVA
-	[   6] +base[   7] 28a0 Export RVA
-	[   7] +base[   8] 28b0 Export RVA
-	[   8] +base[   9] 28c0 Export RVA
-	[   9] +base[  10] 28d0 Export RVA
-	[  10] +base[  11] 28e0 Export RVA
-	[  11] +base[  12] 28f0 Export RVA
-	[  12] +base[  13] 2900 Export RVA
-	[  13] +base[  14] 2910 Export RVA
-	[  14] +base[  15] 2920 Export RVA
-	[  15] +base[  16] 2930 Export RVA
-	[  16] +base[  17] 2940 Export RVA
-	[  17] +base[  18] 2950 Export RVA
-	[  18] +base[  19] 2960 Export RVA
-	[  19] +base[  20] 2970 Export RVA
-	[  20] +base[  21] 2980 Export RVA
-	[  21] +base[  22] 2990 Export RVA
-	[  22] +base[  23] 29a0 Export RVA
-	[  23] +base[  24] 29b0 Export RVA
-	[  24] +base[  25] 29c0 Export RVA
-	[  25] +base[  26] 29d0 Export RVA
-	[  26] +base[  27] 29e0 Export RVA
-	[  27] +base[  28] 29f0 Export RVA
-	[  28] +base[  29] 2a00 Export RVA
-	[  29] +base[  30] 2a10 Export RVA
-	[  30] +base[  31] 2a20 Export RVA
-	[  31] +base[  32] 2a30 Export RVA
-	[  32] +base[  33] 2a40 Export RVA
-	[  33] +base[  34] 2a50 Export RVA
-	[  34] +base[  35] 2a60 Export RVA
-	[  35] +base[  36] 2a70 Export RVA
-	[  36] +base[  37] 2a80 Export RVA
-	[  37] +base[  38] 2a90 Export RVA
-	[  38] +base[  39] 2aa0 Export RVA
-	[  39] +base[  40] 2ab0 Export RVA
-	[  40] +base[  41] 2ac0 Export RVA
-	[  41] +base[  42] 2ad0 Export RVA
-	[  42] +base[  43] 2ae0 Export RVA
-	[  43] +base[  44] 2af0 Export RVA
-	[  44] +base[  45] 2b00 Export RVA
-	[  45] +base[  46] 2b10 Export RVA
-	[  46] +base[  47] 2b20 Export RVA
-	[  47] +base[  48] 2b30 Export RVA
-	[  48] +base[  49] 2b40 Export RVA
-	[  49] +base[  50] 2b50 Export RVA
-	[  50] +base[  51] 2b60 Export RVA
-	[  51] +base[  52] 2b70 Export RVA
-	[  52] +base[  53] 2b80 Export RVA
-	[  53] +base[  54] 2b90 Export RVA
-	[  54] +base[  55] 2ba0 Export RVA
-	[  55] +base[  56] 2bb0 Export RVA
-	[  56] +base[  57] 2bc0 Export RVA
-	[  57] +base[  58] 2bd0 Export RVA
-	[  58] +base[  59] 2be0 Export RVA
-	[  59] +base[  60] 2bf0 Export RVA
-	[  60] +base[  61] 2c00 Export RVA
-	[  61] +base[  62] 2c10 Export RVA
-	[  62] +base[  63] 2c20 Export RVA
-	[  63] +base[  64] 2c30 Export RVA
-	[  64] +base[  65] 2c40 Export RVA
-	[  65] +base[  66] 2c50 Export RVA
-	[  66] +base[  67] 2c60 Export RVA
-	[  67] +base[  68] 2c70 Export RVA
-	[  68] +base[  69] 2c80 Export RVA
-	[  69] +base[  70] 2c90 Export RVA
-	[  70] +base[  71] 2ca0 Export RVA
-	[  71] +base[  72] 2cb0 Export RVA
-	[  72] +base[  73] 2cc0 Export RVA
-	[  73] +base[  74] 2cd0 Export RVA
-	[  74] +base[  75] 2ce0 Export RVA
-	[  75] +base[  76] 2cf0 Export RVA
-	[  76] +base[  77] 2d00 Export RVA
-	[  77] +base[  78] 2d10 Export RVA
-	[  78] +base[  79] 2d20 Export RVA
-	[  79] +base[  80] 2d30 Export RVA
-	[  80] +base[  81] 2d40 Export RVA
-	[  81] +base[  82] 2d50 Export RVA
-	[  82] +base[  83] 2d60 Export RVA
-	[  83] +base[  84] 2d70 Export RVA
-	[  84] +base[  85] 2d80 Export RVA
-	[  85] +base[  86] 2d90 Export RVA
-	[  86] +base[  87] 2da0 Export RVA
-	[  87] +base[  88] 2db0 Export RVA
-	[  88] +base[  89] 2dc0 Export RVA
-	[  89] +base[  90] 2dd0 Export RVA
-	[  90] +base[  91] 2de0 Export RVA
-	[  91] +base[  92] 2df0 Export RVA
-	[  92] +base[  93] 2e00 Export RVA
-	[  93] +base[  94] 2e10 Export RVA
-	[  94] +base[  95] 2e20 Export RVA
-	[  95] +base[  96] 2e30 Export RVA
-	[  96] +base[  97] 2e40 Export RVA
-	[  97] +base[  98] 2e50 Export RVA
-	[  98] +base[  99] 2e60 Export RVA
-	[  99] +base[ 100] 2e70 Export RVA
-	[ 100] +base[ 101] 2e80 Export RVA
-	[ 101] +base[ 102] 2e90 Export RVA
-	[ 102] +base[ 103] 2ea0 Export RVA
-	[ 103] +base[ 104] 2eb0 Export RVA
-	[ 104] +base[ 105] 2ec0 Export RVA
-	[ 105] +base[ 106] 2ed0 Export RVA
-	[ 106] +base[ 107] 2ee0 Export RVA
-	[ 107] +base[ 108] 2ef0 Export RVA
-	[ 108] +base[ 109] 2f00 Export RVA
-	[ 109] +base[ 110] 2f10 Export RVA
-	[ 110] +base[ 111] 2f20 Export RVA
-	[ 111] +base[ 112] 2f30 Export RVA
-	[ 112] +base[ 113] 2f40 Export RVA
-	[ 113] +base[ 114] 2f50 Export RVA
-	[ 114] +base[ 115] 2f60 Export RVA
-	[ 115] +base[ 116] 2f70 Export RVA
-	[ 116] +base[ 117] 2f80 Export RVA
-	[ 117] +base[ 118] 2f90 Export RVA
-	[ 118] +base[ 119] 2fa0 Export RVA
-	[ 119] +base[ 120] 2fb0 Export RVA
-	[ 120] +base[ 121] 2fc0 Export RVA
-	[ 121] +base[ 122] 2fd0 Export RVA
-	[ 122] +base[ 123] 2fe0 Export RVA
-	[ 123] +base[ 124] 2ff0 Export RVA
-	[ 124] +base[ 125] 3000 Export RVA
-	[ 125] +base[ 126] 3010 Export RVA
-	[ 126] +base[ 127] 3020 Export RVA
-	[ 127] +base[ 128] 3030 Export RVA
-	[ 128] +base[ 129] 3040 Export RVA
-	[ 129] +base[ 130] 3050 Export RVA
-	[ 130] +base[ 131] 3060 Export RVA
-	[ 131] +base[ 132] 3070 Export RVA
-	[ 132] +base[ 133] 3080 Export RVA
-	[ 133] +base[ 134] 3090 Export RVA
-	[ 134] +base[ 135] 30a0 Export RVA
-	[ 135] +base[ 136] 30b0 Export RVA
-	[ 136] +base[ 137] 30c0 Export RVA
-	[ 137] +base[ 138] 30d0 Export RVA
-	[ 138] +base[ 139] 30e0 Export RVA
-	[ 139] +base[ 140] 30f0 Export RVA
-	[ 140] +base[ 141] 3100 Export RVA
-	[ 141] +base[ 142] 3110 Export RVA
-	[ 142] +base[ 143] 3120 Export RVA
-	[ 143] +base[ 144] 3130 Export RVA
-	[ 144] +base[ 145] 3140 Export RVA
-	[ 145] +base[ 146] 3150 Export RVA
-	[ 146] +base[ 147] 3160 Export RVA
-	[ 147] +base[ 148] 3170 Export RVA
-	[ 148] +base[ 149] 3180 Export RVA
-	[ 149] +base[ 150] 3190 Export RVA
-	[ 150] +base[ 151] 31a0 Export RVA
-	[ 151] +base[ 152] 31b0 Export RVA
-	[ 152] +base[ 153] 31c0 Export RVA
-	[ 153] +base[ 154] 31d0 Export RVA
-	[ 154] +base[ 155] 31e0 Export RVA
-	[ 155] +base[ 156] 31f0 Export RVA
-	[ 156] +base[ 157] 3200 Export RVA
-	[ 157] +base[ 158] 3210 Export RVA
-	[ 158] +base[ 159] 3220 Export RVA
-	[ 159] +base[ 160] 3230 Export RVA
-	[ 160] +base[ 161] 3240 Export RVA
-	[ 161] +base[ 162] 3250 Export RVA
-	[ 162] +base[ 163] 3260 Export RVA
-	[ 163] +base[ 164] 3270 Export RVA
-	[ 164] +base[ 165] 3280 Export RVA
-	[ 165] +base[ 166] 3290 Export RVA
-	[ 166] +base[ 167] 32a0 Export RVA
-	[ 167] +base[ 168] 32b0 Export RVA
-	[ 168] +base[ 169] 32c0 Export RVA
-	[ 169] +base[ 170] 32d0 Export RVA
-	[ 170] +base[ 171] 32e0 Export RVA
-	[ 171] +base[ 172] 32f0 Export RVA
-	[ 172] +base[ 173] 3300 Export RVA
-	[ 173] +base[ 174] 3310 Export RVA
-	[ 174] +base[ 175] 3320 Export RVA
-	[ 175] +base[ 176] 3330 Export RVA
-	[ 176] +base[ 177] 3340 Export RVA
-	[ 177] +base[ 178] 3350 Export RVA
-	[ 178] +base[ 179] 3360 Export RVA
-	[ 179] +base[ 180] 3370 Export RVA
-	[ 180] +base[ 181] 3380 Export RVA
-	[ 181] +base[ 182] 3390 Export RVA
-	[ 182] +base[ 183] 33a0 Export RVA
-	[ 183] +base[ 184] 33b0 Export RVA
-	[ 184] +base[ 185] 33c0 Export RVA
-	[ 185] +base[ 186] 33d0 Export RVA
-	[ 186] +base[ 187] 33e0 Export RVA
-	[ 187] +base[ 188] 33f0 Export RVA
-	[ 188] +base[ 189] 3400 Export RVA
-	[ 189] +base[ 190] 3410 Export RVA
-	[ 190] +base[ 191] 3420 Export RVA
-	[ 191] +base[ 192] 3430 Export RVA
-	[ 192] +base[ 193] 3440 Export RVA
-	[ 193] +base[ 194] 3450 Export RVA
-	[ 194] +base[ 195] 3460 Export RVA
-	[ 195] +base[ 196] 3470 Export RVA
-	[ 196] +base[ 197] 3480 Export RVA
-	[ 197] +base[ 198] 3490 Export RVA
-	[ 198] +base[ 199] 34a0 Export RVA
-	[ 199] +base[ 200] 34b0 Export RVA
-	[ 200] +base[ 201] 34c0 Export RVA
-	[ 201] +base[ 202] 34d0 Export RVA
-	[ 202] +base[ 203] 34e0 Export RVA
-	[ 203] +base[ 204] 34f0 Export RVA
-	[ 204] +base[ 205] 3500 Export RVA
-	[ 205] +base[ 206] 3510 Export RVA
-	[ 206] +base[ 207] 3520 Export RVA
-	[ 207] +base[ 208] 3530 Export RVA
-	[ 208] +base[ 209] 3540 Export RVA
-	[ 209] +base[ 210] 3550 Export RVA
-	[ 210] +base[ 211] 3560 Export RVA
-	[ 211] +base[ 212] 3570 Export RVA
-	[ 212] +base[ 213] 3580 Export RVA
-	[ 213] +base[ 214] 3590 Export RVA
-	[ 214] +base[ 215] 35a0 Export RVA
-	[ 215] +base[ 216] 35b0 Export RVA
-	[ 216] +base[ 217] 35c0 Export RVA
-	[ 217] +base[ 218] 35d0 Export RVA
-	[ 218] +base[ 219] 35e0 Export RVA
-	[ 219] +base[ 220] 35f0 Export RVA
-	[ 220] +base[ 221] 3600 Export RVA
-	[ 221] +base[ 222] 3610 Export RVA
-	[ 222] +base[ 223] 3620 Export RVA
-	[ 223] +base[ 224] 3630 Export RVA
-	[ 224] +base[ 225] 3640 Export RVA
-	[ 225] +base[ 226] 3650 Export RVA
-	[ 226] +base[ 227] 3660 Export RVA
-	[ 227] +base[ 228] 3670 Export RVA
-	[ 228] +base[ 229] 3680 Export RVA
-	[ 229] +base[ 230] 3690 Export RVA
-	[ 230] +base[ 231] 36a0 Export RVA
-	[ 231] +base[ 232] 36b0 Export RVA
-	[ 232] +base[ 233] 36c0 Export RVA
-	[ 233] +base[ 234] 36d0 Export RVA
-	[ 234] +base[ 235] 36e0 Export RVA
-	[ 235] +base[ 236] 36f0 Export RVA
-	[ 236] +base[ 237] 3700 Export RVA
-	[ 237] +base[ 238] 3710 Export RVA
-	[ 238] +base[ 239] 3720 Export RVA
-	[ 239] +base[ 240] 3730 Export RVA
-	[ 240] +base[ 241] 3740 Export RVA
-	[ 241] +base[ 242] 3750 Export RVA
-	[ 242] +base[ 243] 3760 Export RVA
-	[ 243] +base[ 244] 3770 Export RVA
-	[ 244] +base[ 245] 3780 Export RVA
-	[ 245] +base[ 246] 3790 Export RVA
-	[ 246] +base[ 247] 37a0 Export RVA
-	[ 247] +base[ 248] 37b0 Export RVA
-	[ 248] +base[ 249] 37c0 Export RVA
-	[ 249] +base[ 250] 37d0 Export RVA
-	[ 250] +base[ 251] 37e0 Export RVA
-	[ 251] +base[ 252] 37f0 Export RVA
-	[ 252] +base[ 253] 3800 Export RVA
-	[ 253] +base[ 254] 3810 Export RVA
-	[ 254] +base[ 255] 3820 Export RVA
-	[ 255] +base[ 256] 3830 Export RVA
-	[ 256] +base[ 257] 3840 Export RVA
-	[ 257] +base[ 258] 3850 Export RVA
-	[ 258] +base[ 259] 3860 Export RVA
-	[ 259] +base[ 260] 3870 Export RVA
-	[ 260] +base[ 261] 3880 Export RVA
-	[ 261] +base[ 262] 3890 Export RVA
-	[ 262] +base[ 263] 6ac0 Export RVA
+	[   1] +base[   2] 27f0 Export RVA
+	[   2] +base[   3] 2800 Export RVA
+	[   3] +base[   4] 2810 Export RVA
+	[   4] +base[   5] 2820 Export RVA
+	[   5] +base[   6] 2830 Export RVA
+	[   6] +base[   7] 2840 Export RVA
+	[   7] +base[   8] 2850 Export RVA
+	[   8] +base[   9] 2860 Export RVA
+	[   9] +base[  10] 2870 Export RVA
+	[  10] +base[  11] 2880 Export RVA
+	[  11] +base[  12] 2890 Export RVA
+	[  12] +base[  13] 28a0 Export RVA
+	[  13] +base[  14] 28b0 Export RVA
+	[  14] +base[  15] 28c0 Export RVA
+	[  15] +base[  16] 28d0 Export RVA
+	[  16] +base[  17] 28e0 Export RVA
+	[  17] +base[  18] 28f0 Export RVA
+	[  18] +base[  19] 2900 Export RVA
+	[  19] +base[  20] 2910 Export RVA
+	[  20] +base[  21] 2920 Export RVA
+	[  21] +base[  22] 2930 Export RVA
+	[  22] +base[  23] 2940 Export RVA
+	[  23] +base[  24] 2950 Export RVA
+	[  24] +base[  25] 2960 Export RVA
+	[  25] +base[  26] 2970 Export RVA
+	[  26] +base[  27] 2980 Export RVA
+	[  27] +base[  28] 2990 Export RVA
+	[  28] +base[  29] 29a0 Export RVA
+	[  29] +base[  30] 29b0 Export RVA
+	[  30] +base[  31] 29c0 Export RVA
+	[  31] +base[  32] 29d0 Export RVA
+	[  32] +base[  33] 29e0 Export RVA
+	[  33] +base[  34] 29f0 Export RVA
+	[  34] +base[  35] 2a00 Export RVA
+	[  35] +base[  36] 2a10 Export RVA
+	[  36] +base[  37] 2a20 Export RVA
+	[  37] +base[  38] 2a30 Export RVA
+	[  38] +base[  39] 2a40 Export RVA
+	[  39] +base[  40] 2a50 Export RVA
+	[  40] +base[  41] 2a60 Export RVA
+	[  41] +base[  42] 2a70 Export RVA
+	[  42] +base[  43] 2a80 Export RVA
+	[  43] +base[  44] 2a90 Export RVA
+	[  44] +base[  45] 2aa0 Export RVA
+	[  45] +base[  46] 2ab0 Export RVA
+	[  46] +base[  47] 2ac0 Export RVA
+	[  47] +base[  48] 2ad0 Export RVA
+	[  48] +base[  49] 2ae0 Export RVA
+	[  49] +base[  50] 2af0 Export RVA
+	[  50] +base[  51] 2b00 Export RVA
+	[  51] +base[  52] 2b10 Export RVA
+	[  52] +base[  53] 2b20 Export RVA
+	[  53] +base[  54] 2b30 Export RVA
+	[  54] +base[  55] 2b40 Export RVA
+	[  55] +base[  56] 2b50 Export RVA
+	[  56] +base[  57] 2b60 Export RVA
+	[  57] +base[  58] 2b70 Export RVA
+	[  58] +base[  59] 2b80 Export RVA
+	[  59] +base[  60] 2b90 Export RVA
+	[  60] +base[  61] 2ba0 Export RVA
+	[  61] +base[  62] 2bb0 Export RVA
+	[  62] +base[  63] 2bc0 Export RVA
+	[  63] +base[  64] 2bd0 Export RVA
+	[  64] +base[  65] 2be0 Export RVA
+	[  65] +base[  66] 2bf0 Export RVA
+	[  66] +base[  67] 2c00 Export RVA
+	[  67] +base[  68] 2c10 Export RVA
+	[  68] +base[  69] 2c20 Export RVA
+	[  69] +base[  70] 2c30 Export RVA
+	[  70] +base[  71] 2c40 Export RVA
+	[  71] +base[  72] 2c50 Export RVA
+	[  72] +base[  73] 2c60 Export RVA
+	[  73] +base[  74] 2c70 Export RVA
+	[  74] +base[  75] 2c80 Export RVA
+	[  75] +base[  76] 2c90 Export RVA
+	[  76] +base[  77] 2ca0 Export RVA
+	[  77] +base[  78] 2cb0 Export RVA
+	[  78] +base[  79] 2cc0 Export RVA
+	[  79] +base[  80] 2cd0 Export RVA
+	[  80] +base[  81] 2ce0 Export RVA
+	[  81] +base[  82] 2cf0 Export RVA
+	[  82] +base[  83] 2d00 Export RVA
+	[  83] +base[  84] 2d10 Export RVA
+	[  84] +base[  85] 2d20 Export RVA
+	[  85] +base[  86] 2d30 Export RVA
+	[  86] +base[  87] 2d40 Export RVA
+	[  87] +base[  88] 2d50 Export RVA
+	[  88] +base[  89] 2d60 Export RVA
+	[  89] +base[  90] 2d70 Export RVA
+	[  90] +base[  91] 2d80 Export RVA
+	[  91] +base[  92] 2d90 Export RVA
+	[  92] +base[  93] 2da0 Export RVA
+	[  93] +base[  94] 2db0 Export RVA
+	[  94] +base[  95] 2dc0 Export RVA
+	[  95] +base[  96] 2dd0 Export RVA
+	[  96] +base[  97] 2de0 Export RVA
+	[  97] +base[  98] 2df0 Export RVA
+	[  98] +base[  99] 2e00 Export RVA
+	[  99] +base[ 100] 2e10 Export RVA
+	[ 100] +base[ 101] 2e20 Export RVA
+	[ 101] +base[ 102] 2e30 Export RVA
+	[ 102] +base[ 103] 2e40 Export RVA
+	[ 103] +base[ 104] 2e50 Export RVA
+	[ 104] +base[ 105] 2e60 Export RVA
+	[ 105] +base[ 106] 2e70 Export RVA
+	[ 106] +base[ 107] 2e80 Export RVA
+	[ 107] +base[ 108] 2e90 Export RVA
+	[ 108] +base[ 109] 2ea0 Export RVA
+	[ 109] +base[ 110] 2eb0 Export RVA
+	[ 110] +base[ 111] 2ec0 Export RVA
+	[ 111] +base[ 112] 2ed0 Export RVA
+	[ 112] +base[ 113] 2ee0 Export RVA
+	[ 113] +base[ 114] 2ef0 Export RVA
+	[ 114] +base[ 115] 2f00 Export RVA
+	[ 115] +base[ 116] 2f10 Export RVA
+	[ 116] +base[ 117] 2f20 Export RVA
+	[ 117] +base[ 118] 2f30 Export RVA
+	[ 118] +base[ 119] 2f40 Export RVA
+	[ 119] +base[ 120] 2f50 Export RVA
+	[ 120] +base[ 121] 2f60 Export RVA
+	[ 121] +base[ 122] 2f70 Export RVA
+	[ 122] +base[ 123] 2f80 Export RVA
+	[ 123] +base[ 124] 2f90 Export RVA
+	[ 124] +base[ 125] 2fa0 Export RVA
+	[ 125] +base[ 126] 2fb0 Export RVA
+	[ 126] +base[ 127] 2fc0 Export RVA
+	[ 127] +base[ 128] 2fd0 Export RVA
+	[ 128] +base[ 129] 2fe0 Export RVA
+	[ 129] +base[ 130] 2ff0 Export RVA
+	[ 130] +base[ 131] 3000 Export RVA
+	[ 131] +base[ 132] 3010 Export RVA
+	[ 132] +base[ 133] 3020 Export RVA
+	[ 133] +base[ 134] 3030 Export RVA
+	[ 134] +base[ 135] 3040 Export RVA
+	[ 135] +base[ 136] 3050 Export RVA
+	[ 136] +base[ 137] 3060 Export RVA
+	[ 137] +base[ 138] 3070 Export RVA
+	[ 138] +base[ 139] 3080 Export RVA
+	[ 139] +base[ 140] 3090 Export RVA
+	[ 140] +base[ 141] 30a0 Export RVA
+	[ 141] +base[ 142] 30b0 Export RVA
+	[ 142] +base[ 143] 30c0 Export RVA
+	[ 143] +base[ 144] 30d0 Export RVA
+	[ 144] +base[ 145] 30e0 Export RVA
+	[ 145] +base[ 146] 30f0 Export RVA
+	[ 146] +base[ 147] 3100 Export RVA
+	[ 147] +base[ 148] 3110 Export RVA
+	[ 148] +base[ 149] 3120 Export RVA
+	[ 149] +base[ 150] 3130 Export RVA
+	[ 150] +base[ 151] 3140 Export RVA
+	[ 151] +base[ 152] 3150 Export RVA
+	[ 152] +base[ 153] 3160 Export RVA
+	[ 153] +base[ 154] 3170 Export RVA
+	[ 154] +base[ 155] 3180 Export RVA
+	[ 155] +base[ 156] 3190 Export RVA
+	[ 156] +base[ 157] 31a0 Export RVA
+	[ 157] +base[ 158] 31b0 Export RVA
+	[ 158] +base[ 159] 31c0 Export RVA
+	[ 159] +base[ 160] 31d0 Export RVA
+	[ 160] +base[ 161] 31e0 Export RVA
+	[ 161] +base[ 162] 31f0 Export RVA
+	[ 162] +base[ 163] 3200 Export RVA
+	[ 163] +base[ 164] 3210 Export RVA
+	[ 164] +base[ 165] 3220 Export RVA
+	[ 165] +base[ 166] 3230 Export RVA
+	[ 166] +base[ 167] 3240 Export RVA
+	[ 167] +base[ 168] 3250 Export RVA
+	[ 168] +base[ 169] 3260 Export RVA
+	[ 169] +base[ 170] 3270 Export RVA
+	[ 170] +base[ 171] 3280 Export RVA
+	[ 171] +base[ 172] 3290 Export RVA
+	[ 172] +base[ 173] 32a0 Export RVA
+	[ 173] +base[ 174] 32b0 Export RVA
+	[ 174] +base[ 175] 32c0 Export RVA
+	[ 175] +base[ 176] 32d0 Export RVA
+	[ 176] +base[ 177] 32e0 Export RVA
+	[ 177] +base[ 178] 32f0 Export RVA
+	[ 178] +base[ 179] 3300 Export RVA
+	[ 179] +base[ 180] 3310 Export RVA
+	[ 180] +base[ 181] 3320 Export RVA
+	[ 181] +base[ 182] 3330 Export RVA
+	[ 182] +base[ 183] 3340 Export RVA
+	[ 183] +base[ 184] 3350 Export RVA
+	[ 184] +base[ 185] 3360 Export RVA
+	[ 185] +base[ 186] 3370 Export RVA
+	[ 186] +base[ 187] 3380 Export RVA
+	[ 187] +base[ 188] 3390 Export RVA
+	[ 188] +base[ 189] 33a0 Export RVA
+	[ 189] +base[ 190] 33b0 Export RVA
+	[ 190] +base[ 191] 33c0 Export RVA
+	[ 191] +base[ 192] 33d0 Export RVA
+	[ 192] +base[ 193] 33e0 Export RVA
+	[ 193] +base[ 194] 33f0 Export RVA
+	[ 194] +base[ 195] 3400 Export RVA
+	[ 195] +base[ 196] 3410 Export RVA
+	[ 196] +base[ 197] 3420 Export RVA
+	[ 197] +base[ 198] 3430 Export RVA
+	[ 198] +base[ 199] 3440 Export RVA
+	[ 199] +base[ 200] 3450 Export RVA
+	[ 200] +base[ 201] 3460 Export RVA
+	[ 201] +base[ 202] 3470 Export RVA
+	[ 202] +base[ 203] 3480 Export RVA
+	[ 203] +base[ 204] 3490 Export RVA
+	[ 204] +base[ 205] 34a0 Export RVA
+	[ 205] +base[ 206] 34b0 Export RVA
+	[ 206] +base[ 207] 34c0 Export RVA
+	[ 207] +base[ 208] 34d0 Export RVA
+	[ 208] +base[ 209] 34e0 Export RVA
+	[ 209] +base[ 210] 34f0 Export RVA
+	[ 210] +base[ 211] 3500 Export RVA
+	[ 211] +base[ 212] 3510 Export RVA
+	[ 212] +base[ 213] 3520 Export RVA
+	[ 213] +base[ 214] 3530 Export RVA
+	[ 214] +base[ 215] 3540 Export RVA
+	[ 215] +base[ 216] 3550 Export RVA
+	[ 216] +base[ 217] 3560 Export RVA
+	[ 217] +base[ 218] 3570 Export RVA
+	[ 218] +base[ 219] 3580 Export RVA
+	[ 219] +base[ 220] 3590 Export RVA
+	[ 220] +base[ 221] 35a0 Export RVA
+	[ 221] +base[ 222] 35b0 Export RVA
+	[ 222] +base[ 223] 35c0 Export RVA
+	[ 223] +base[ 224] 35d0 Export RVA
+	[ 224] +base[ 225] 35e0 Export RVA
+	[ 225] +base[ 226] 35f0 Export RVA
+	[ 226] +base[ 227] 3600 Export RVA
+	[ 227] +base[ 228] 3610 Export RVA
+	[ 228] +base[ 229] 3620 Export RVA
+	[ 229] +base[ 230] 3630 Export RVA
+	[ 230] +base[ 231] 3640 Export RVA
+	[ 231] +base[ 232] 3650 Export RVA
+	[ 232] +base[ 233] 3660 Export RVA
+	[ 233] +base[ 234] 3670 Export RVA
+	[ 234] +base[ 235] 3680 Export RVA
+	[ 235] +base[ 236] 3690 Export RVA
+	[ 236] +base[ 237] 36a0 Export RVA
+	[ 237] +base[ 238] 36b0 Export RVA
+	[ 238] +base[ 239] 36c0 Export RVA
+	[ 239] +base[ 240] 36d0 Export RVA
+	[ 240] +base[ 241] 36e0 Export RVA
+	[ 241] +base[ 242] 36f0 Export RVA
+	[ 242] +base[ 243] 3700 Export RVA
+	[ 243] +base[ 244] 3710 Export RVA
+	[ 244] +base[ 245] 3720 Export RVA
+	[ 245] +base[ 246] 3730 Export RVA
+	[ 246] +base[ 247] 3740 Export RVA
+	[ 247] +base[ 248] 3750 Export RVA
+	[ 248] +base[ 249] 3760 Export RVA
+	[ 249] +base[ 250] 3770 Export RVA
+	[ 250] +base[ 251] 3780 Export RVA
+	[ 251] +base[ 252] 3790 Export RVA
+	[ 252] +base[ 253] 37a0 Export RVA
+	[ 253] +base[ 254] 37b0 Export RVA
+	[ 254] +base[ 255] 37c0 Export RVA
+	[ 255] +base[ 256] 37d0 Export RVA
+	[ 256] +base[ 257] 6990 Export RVA
 
 [Ordinal/Name Pointer] Table
-	[   0] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9EEELi98ELi3EE7encryptEc
-	[   1] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi126ELi7EE7encryptEc
-	[   2] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi136ELi5EE7encryptEc
-	[   3] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi218ELi11EE7encryptEc
-	[   4] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12EEELi64ELi13EE7encryptEc
-	[   5] _ZNK4obfs10MetaStringISt16integer_sequenceIyJLy0ELy1ELy2ELy3ELy4ELy5ELy6ELy7ELy8ELy9ELy10ELy11ELy12ELy13EEELi196ELi9EE7encryptEc
-	[   6] __M2FmYWVhNWa9_g
-	[   7] __M2I1NTFmZTBA_g
-	[   8] __M2NkMjk5YzWf_g
-	[   9] __M2RlMjUwOGbn_g
-	[  10] __M2UyNjYyMDNl_g
-	[  11] __M2ZiYThjNDKk_g
-	[  12] __MDBkZWJiMjM0_g
-	[  13] __MDFjNjAyZGGa_g
-	[  14] __MDJkYTlhY2J7_g
-	[  15] __MDM2NTA2ODEX_g
-	[  16] __MDRkNjMzMDdz_g
-	[  17] __MDU5YmVmNjTh_g
-	[  18] __MDY4MTE3MDHG_g
-	[  19] __MDc3M2UzM2Ti_g
-	[  20] __MDgyOWI0ZWNF_g
-	[  21] __MDkxYzEyNmSY_g
-	[  22] __MGFiMjZmYTf4_g
-	[  23] __MGJiMzQ0YjHR_g
-	[  24] __MGM1OGI4NTJ5_g
-	[  25] __MGQzYWZhZWFf_g
-	[  26] __MGU0ZDEwNGFg_g
-	[  27] __MGYwNTliZWZk_g
-	[  28] __MTA0YTYwMTbu_g
-	[  29] __MTFiZjkzYWRp_g
-	[  30] __MTI2ZDk4ZGLO_g
-	[  31] __MTMyZDYxZjb7_g
-	[  32] __MTRmOTk3NmGG_g
-	[  33] __MTU1NjIxMmNT_g
-	[  34] __MTZlZTY2NzQ7_g
-	[  35] __MTcwMWM2MDLa_g
-	[  36] __MTgwMGRlYmIj_g
-	[  37] __MTlhODBjNTi4_g
-	[  38] __MWFkN2QzNjhe_g
-	[  39] __MWI0OGE5MjAL_g
-	[  40] __MWMxMjZkOTjb_g
-	[  41] __MWQzY2QyOTnF_g
-	[  42] __MWU3ZTQzMTMt_g
-	[  43] __MWZlMDQwMzKj_g
-	[  44] __MjAwYmIzNDSx_g
-	[  45] __MjEyYzUzNGMZ_g
-	[  46] __MjI4OTJhOGIe_g
-	[  47] __MjMzNDJiZThs_g
-	[  48] __MjQ3NmYxNTT0_g
-	[  49] __MjVjMzRmOWOv_g
-	[  50] __MjY2MjAzNjUG_g
-	[  51] __MjdmNTM2YjUd_g
-	[  52] __MjhjMWYyYWLz_g
-	[  53] __MjliNGVjNDUU_g
-	[  54] __MmE4YjFlN2VD_g
-	[  55] __MmJlODZjZWRL_g
-	[  56] __MmM1MzRjMTmo_g
-	[  57] __MmQ2MWY2ZmJX_g
-	[  58] __MmUwYWIyNman_g
-	[  59] __MmZkOTMxODTc_g
-	[  60] __MzBjNzcwZDjw_g
-	[  61] __MzE4NGRjODWQ_g
-	[  62] __MzJhMzllMDTW_g
-	[  63] __MzMwNzczZTM9_g
-	[  64] __MzQyYmU4NmPt_g
-	[  65] __MzUyN2Y1Mza1_g
-	[  66] __MzZiNTFkM2PS_g
-	[  67] __MzcxMWJmOTOt_g
-	[  68] __MzhjYTFhZDfT_g
-	[  69] __Mzk3YThlM2Um_g
-	[  70] __N2E4ZTNlMjZi_g
-	[  71] __N2I4ODA4Mjm0_g
-	[  72] __N2NhMGViODDd_g
-	[  73] __N2Q5NTg3YzJO_g
-	[  74] __N2U0MzEzMmRh_g
-	[  75] __N2ZhMjI4YzHy_g
-	[  76] __NDAzMmEzOWUE_g
-	[  77] __NDEzNTI3ZjU2_g
-	[  78] __NDJhNDI0Nzbx_g
-	[  79] __NDMxMzJkNjH2_g
-	[  80] __NDRiMWQxMGYF_g
-	[  81] __NDUxNGY5OTdq_g
-	[  82] __NDZiNzUxZmOU_g
-	[  83] __NDdjMDBkM2H6_g
-	[  84] __NDhhOTIwMGKz_g
-	[  85] __NDkzOGNhMWHX_g
-	[  86] __NGE2MDE2ZWVm_g
-	[  87] __NGI0MTM1Mjf1_g
-	[  88] __NGMxOWE4MGNY_g
-	[  89] __NGQxMDRhNjAW_g
-	[  90] __NGU5ZDM5N2GO_g
-	[  91] __NGY5Y2FmYzms_g
-	[  92] __NTA4ZmU3MzDH_g
-	[  93] __NTFmYzk0MmbZ_g
-	[  94] __NTI3OWM0NWTI_g
-	[  95] __NTM0YzE5YTgM_g
-	[  96] __NTRmNGQ0Zmbl_g
-	[  97] __NTUxZmUwNDAy_g
-	[  98] __NTYyMTJjNTNM_g
-	[  99] __NTcwZTRkMTBK_g
-	[ 100] __NThiODUyNznE_g
-	[ 101] __NTkxNTU2MjEs_g
-	[ 102] __NWFlNjc4ZGZu_g
-	[ 103] __NWJhZWU0ODP3_g
-	[ 104] __NWNmZGQ1N2ai_g
-	[ 105] __NWRjOGJlY2Za_g
-	[ 106] __NWVmZTc1YjmR_g
-	[ 107] __NWZiZGJjMmUK_g
-	[ 108] __NjAxNmVlNjZ0_g
-	[ 109] __NjFmNmZiNTcO_g
-	[ 110] __NjIwMzY1MDaB_g
-	[ 111] __NjM0N2MwMGQ6_g
-	[ 112] __NjRlMTIyODkq_g
-	[ 113] __NjUwNjgxMTcB_g
-	[ 114] __NjY3NDNiNTUf_g
-	[ 115] __Njc2YjU5MTVW_g
-	[ 116] __Njg1ZWZlNzW5_g
-	[ 117] __NjlhMWE2N2SV_g
-	[ 118] __NmE4NjQ2YjdR_g
-	[ 119] __NmI1OTE1NTYh_g
-	[ 120] __NmNlZDRiNDE1_g
-	[ 121] __NmQ5OGRiY2V3_g
-	[ 122] __NmU5NmFhODKl_g
-	[ 123] __NmZhN2Y4ZDAY_g
-	[ 124] __NzBkOGYwMjXD_g
-	[ 125] __NzE3Y2EwZWKA_g
-	[ 126] __NzI4ZDYzNDfA_g
-	[ 127] __NzNlMzNkZTJQ_g
-	[ 128] __NzQzYjU1MWbg_g
-	[ 129] __NzViOTkxZTkJ_g
-	[ 130] __NzZmMTU0ZjTU_g
-	[ 131] __NzdjZDcxN2Og_g
-	[ 132] __NzhkZjZlOTaq_g
-	[ 133] __NzljNDVkYzi__g
-	[ 134] __ODBkZDkyM2a6_g
-	[ 135] __ODExNzAxYzYC_g
-	[ 136] __ODJhNTViYWXk_g
-	[ 137] __ODNmN2NjNzKN_g
-	[ 138] __ODRkYzg1OTCK_g
-	[ 139] __ODU5MDhhYjAb_g
-	[ 140] __ODY0NmI3NTH8_g
-	[ 141] __ODdjMjRlOWQ5_g
-	[ 142] __ODgwODI5YjTs_g
-	[ 143] __ODkyYThiMWV__g
-	[ 144] __OGFiMDFiNDip_g
-	[ 145] __OGIxZTdlNDMT_g
-	[ 146] __OGM0MmE0MjR2_g
-	[ 147] __OGQ2MzQ3YzAN_g
-	[ 148] __OGUzZTI2NjID_g
-	[ 149] __OGZlNzMwYzdw_g
-	[ 150] __OTA4YWIwMWJI_g
-	[ 151] __OTFlOTA5MWMS_g
-	[ 152] __OTIzZmJhOGNC_g
-	[ 153] __OTNhZDY5YTGm_g
-	[ 154] __OTQyZmQ5MzGE_g
-	[ 155] __OTU4N2MyNGWd_g
-	[ 156] __OTZhYTgyYTVb_g
-	[ 157] __OTc2YTg2NDa3_g
-	[ 158] __OThkYmNlNzfN_g
-	[ 159] __OTljNTlmNWP9_g
-	[ 160] __OWFjYjdiODgI_g
-	[ 161] __OWJlZjY0ZTEi_g
-	[ 162] __OWNhZmM5YWNJ_g
-	[ 163] __OWQzOTdhOGU__g
-	[ 164] __OWUwNGQ2MzMH_g
-	[ 165] __OWY1Y2ZkZDV__g
-	[ 166] __Y2ExYWQ3ZDNo_g
-	[ 167] __Y2I3Yjg4MDgp_g
-	[ 168] __Y2M3MjhkNjNH_g
-	[ 169] __Y2Q3MTdjYTDr_g
-	[ 170] __Y2U3N2NkNzF8_g
-	[ 171] __Y2Y1YWU2Nzjf_g
-	[ 172] __YTBlYjgwZGSS_g
-	[ 173] __YTFhNjdkOTWH_g
-	[ 174] __YTIyOGMxZjKr_g
-	[ 175] __YTM5ZTA0ZDYz_g
-	[ 176] __YTQyNDc2ZjFU_g
-	[ 177] __YTU1YmFlZTSD_g
-	[ 178] __YTY3ZDk1ODfC_g
-	[ 179] __YTdmOGQwMTgA_g
-	[ 180] __YTgwYzU4YjhS_g
-	[ 181] __YTkyMDBiYjNE_g
-	[ 182] __YWE4MmE1NWKu_g
-	[ 183] __YWJmMzM3MTG__g
-	[ 184] __YWM0OTM4Y2Ea_g
-	[ 185] __YWQ2OWExYTZ9_g
-	[ 186] __YWVlNDgzZjfM_g
-	[ 187] __YWZjOWFjNDk4_g
-	[ 188] __YjAxYjQ4YTkg_g
-	[ 189] __YjFkMTBmMDWb_g
-	[ 190] __YjI2ZmE3ZjjQ_g
-	[ 191] __YjM0NGIxZDEP_g
-	[ 192] __YjRlYzQ1MTT5_g
-	[ 193] __YjUxZDNjZDKZ_g
-	[ 194] __YjY2NzZiNTkV_g
-	[ 195] __Yjc1MWZjOTQv_g
-	[ 196] __Yjg1Mjc5YzRd_g
-	[ 197] __Yjk5MWU5MDkc_g
-	[ 198] __YmE4YzQyYTQk_g
-	[ 199] __YmIyMzM0MmLo_g
-	[ 200] __YmMyZTBhYjJv_g
-	[ 201] __YmRiYzJlMGGy_g
-	[ 202] __YmVjZjVhZTZ4_g
-	[ 203] __YmY5M2FkNjmh_g
-	[ 204] __YzAwZDNhZmHq_g
-	[ 205] __YzFmMmFiZjM3_g
-	[ 206] __YzI0ZTlkMzl6_g
-	[ 207] __YzM0ZjljYWbJ_g
-	[ 208] __YzQ1ZGM4YmXP_g
-	[ 209] __YzU5ZjVjZmTV_g
-	[ 210] __YzYwMmRhOWHL_g
-	[ 211] __Yzc3MGQ4ZjAl_g
-	[ 212] __YzhiZWNmNWHm_g
-	[ 213] __YzlhYzQ5MzjK_g
-	[ 214] __ZDAxODAwZGW7_g
-	[ 215] __ZDEwZjA1OWLv_g
-	[ 216] __ZDI5OWM1OWZc_g
-	[ 217] __ZDM2ODVlZmV1_g
-	[ 218] __ZDRmZmU1YjZn_g
-	[ 219] __ZDU3ZmEyMjjB_g
-	[ 220] __ZDYzMzA3NzPj_g
-	[ 221] __ZDdkMzY4NWX__g
-	[ 222] __ZDhmMDI1YzNP_g
-	[ 223] __ZDkzMTg0ZGOF_g
-	[ 224] __ZGE5YWNiN2KI_g
-	[ 225] __ZGJjZTc3Y2Rx_g
-	[ 226] __ZGM4NTkwOGGw_g
-	[ 227] __ZGQ5MjNmYmGM_g
-	[ 228] __ZGViYjIzMzQr_g
-	[ 229] __ZGY2ZTk2YWGC_g
-	[ 230] __ZTA0MDMyYTOe_g
-	[ 231] __ZTEyMjg5MmGL_g
-	[ 232] __ZTI1MDhmZTcw_g
-	[ 233] __ZTMzZGUyNTCP_g
-	[ 234] __ZTQ4M2Y3Y2Ny_g
-	[ 235] __ZTViNjY3NmJZ_g
-	[ 236] __ZTY3OGRmNmWW_g
-	[ 237] __ZTczMGM3NzDY_g
-	[ 238] __ZTg2Y2VkNGJB_g
-	[ 239] __ZTkwOTFjMTJt_g
-	[ 240] __ZWE1ZmJkYmMu_g
-	[ 241] __ZWI4MGRkOTI__g
-	[ 242] __ZWM0NTE0ZjmX_g
-	[ 243] __ZWQ0YjQxMzUn_g
-	[ 244] __ZWU2Njc0M2JV_g
-	[ 245] __ZWY2NGUxMjKJ_g
-	[ 246] __ZjAyNWMzNGac_g
-	[ 247] __ZjE1NGY0ZDT__g
-	[ 248] __ZjJhYmYzMzcR_g
-	[ 249] __ZjMzNzExYmaT_g
-	[ 250] __ZjRkNGZmZTW2_g
-	[ 251] __ZjUzNmI1MWQ8_g
-	[ 252] __ZjZmYjU3MGVN_g
-	[ 253] __ZjdjYzcyOGRj_g
-	[ 254] __ZjhkMDE4MDDe_g
-	[ 255] __Zjk5NzZhODZG_g
-	[ 256] __ZmFlYTVmYmS8_g
-	[ 257] __ZmI1NzBlNGQQ_g
-	[ 258] __ZmM5NDJmZDkx_g
-	[ 259] __ZmRkNTdmYTIo_g
-	[ 260] __ZmU3NWI5OTHp_g
-	[ 261] __ZmZlNWI2Njdr_g
-	[ 262] start
+	[   0] __M2EyM2UzZGQf_g
+	[   1] __M2JmNjEzODk__g
+	[   2] __M2M2NmVkOGWa_g
+	[   3] __M2QwOWVlN2RG_g
+	[   4] __M2U3NjgyOTlo_g
+	[   5] __M2Y1MzBmZWP6_g
+	[   6] __MDAwODE5YjTr_g
+	[   7] __MDE4MDljODHw_g
+	[   8] __MDI0MWJmZmI7_g
+	[   9] __MDNhMDQ0NWPB_g
+	[  10] __MDRhZjJlNGYF_g
+	[  11] __MDU3Mjg0MTRt_g
+	[  12] __MDZiYjhkMjm8_g
+	[  13] __MDdkY2I1OWYR_g
+	[  14] __MDgxOWI0ZWKR_g
+	[  15] __MDllZTdkNDam_g
+	[  16] __MGFjNzMxNmK4_g
+	[  17] __MGJjYTFhOWUN_g
+	[  18] __MGNhYTE1Nzkl_g
+	[  19] __MGRlMDY1MzJY_g
+	[  20] __MGU4NWI3NTTL_g
+	[  21] __MGZlY2ZhNjJQ_g
+	[  22] __MTA3NTdjODOI_g
+	[  23] __MTFhOWJhNzjx_g
+	[  24] __MTJhMjQwZDQ__g
+	[  25] __MTM4OTNmNTMP_g
+	[  26] __MTQ2ZDQ1ODZV_g
+	[  27] __MTU3OTI1NTLl_g
+	[  28] __MTY1ZGU5MTgw_g
+	[  29] __MTc1ZmNmMDOg_g
+	[  30] __MTgzMGY3Zjg2_g
+	[  31] __MTliNGViOTFg_g
+	[  32] __MWE5ZTBkZTBl_g
+	[  33] __MWI1ZTEwNzV8_g
+	[  34] __MWM1OTlkOThN_g
+	[  35] __MWQ3YmE1YTE5_g
+	[  36] __MWVkMjk0OTDR_g
+	[  37] __MWY4ZjE3NWbP_g
+	[  38] __MjBkOGQ3MDfc_g
+	[  39] __MjFkOWY0N2Go_g
+	[  40] __MjJjNTk2Zmbm_g
+	[  41] __MjNlM2RkMWaP_g
+	[  42] __MjQzNzA0YWYu_g
+	[  43] __MjU1MmU1MWXS_g
+	[  44] __MjZiMGZlNjer_g
+	[  45] __Mjc0OWUxMjjf_g
+	[  46] __MjhkZjIwZDjX_g
+	[  47] __MjliY2Y1NWL5_g
+	[  48] __MmEyYzhiMTKi_g
+	[  49] __MmJmYzZhMDAI_g
+	[  50] __MmM4YjEyYTJA_g
+	[  51] __MmQwZTg1YjdU_g
+	[  52] __MmU0ZjA1NzKE_g
+	[  53] __MmY3M2M5YjOb_g
+	[  54] __MzBmN2Y4MzYK_g
+	[  55] __MzE2YmI4M2Ej_g
+	[  56] __MzI1OGI5NDg8_g
+	[  57] __MzM3NDY5MjdJ_g
+	[  58] __MzQ3MTcwMGLK_g
+	[  59] __MzU1YTJkMGWF_g
+	[  60] __MzYwYWM3MzFr_g
+	[  61] __MzcwNGFmMmVP_g
+	[  62] __MzhmMmVmOTIb_g
+	[  63] __MzkxNjVkZTkY_g
+	[  64] __N2FhODAxODCc_g
+	[  65] __N2JhNWExMzkW_g
+	[  66] __N2M4Mzg4NmUz_g
+	[  67] __N2Q0NmE2N2Y0_g
+	[  68] __N2U0Y2FkYjG__g
+	[  69] __N2YzNDcxNzAL_g
+	[  70] __NDBkNDNlNzaC_g
+	[  71] __NDFiZmZiM2L2_g
+	[  72] __NDI0Yjk1Mjaw_g
+	[  73] __NDMwY2FhMTV5_g
+	[  74] __NDQ1Y2MxNzfM_g
+	[  75] __NDU4NjU1Y2Vk_g
+	[  76] __NDZhNjdmMzRx_g
+	[  77] __NDcyYmZjNmEA_g
+	[  78] __NDgzYzY2ZWSO_g
+	[  79] __NDllMTI4ZGYg_g
+	[  80] __NGE0MjRiOTUm_g
+	[  81] __NGI5NTI2YjD__g
+	[  82] __NGNhZGIxYmWu_g
+	[  83] __NGRiNjU3NGVv_g
+	[  84] __NGU2ZmFjOTfQ_g
+	[  85] __NGYwNTcyODQU_g
+	[  86] __NTBjODQzMGOq_g
+	[  87] __NTE0YTQyNGKV_g
+	[  88] __NTJlNTFlZDKU_g
+	[  89] __NTMwZmVjZmFi_g
+	[  90] __NTRjYmMwYTcq_g
+	[  91] __NTVjZTY0NTa9_g
+	[  92] __NTZiZGIyZTTC_g
+	[  93] __NTc0ZTZmYWOX_g
+	[  94] __NThiOTQ4M2Nm_g
+	[  95] __NTk5ZDk4NGS2_g
+	[  96] __NWEyZDBlODW3_g
+	[  97] __NWJmOTM1NWEt_g
+	[  98] __NWNjMTc3Y2PN_g
+	[  99] __NWRlOTE4MzD3_g
+	[ 100] __NWUxMDc1N2OD_g
+	[ 101] __NWZjZjAzYTBE_g
+	[ 102] __NjBkYTg3ZTI4_g
+	[ 103] __NjFmM2QzZmTe_g
+	[ 104] __NjI1MGM4NDMM_g
+	[ 105] __NjNkNjdlNGOt_g
+	[ 106] __NjQ1NmJkYjLk_g
+	[ 107] __NjUzMjU4YjlI_g
+	[ 108] __NjZlZDhlOWEG_g
+	[ 109] __NjdhYjIxZDn0_g
+	[ 110] __NjgyNDM3MDSv_g
+	[ 111] __NjkyNzQ5ZTEo_g
+	[ 112] __NmEwMDA4MTm0_g
+	[ 113] __NmJiODNhMjPj_g
+	[ 114] __NmM4YWU3NDcr_g
+	[ 115] __NmQ0NTg2NTXO_g
+	[ 116] __NmUzMzc0Njkn_g
+	[ 117] __NmZhYzk3ZDDo_g
+	[ 118] __NzAwYmNhMWGe_g
+	[ 119] __NzE3MDBiY2Ea_g
+	[ 120] __NzI4NDE0NmRF_g
+	[ 121] __NzNjOWIzOWLG_g
+	[ 122] __NzQ2OTI3NDnh_g
+	[ 123] __NzU3YzgzODhu_g
+	[ 124] __NzY4Mjk5Njgk_g
+	[ 125] __NzdjY2NkYTNR_g
+	[ 126] __NzhmMWVhOTOM_g
+	[ 127] __NzkyNTUyZTUe_g
+	[ 128] __ODA5YzgxZjAC_g
+	[ 129] __ODFmMDAyNDG__g
+	[ 130] __ODI5OTY4MjQ3_g
+	[ 131] __ODM4ODZlMzN0_g
+	[ 132] __ODQxNDZkNDWG_g
+	[ 133] __ODViNzU0Y2LA_g
+	[ 134] __ODY1NWNlNjRW_g
+	[ 135] __ODdlMjM4ZjLv_g
+	[ 136] __ODg2ZTMzNzRp_g
+	[ 137] __ODkzZjUzMGbs_g
+	[ 138] __OGFlNzQ3MmL8_g
+	[ 139] __OGIxMmEyNDDU_g
+	[ 140] __OGM2M2Q2N2VM_g
+	[ 141] __OGQyOWJjZjVb_g
+	[ 142] __OGU5YTA2YmKN_g
+	[ 143] __OGYxNzVmY2YD_g
+	[ 144] __OTBkMTNkMDnu_g
+	[ 145] __OTE2MGRhODfi_g
+	[ 146] __OTIxYjVlMTB1_g
+	[ 147] __OTM4YzYzZDZ__g
+	[ 148] __OTQ5MGQxM2QJ_g
+	[ 149] __OTUyNmIwZmVn_g
+	[ 150] __OTZmZmU2YTQc_g
+	[ 151] __OTdkMGU4NjHz_g
+	[ 152] __OTg0ZGI2NTdO_g
+	[ 153] __OTk2ODI0MzcE_g
+	[ 154] __OWEwNmJiOGQp_g
+	[ 155] __OWJjNmQ1YzMd_g
+	[ 156] __OWM4MWYwMDJB_g
+	[ 157] __OWQ5ODRkYjZX_g
+	[ 158] __OWUwZGUwNjUy_g
+	[ 159] __OWYxMWE5YmF4_g
+	[ 160] __Y2ExYTllMGTg_g
+	[ 161] __Y2JjMGE3MmEs_g
+	[ 162] __Y2NjZGEzNTFK_g
+	[ 163] __Y2RhMzUxNGFC_g
+	[ 164] __Y2U2NDU2YmSy_g
+	[ 165] __Y2YwM2EwNDRc_g
+	[ 166] __YTA0NDVjYzF3_g
+	[ 167] __YTEzOTE2NWTp_g
+	[ 168] __YTI0MGQ0M2V2_g
+	[ 169] __YTM1MTRhNDJL_g
+	[ 170] __YTQxYzU5OWSY_g
+	[ 171] __YTVhMTM5MTZd_g
+	[ 172] __YTY3ZjM0NzFw_g
+	[ 173] __YTcyYTJjOGIS_g
+	[ 174] __YTgwMTgwOWOB_g
+	[ 175] __YTliYTc4ZjHq_g
+	[ 176] __YWExNTc5MjVS_g
+	[ 177] __YWIyMWQ5ZjR6_g
+	[ 178] __YWM5N2QwZThh_g
+	[ 179] __YWRiMWJlYWUi_g
+	[ 180] __YWUyMmM1OTb__g
+	[ 181] __YWYyZTRmMDVy_g
+	[ 182] __YjBmZTY3YWIh_g
+	[ 183] __YjFiZWFlMjLF_g
+	[ 184] __YjJlNGMyYzRs_g
+	[ 185] __YjM5YmM2ZDXD_g
+	[ 186] __YjRlYjkxNjDa_g
+	[ 187] __YjU5ZjExYTm6_g
+	[ 188] __YjY1NzRlNmas_g
+	[ 189] __Yjc1NGNiYzCn_g
+	[ 190] __YjgzYTIzZTPd_g
+	[ 191] __Yjk0ODNjNjbt_g
+	[ 192] __YmE3OGYxZWGT_g
+	[ 193] __YmI4ZDI5YmP1_g
+	[ 194] __YmNmNTViZjk1_g
+	[ 195] __YmRiMmU0YzLE_g
+	[ 196] __YmVhZTIyYzWW_g
+	[ 197] __YmZmYjNiZjYT_g
+	[ 198] __YzBhNzJhMmOL_g
+	[ 199] __YzE3N2NjY2Sj_g
+	[ 200] __YzJjNDZjOGHn_g
+	[ 201] __YzMxZDdiYTWh_g
+	[ 202] __YzQ2YzhhZTdH_g
+	[ 203] __YzU5NmZmZTak_g
+	[ 204] __YzZkNWMzMWR7_g
+	[ 205] __YzczMTZiYjg6_g
+	[ 206] __Yzg0MzBjYWEV_g
+	[ 207] __YzliMzliYzbV_g
+	[ 208] __ZDBlODYxZjPT_g
+	[ 209] __ZDEzZDA5ZWV9_g
+	[ 210] __ZDI5NDkwZDE9_g
+	[ 211] __ZDNmZGRlZGIv_g
+	[ 212] __ZDQzZTc2ODKZ_g
+	[ 213] __ZDVjMzFkN2Kl_g
+	[ 214] __ZDY3ZTRjYWSx_g
+	[ 215] __ZDcwN2RjYjWf_g
+	[ 216] __ZDhkNzA3ZGO1_g
+	[ 217] __ZDlmNDdhYTgB_g
+	[ 218] __ZGE4N2UyMzjy_g
+	[ 219] __ZGIyZjczYzmz_g
+	[ 220] __ZGNiNTlmMTGp_g
+	[ 221] __ZGQxZjhmMTdf_g
+	[ 222] __ZGVkYjJmNzPJ_g
+	[ 223] __ZGYyMGQ4ZDcH_g
+	[ 224] __ZTA2NTMyNTi5_g
+	[ 225] __ZTEyOGRmMjDY_g
+	[ 226] __ZTIzOGYyZWaS_g
+	[ 227] __ZTNkZDFmOGYX_g
+	[ 228] __ZTRjMmM0NmOK_g
+	[ 229] __ZTUxZWQyOTSQ_g
+	[ 230] __ZTZhNDFjNTmd_g
+	[ 231] __ZTc0NzJiZmNq_g
+	[ 232] __ZTg2MWYzZDP9_g
+	[ 233] __ZTkxODMwZjf4_g
+	[ 234] __ZWE5MzhjNjPW_g
+	[ 235] __ZWI5MTYwZGGH_g
+	[ 236] __ZWNmYTYyNTDI_g
+	[ 237] __ZWQ4ZTlhMDa7_g
+	[ 238] __ZWU3ZDQ2YTZ__g
+	[ 239] __ZWY5MjFiNWUQ_g
+	[ 240] __ZjAwMjQxYmb7_g
+	[ 241] __ZjFlYTkzOGNj_g
+	[ 242] __ZjJlZjkyMWJe_g
+	[ 243] __ZjNkM2ZkZGXb_g
+	[ 244] __ZjQ3YWE4MDGA_g
+	[ 245] __ZjU1YmY5MzVa_g
+	[ 246] __ZjYxMzg5M2ZT_g
+	[ 247] __ZjdmODM2MGHH_g
+	[ 248] __ZjgzNjBhYzcx_g
+	[ 249] __ZjkzNTVhMmQO_g
+	[ 250] __ZmE2MjUwYzhD_g
+	[ 251] __ZmIzYmY2MTOJ_g
+	[ 252] __ZmM2YTAwMDgZ_g
+	[ 253] __ZmRkZWRiMmZz_g
+	[ 254] __ZmU2N2FiMjHZ_g
+	[ 255] __ZmZlNmE0MWNZ_g
+	[ 256] start
 
 
 PE File Base Relocations (interpreted .reloc section contents)
@@ -913,11 +901,11 @@ Virtual Address: 00009000 Chunk size 520 (0x208) Number of fixups 256
 	reloc  254 offset  db0 [9db0] DIR64
 	reloc  255 offset  db8 [9db8] DIR64
 
-There is a debug directory in .buildid at 0x40a000
+There is a debug directory in .buildid at 0x4000a000
 
 Type                Size     Rva      Offset
-  2        CodeView 00000019 0000a01c 0000801c
-(format RSDS signature 8ea12d7d1b707452241c46f0fe657b0c age 1)
+  2        CodeView 00000019 0000a01c 00007e1c
+(format RSDS signature ae20893e2a68f2cd9ae3844e5ec290a9 age 1)
 
 The .rsrc Resource Directory section:
 000  Type Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 4
@@ -949,21 +937,21 @@ The .rsrc Resource Directory section:
 
 Sections:
 Idx Name          Size      VMA               LMA               File off  Algn
-  0 .text         00006490  0000000000401000  0000000000401000  00000400  2**4
+  0 .text         00006360  0000000140001000  0000000140001000  00000400  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         000007a0  0000000000408000  0000000000408000  00006a00  2**5
+  1 .data         000007a0  0000000140008000  0000000140008000  00006800  2**5
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .rdata        00000df0  0000000000409000  0000000000409000  00007200  2**5
+  2 .rdata        00000df0  0000000140009000  0000000140009000  00007000  2**5
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .buildid      00000035  000000000040a000  000000000040a000  00008000  2**2
+  3 .buildid      00000035  000000014000a000  000000014000a000  00007e00  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  4 .edata        00001e5f  000000000040b000  000000000040b000  00008200  2**2
+  4 .edata        00001b45  000000014000b000  000000014000b000  00008000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  5 .idata        000003cc  000000000040d000  000000000040d000  0000a200  2**2
+  5 .idata        000003cc  000000014000d000  000000014000d000  00009c00  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .rsrc         0007fb58  000000000040e000  000000000040e000  0000a600  2**2
+  6 .rsrc         0007fb58  000000014000e000  000000014000e000  0000a000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  7 .reloc        00000208  000000000048e000  000000000048e000  0008a200  2**2
+  7 .reloc        00000208  000000014008e000  000000014008e000  00089c00  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
 SYMBOL TABLE:
 no symbols
