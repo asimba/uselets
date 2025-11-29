@@ -3,7 +3,7 @@ cleanup.exe:     file format pei-x86-64
 cleanup.exe
 architecture: i386:x86-64, flags 0x00000103:
 HAS_RELOC, EXEC_P, D_PAGED
-start address 0x0000000000403270
+start address 0x0000000140003070
 
 Characteristics 0x22e
 	executable
@@ -15,13 +15,13 @@ Characteristics 0x22e
 Time/Date		Thu Jan 01 03:00:00 1970
 Magic			020b	(PE32+)
 MajorLinkerVersion	2
-MinorLinkerVersion	33
+MinorLinkerVersion	36
 SizeOfCode		0000000000002c00
-SizeOfInitializedData	000000000000e600
+SizeOfInitializedData	000000000000ea00
 SizeOfUninitializedData	0000000000030800
-AddressOfEntryPoint	0000000000003270
+AddressOfEntryPoint	0000000000003070
 BaseOfCode		0000000000001000
-ImageBase		0000000000400000
+ImageBase		0000000140000000
 SectionAlignment	00001000
 FileAlignment		00000200
 MajorOSystemVersion	6
@@ -33,9 +33,9 @@ MinorSubsystemVersion	2
 Win32Version		00000000
 SizeOfImage		00048000
 SizeOfHeaders		00000400
-CheckSum		0001fe5d
+CheckSum		000167df
 Subsystem		00000002	(Windows GUI)
-DllCharacteristics	00000140
+DllCharacteristics	00000160
 SizeOfStackReserve	0000000000200000
 SizeOfStackCommit	0000000000001000
 SizeOfHeapReserve	0000000000100000
@@ -46,7 +46,7 @@ NumberOfRvaAndSizes	00000010
 The Data Directory
 Entry 0 0000000000038000 00001b6f Export Directory [.edata (or where ever we found it)]
 Entry 1 000000000003a000 00000ab0 Import Directory [parts of .idata]
-Entry 2 000000000003c000 0000b4a0 Resource Directory [.rsrc]
+Entry 2 000000000003c000 0000b880 Resource Directory [.rsrc]
 Entry 3 0000000000000000 00000000 Exception Directory [.pdata]
 Entry 4 0000000000000000 00000000 Security Directory
 Entry 5 0000000000000000 00000000 Base Relocation Directory [.reloc]
@@ -61,7 +61,7 @@ Entry d 0000000000000000 00000000 Delay Import Directory
 Entry e 0000000000000000 00000000 CLR Runtime Header
 Entry f 0000000000000000 00000000 Reserved
 
-There is an import table in .idata at 0x43a000
+There is an import table in .idata at 0x4003a000
 
 The Import Tables (interpreted .idata section contents)
  vma:            Hint    Time      Forward  DLL       First
@@ -78,18 +78,18 @@ The Import Tables (interpreted .idata section contents)
 
 	DLL Name: GDI32.dll
 	vma:  Hint/Ord Member-Name Bound-To
-	3a55a	 1018  BitBlt
-	3a564	 1040  CreateBitmap
-	3a574	 1048  CreateCompatibleDC
-	3a58a	 1075  CreatePen
-	3a596	 1085  CreateSolidBrush
-	3a5aa	 1267  DeleteDC
-	3a5b6	 1270  DeleteObject
-	3a5c6	 1346  ExtCreatePen
-	3a5d6	 1552  GetObjectW
-	3a5e4	 1652  Polyline
-	3a5f0	 1660  Rectangle
-	3a5fc	 1724  SelectObject
+	3a55a	   20  BitBlt
+	3a564	   42  CreateBitmap
+	3a574	   50  CreateCompatibleDC
+	3a58a	   80  CreatePen
+	3a596	   91  CreateSolidBrush
+	3a5aa	  385  DeleteDC
+	3a5b6	  388  DeleteObject
+	3a5c6	  466  ExtCreatePen
+	3a5d6	  687  GetObjectW
+	3a5e4	  796  Polyline
+	3a5f0	  804  Rectangle
+	3a5fc	  870  SelectObject
 
  0003a028	0003a114 00000000 00000000 0003a9f8 0003a35c
 
@@ -112,8 +112,8 @@ The Import Tables (interpreted .idata section contents)
 	3a6e8	 1242  SearchPathW
 	3a6f6	 1330  SetHandleInformation
 	3a70e	 1503  WaitForSingleObject
-	3a724	 1570  WriteFile
-	3a730	 1603  lstrcmpW
+	3a724	 1567  WriteFile
+	3a730	 1600  lstrcmpW
 
  0003a03c	0003a1b4 00000000 00000000 0003aa0c 0003a3fc
 
@@ -165,14 +165,14 @@ The Import Tables (interpreted .idata section contents)
 
  0003a078	00000000 00000000 00000000 00000000 00000000
 
-There is an export table in .edata at 0x438000
+There is an export table in .edata at 0x40038000
 
 The Export Tables (interpreted .edata section contents)
 
 Export Flags 			0
 Time/Date stamp 		0
 Major/Minor 			0/0
-Name 				0000000000038a46 uzxufetg.exe
+Name 				0000000000038a46 ytwmvgsb.exe
 Ordinal Base 			1
 Number in:
 	Export Address Table 		00000103
@@ -441,274 +441,274 @@ Export Address Table -- Ordinal Base 1
 	[ 255] +base[ 256] 1ff0 Export RVA
 	[ 256] +base[ 257] 3b004 Export RVA
 	[ 257] +base[ 258] 3b000 Export RVA
-	[ 258] +base[ 259] 3270 Export RVA
+	[ 258] +base[ 259] 3070 Export RVA
 
 [Ordinal/Name Pointer] Table
-	[   0] __M2FiYzQ5YjNt_g
-	[   1] __M2IwYjAxYzIq_g
-	[   2] __M2MyOTk2OTP2_g
-	[   3] __M2RlYTAzMWGh_g
-	[   4] __M2VhMDc0MjWH_g
-	[   5] __M2ZlMmEyOWUK_g
-	[   6] __MDBkZDM0NzPx_g
-	[   7] __MDFjMjJhODF9_g
-	[   8] __MDIwNmZiNzGZ_g
-	[   9] __MDMxYWExY2L3_g
-	[  10] __MDRkYzMwN2KJ_g
-	[  11] __MDUxODNiMGIB_g
-	[  12] __MDZmYjcxOTko_g
-	[  13] __MDdmZjM1ZDjJ_g
-	[  14] __MDhlYjgwNzCl_g
-	[  15] __MDllMzM2YWUU_g
-	[  16] __MGFmODhmMWOx_g
-	[  17] __MGIwMWMyMmGB_g
-	[  18] __MGM5MjU3YWRg_g
-	[  19] __MGQ2OTY1NmKK_g
-	[  20] __MGViOTc2Mjeb_g
-	[  21] __MGYzMjAwZGQ0_g
-	[  22] __MTAxNzQzNGFS_g
-	[  23] __MTE2ZmYzZTlf_g
-	[  24] __MTJiNjBkNjll_g
-	[  25] __MTMxZGMwN2Vo_g
-	[  26] __MTQ2NDg2NzlY_g
-	[  27] __MTVhYmQwYWGL_g
-	[  28] __MTYyNGU3ZTDt_g
-	[  29] __MTc0MzRhNTI__g
-	[  30] __MTgzYjBiMDHC_g
-	[  31] __MTliNzUwMzhM_g
-	[  32] __MWFhMWNiZjcx_g
-	[  33] __MWI3ODYxOWQ6_g
-	[  34] __MWNiMTc3OGWs_g
-	[  35] __MWRjMDdlNjip_g
-	[  36] __MWU1MWVmOTBG_g
-	[  37] __MWZlZWJkZjLs_g
-	[  38] __MjBlNGQ3YWbW_g
-	[  39] __MjFlODVjYTha_g
-	[  40] __MjI5NWQyMDUY_g
-	[  41] __MjM3MjY2YzaN_g
-	[  42] __MjRlN2UwZWSc_g
-	[  43] __MjU4NzZjY2ak_g
-	[  44] __MjZiZmNkZDl6_g
-	[  45] __Mjc5YmYwMTFv_g
-	[  46] __Mjg0OGI1Yzdd_g
-	[  47] __Mjk5NjkzZjaU_g
-	[  48] __MmE4MTdkNjeR_g
-	[  49] __MmJkZmIwNDK__g
-	[  50] __MmMwNGRjMzB7_g
-	[  51] __MmQ3ZjlhZDHT_g
-	[  52] __MmUxNjI0ZTfg_g
-	[  53] __MmY5ZjU2Mja__g
-	[  54] __MzA3Yjg5NTmY_g
-	[  55] __MzFmNGI0NDQI_g
-	[  56] __MzIwMGRkMzRz_g
-	[  57] __MzMyMGU0ZDev_g
-	[  58] __MzQ3M2YxMjNy_g
-	[  59] __MzVkOGM5MmME_g
-	[  60] __MzZhZTE0NjSG_g
-	[  61] __Mzc1NDFiNzhh_g
-	[  62] __Mzg0YzMzMjDk_g
-	[  63] __MzkwOWUzMzau_g
-	[  64] __N2E4NTFmZWW9_g
-	[  65] __N2I4OTU5OTjM_g
-	[  66] __N2NiYWU2MjKV_g
-	[  67] __N2Q2NzkxMmUW_g
-	[  68] __N2U2OGE5ZGIC_g
-	[  69] __N2Y5YWQxZDPU_g
-	[  70] __NDAwN2ZmMzXY_g
-	[  71] __NDFjYTJkN2aa_g
-	[  72] __NDJiZTg4MTWr_g
-	[  73] __NDM0YTUyM2bi_g
-	[  74] __NDQwOGViODBw_g
-	[  75] __NDVmZDFlNTHv_g
-	[  76] __NDYwZjMyMDDd_g
-	[  77] __NDcyYmRmYjBC_g
-	[  78] __NDhiNWM3NWT5_g
-	[  79] __NDliMzZkMTMd_g
-	[  80] __NGE1MjNmZTKi_g
-	[  81] __NGJkZTViY2UO_g
-	[  82] __NGMzMzIwZTTX_g
-	[  83] __NGRlNWM0ZGGn_g
-	[  84] __NGUyZjlmNTYm_g
-	[  85] __NGY0ZTJmOWZW_g
-	[  86] __NTAzODRjMzMg_g
-	[  87] __NTFlZjkwNDYP_g
-	[  88] __NTIzZmUyYTKe_g
-	[  89] __NTNmYzQ1ZmQe_g
-	[  90] __NTQxYjc4NjGd_g
-	[  91] __NTU0ZGU1YzTa_g
-	[  92] __NTYyNmJmY2TZ_g
-	[  93] __NTdhZDYwNGZO_g
-	[  94] __NTg0YmRlNWLO_g
-	[  95] __NTk5OGNjNzVj_g
-	[  96] __NWE4NGZlYTb6_g
-	[  97] __NWJjZTBlYjl2_g
-	[  98] __NWNhODVhODT__g
-	[  99] __NWRmOTBjOTJX_g
-	[ 100] __NWU4M2UxMzdU_g
-	[ 101] __NWZiYmQ1ZjWj_g
-	[ 102] __NjA0ZjRlMmaf_g
-	[ 103] __NjE5ZDNhYmNJ_g
-	[ 104] __NjIxOWI3NTA4_g
-	[ 105] __NjM0NzJiZGaw_g
-	[ 106] __NjQ4Njc5NThL_g
-	[ 107] __NjU2YjhhNDAH_g
-	[ 108] __NjZjNjhkYzXD_g
-	[ 109] __Njc5MTJlMTYk_g
-	[ 110] __NjhhOWRiMDIG_g
-	[ 111] __Njk2NTZiOGFA_g
-	[ 112] __NmFiMmI4MTAX_g
-	[ 113] __NmI4YTQwMDf__g
-	[ 114] __NmNjZmE0NWWD_g
-	[ 115] __NmQxMzFkYzB__g
-	[ 116] __NmU4YzQxY2Et_g
-	[ 117] __NmZmM2U5NWa7_g
-	[ 118] __NzBhNTZhYjK4_g
-	[ 119] __NzE5OTI4NDi1_g
-	[ 120] __NzI2NmM2OGTF_g
-	[ 121] __NzNmMTIzNzJm_g
-	[ 122] __NzQyNTg3NmPP_g
-	[ 123] __NzU2MzQ3MmLf_g
-	[ 124] __NzYyNzliZjAR_g
-	[ 125] __Nzc4ZWFjODJV_g
-	[ 126] __Nzg2MTlkM2G8_g
-	[ 127] __Nzk1ODRiZGVb_g
-	[ 128] __ODA3MGE1NmGy_g
-	[ 129] __ODE3ZDY3OTEu_g
-	[ 130] __ODI1NTRkZTXE_g
-	[ 131] __ODNlMTM3NTQb_g
-	[ 132] __ODRmZWE2ZmF8_g
-	[ 133] __ODUxZmVlYmTy_g
-	[ 134] __ODY3OTU4NGLe_g
-	[ 135] __ODc2Y2NmYTRe_g
-	[ 136] __ODgxNWFiZDCq_g
-	[ 137] __ODk1OTk4Y2N1_g
-	[ 138] __OGE0MDA3ZmY1_g
-	[ 139] __OGIyMWU4NWOo_g
-	[ 140] __OGM0MWNhMmR__g
-	[ 141] __OGRjNWMzYzg__g
-	[ 142] __OGVhYzgyNTVN_g
-	[ 143] __OGYxY2IxNzeO_g
-	[ 144] __OTA0NjBmMzIA_g
-	[ 145] __OTEyZTE2MjTn_g
-	[ 146] __OTI1N2FkNjBP_g
-	[ 147] __OTNmNjk0OTc5_g
-	[ 148] __OTQ5NzM5MDnj_g
-	[ 149] __OTVkMjA1MTg7_g
-	[ 150] __OTY5M2Y2OTSX_g
-	[ 151] __OTczOTA5ZTM2_g
-	[ 152] __OThjYzc1NjNH_g
-	[ 153] __OTkyODQ4YjXH_g
-	[ 154] __OWFkMWQzZDQS_g
-	[ 155] __OWJmMDExNmbz_g
-	[ 156] __OWM2MjE5YjdQ_g
-	[ 157] __OWQzYWJjNDmz_g
-	[ 158] __OWUwYWY4OGYc_g
-	[ 159] __OWY1NjI2YmbN_g
-	[ 160] __Y2EyZDdmOWHR_g
-	[ 161] __Y2JmNzMxZjS0_g
-	[ 162] __Y2M3NTYzNDcr_g
-	[ 163] __Y2RkOTdhODUf_g
-	[ 164] __Y2UwZWI5NzYn_g
-	[ 165] __Y2ZhNDVlODPh_g
-	[ 166] __YTA3NDI1ODds_g
-	[ 167] __YTFjYmY3MzH0_g
-	[ 168] __YTI5ZTBhZjiP_g
-	[ 169] __YTNjMTNkZWED_g
-	[ 170] __YTQ1ZTgzZTE3_g
-	[ 171] __YTU2YWIyYjgQ_g
-	[ 172] __YTZmYTdjYmHm_g
-	[ 173] __YTc1M2ZjNDX9_g
-	[ 174] __YTg1YTg0ZmWm_g
-	[ 175] __YTlkYjAyMDb7_g
-	[ 176] __YWE4YjIxZThc_g
-	[ 177] __YWJkMGFhOGIh_g
-	[ 178] __YWM4MjU1NGTl_g
-	[ 179] __YWQ2MDRmNGUv_g
-	[ 180] __YWUxNDY0ODZ5_g
-	[ 181] __YWZkNjNjMjmW_g
-	[ 182] __YjA0MmJlODgV_g
-	[ 183] __YjE3NzhlYWOC_g
-	[ 184] __YjJiODEwMTdD_g
-	[ 185] __YjM2ZDEzMWTA_g
-	[ 186] __YjQ0NDA4ZWKA_g
-	[ 187] __YjVjNzVkZjkM_g
-	[ 188] __YjYwZDY5NjVr_g
-	[ 189] __Yjc1MDM4NGMz_g
-	[ 190] __YjgxMDE3NDNK_g
-	[ 191] __Yjk3NjI3OWLw_g
-	[ 192] __YmFlNjIyOTXS_g
-	[ 193] __YmJkNWY1YTPB_g
-	[ 194] __YmM0OWIzNmQT_g
-	[ 195] __YmRmMmVjNmWM_g
-	[ 196] __YmU4ODE1YWLQ_g
-	[ 197] __YmZjZGQ5N2GF_g
-	[ 198] __YzA3ZTY4YTnb_g
-	[ 199] __YzEzZGVhMDMa_g
-	[ 200] __YzIyYTgxN2Rn_g
-	[ 201] __YzNjODNlYTB0_g
-	[ 202] __YzRkYWE3NTP8_g
-	[ 203] __YzVjM2M4M2Wg_g
-	[ 204] __YzY4ZGM1YzPI_g
-	[ 205] __Yzc1ZGY5MGOS_g
-	[ 206] __YzgzZWEwNzQl_g
-	[ 207] __YzkyYzA0ZGMw_g
-	[ 208] __ZDBhYThiMjHo_g
-	[ 209] __ZDFkM2Q0MTK2_g
-	[ 210] __ZDIwNTE4M2IL_g
-	[ 211] __ZDNkNDEyYjYN_g
-	[ 212] __ZDQxMmI2MGRp_g
-	[ 213] __ZDVmNWEzYzE9_g
-	[ 214] __ZDYzYzI5OTaT_g
-	[ 215] __ZDdhZmQ2M2Mp_g
-	[ 216] __ZDhjOTJjMDTc_g
-	[ 217] __ZDk3YTg1MWbu_g
-	[ 218] __ZGFhNzUzZmNF_g
-	[ 219] __ZGIwMjA2ZmJx_g
-	[ 220] __ZGMzMDdiODlZ_g
-	[ 221] __ZGQzNDczZjEj_g
-	[ 222] __ZGU1YmNlMGW5_g
-	[ 223] __ZGZiMDQyYmWI_g
-	[ 224] __ZTBlZDljNjIZ_g
-	[ 225] __ZTEzNzU0MWJ4_g
-	[ 226] __ZTJhMjllMGH4_g
-	[ 227] __ZTMzNmFlMTRk_g
-	[ 228] __ZTRkN2FmZDY8_g
-	[ 229] __ZTVjNGRhYTdT_g
-	[ 230] __ZTYyMjk1ZDIF_g
-	[ 231] __ZTdlMGVkOWNi_g
-	[ 232] __ZTg1Y2E4NWGE_g
-	[ 233] __ZTk1ZmJiZDX1_g
-	[ 234] __ZWEwMzFhYTHL_g
-	[ 235] __ZWI4MDcwYTVq_g
-	[ 236] __ZWM2ZThjNDHK_g
-	[ 237] __ZWQ5YzYyMTm3_g
-	[ 238] __ZWViZGYyZWNu_g
-	[ 239] __ZWY5MDQ2MGYy_g
-	[ 240] __ZjAxMTZmZjPp_g
-	[ 241] __ZjEyMzcyNjbG_g
-	[ 242] __ZjJlYzZlOGNB_g
-	[ 243] __ZjNlOTVmYmLV_g
-	[ 244] __ZjRiNDQ0MDjr_g
-	[ 245] __ZjVhM2MxM2Tq_g
-	[ 246] __ZjY5NDk3MzkJ_g
-	[ 247] __ZjczMWY0YjRE_g
-	[ 248] __Zjg4ZjFjYjF3_g
-	[ 249] __ZjkwYzkyNTet_g
-	[ 250] __ZmE3Y2JhZTYi_g
-	[ 251] __ZmI3MTk5MjhI_g
-	[ 252] __ZmM0NWZkMWVR_g
-	[ 253] __ZmQxZTUxZWaQ_g
-	[ 254] __ZmVhNmZhN2O6_g
-	[ 255] __ZmYzNWQ4Yzks_g
+	[   0] __M2FjM2I1ZmaJ_g
+	[   1] __M2I2ZjkxOWJ__g
+	[   2] __M2M2NWJiOTMv_g
+	[   3] __M2QwNWI5MGPn_g
+	[   4] __M2UwNzRkODM__g
+	[   5] __M2YyNTQ5ZWOK_g
+	[   6] __MDAxYWFiMzdu_g
+	[   7] __MDFkZWEyMTfo_g
+	[   8] __MDJiNjRlZGLB_g
+	[   9] __MDM1MDczODFK_g
+	[  10] __MDQ3MjE1NmPl_g
+	[  11] __MDViOTBjZTd2_g
+	[  12] __MDY5ODU5ZWG9_g
+	[  13] __MDc0ZDgzM2Yl_g
+	[  14] __MDgzYjZmOTGb_g
+	[  15] __MDkzYzY1YmKT_g
+	[  16] __MGFhNWZiNTVS_g
+	[  17] __MGI3ZDhjNTYW_g
+	[  18] __MGNlNzc2ZGGw_g
+	[  19] __MGQ2ZDJkZjTm_g
+	[  20] __MGU1Mzk5Yjdw_g
+	[  21] __MGY0MDZiNzez_g
+	[  22] __MTBlMDQ2OGKc_g
+	[  23] __MTEyOWVlNDWp_g
+	[  24] __MTIyNjY2MjEO_g
+	[  25] __MTM3MTRjMTSV_g
+	[  26] __MTQ5NTYyZjV5_g
+	[  27] __MTU2Y2U1YjHv_g
+	[  28] __MTYyMjEyMjZm_g
+	[  29] __MTdlODJjY2bx_g
+	[  30] __MThlMzQ0Njd1_g
+	[  31] __MTk4MGQ3ZjKW_g
+	[  32] __MWFhYjM3NmWP_g
+	[  33] __MWI2OThlZDnw_g
+	[  34] __MWNhNmNiYWVh_g
+	[  35] __MWQxY2E2Y2Ku_g
+	[  36] __MWUyNzBhYTX7_g
+	[  37] __MWZlMTU0ZWT9_g
+	[  38] __MjAxZTI3MGGl_g
+	[  39] __MjEwZTUzOTm3_g
+	[  40] __MjIxMjI2NjYh_g
+	[  41] __MjMwZDZkMmT0_g
+	[  42] __MjRhNGNlZDT5_g
+	[  43] __MjU0OWVjOGGI_g
+	[  44] __MjY2NjIxMGVT_g
+	[  45] __MjcwYWE1ZmJV_g
+	[  46] __Mjg5ZTQ4OWG__g
+	[  47] __MjllZTQ1YTk0_g
+	[  48] __MmEzMTMyYTiX_g
+	[  49] __MmI4MjM1MGZA_g
+	[  50] __MmNjZmYxNWHr_g
+	[  51] __MmRmNGU2N2Pf_g
+	[  52] __MmU0MjA0NzIV_g
+	[  53] __MmYyYTMxMzKo_g
+	[  54] __MzA5NDg1MjAe_g
+	[  55] __MzEzMmE4OTdo_g
+	[  56] __MzJhODk3NjjR_g
+	[  57] __MzNkMjAyYjZO_g
+	[  58] __MzRjNzg2ZGQ2_g
+	[  59] __MzUwZjQwNmJ3_g
+	[  60] __MzYwNjk4NTnq_g
+	[  61] __Mzc2ZThmNjSE_g
+	[  62] __Mzg4NzVjNDMI_g
+	[  63] __Mzk5ZmUyYTAo_g
+	[  64] __N2FjMDEwZTBG_g
+	[  65] __N2I3ZWQ4NmFB_g
+	[  66] __N2NkZjFkMWOm_g
+	[  67] __N2Q4YzU2MTYi_g
+	[  68] __N2VkODZhNDEz_g
+	[  69] __N2Y3YWMwMTDg_g
+	[  70] __NDA2Yjc3YjNY_g
+	[  71] __NDEzM2QyMDK2_g
+	[  72] __NDIwNDcyMTVs_g
+	[  73] __NDMwODNiNmaR_g
+	[  74] __NDQ2Nzc1Yjj4_g
+	[  75] __NDVhOTM0YzeG_g
+	[  76] __NDY4YjljZjb6_g
+	[  77] __NDdkNjJlNDIE_g
+	[  78] __NDg5YWJmMTNx_g
+	[  79] __NDllYzhhODg6_g
+	[  80] __NGFhNzViMDAa_g
+	[  81] __NGI1MWQwY2HE_g
+	[  82] __NGMxNDk1NjL1_g
+	[  83] __NGQ4MzNmMjVJ_g
+	[  84] __NGVkYmMxNDfW_g
+	[  85] __NGYzMDk0ODUg_g
+	[  86] __NTA3MzgxNGGn_g
+	[  87] __NTFkMGNhYzSv_g
+	[  88] __NTJiYWM2MWbh_g
+	[  89] __NTM5OWI3NzDM_g
+	[  90] __NTRlZGZkMTjj_g
+	[  91] __NTU1MmJhYzYf_g
+	[  92] __NTYxNjIyMTIm_g
+	[  93] __NTdmZTVkMziH_g
+	[  94] __NTg1ZmRjMDk8_g
+	[  95] __NTllYWJkNWXI_g
+	[  96] __NWFlYjYwNGYw_g
+	[  97] __NWIwMDFhYWI3_g
+	[  98] __NWM0MzA4M2Jv_g
+	[  99] __NWQzODg3NWND_g
+	[ 100] __NWVjOGMyMDHe_g
+	[ 101] __NWZkYzA5M2Nl_g
+	[ 102] __NjA0ZjMwOTSF_g
+	[ 103] __NjExMTI5ZWVF_g
+	[ 104] __NjJmNTc5ZDM9_g
+	[ 105] __NjMwYjdkOGNW_g
+	[ 106] __NjQ4NDNlMDdN_g
+	[ 107] __NjViYjkzMmYq_g
+	[ 108] __NjYyMTBlNTOZ_g
+	[ 109] __Njc3NWI4Zjid_g
+	[ 110] __NjhkMTc4ZjN7_g
+	[ 111] __Njk4ZWQ5ZjB0_g
+	[ 112] __NmE0MTMzZDIC_g
+	[ 113] __NmI3N2IzNThf_g
+	[ 114] __NmNlNWIxZWb8_g
+	[ 115] __NmQyZGY0ZTZ8_g
+	[ 116] __NmU4ZjY0ODQ__g
+	[ 117] __NmY5MTliN2Z6_g
+	[ 118] __NzBjYzFiNjmO_g
+	[ 119] __NzE0YzE0OTVi_g
+	[ 120] __NzIxNTZjZTWx_g
+	[ 121] __NzM4MTRhYTdb_g
+	[ 122] __NzQxOTgwZDfy_g
+	[ 123] __NzViOGY4OWSs_g
+	[ 124] __NzZkYWIwOGRL_g
+	[ 125] __NzdiMzU4NWbc_g
+	[ 126] __NzhmMzdiN2XY_g
+	[ 127] __NzlkMzNkMDW5_g
+	[ 128] __ODBkN2YyOTa0_g
+	[ 129] __ODE0YWE3NWIA_g
+	[ 130] __ODIzNTBmNDBr_g
+	[ 131] __ODMzZjI1NDns_g
+	[ 132] __ODQzZTA3NGSD_g
+	[ 133] __ODUyMDFlMjcK_g
+	[ 134] __ODZkZDM2MDaY_g
+	[ 135] __ODc1YzQzMDg7_g
+	[ 136] __ODgzYWMzYjX__g
+	[ 137] __ODlhYWIyYTG8_g
+	[ 138] __OGE4ODNhYzO1_g
+	[ 139] __OGI5Y2Y2ZmH3_g
+	[ 140] __OGM1NjE2MjIS_g
+	[ 141] __OGQ0YjUxZDDK_g
+	[ 142] __OGVkOWYwNzQZ_g
+	[ 143] __OGY2NDg0M2UH_g
+	[ 144] __OTBlOTJiODI1_g
+	[ 145] __OTE5YjdmN2HA_g
+	[ 146] __OTJhZDYzMGJ9_g
+	[ 147] __OTMyZjJhMzEy_g
+	[ 148] __OTQ4NTIwMWUn_g
+	[ 149] __OTU2MmY1NznT_g
+	[ 150] __OTZiNGU0YTNX_g
+	[ 151] __OTc2OGQxNzjz_g
+	[ 152] __OTg1OWVhYmRe_g
+	[ 153] __OTliNzcwY2Mb_g
+	[ 154] __OWFiZjEzNzFM_g
+	[ 155] __OWI3ZjdhYzAQ_g
+	[ 156] __OWNmNmZhZjc5_g
+	[ 157] __OWRhYzI0YTTO_g
+	[ 158] __OWU0ODlhYmYT_g
+	[ 159] __OWZlMmEwMjie_g
+	[ 160] __Y2FjNGFmMDNQ_g
+	[ 161] __Y2JhZTYxMTEp_g
+	[ 162] __Y2MxYjY5OGXZ_g
+	[ 163] __Y2RjNTIzMGRt_g
+	[ 164] __Y2VkNGY5OTKt_g
+	[ 165] __Y2ZmMTVhZWJg_g
+	[ 166] __YTAyODllNDia_g
+	[ 167] __YTFiY2M5OTDp_g
+	[ 168] __YTIxN2U4MmPP_g
+	[ 169] __YTM1N2ZlNWQ4_g
+	[ 170] __YTRjZWQ0ZjmS_g
+	[ 171] __YTVmYjU1NTK6_g
+	[ 172] __YTZjYmFlNjER_g
+	[ 173] __YTc1YjAwMWGr_g
+	[ 174] __YTg5NzY4ZDF4_g
+	[ 175] __YTkzNGM3ODbd_g
+	[ 176] __YWFiMmExYmPJ_g
+	[ 177] __YWIzNzZlOGZk_g
+	[ 178] __YWMyNGE0Y2XU_g
+	[ 179] __YWQ2MzBiN2SM_g
+	[ 180] __YWU2MTExMjnu_g
+	[ 181] __YWYwMzUwNzOB_g
+	[ 182] __YjA4ZDRiNTHQ_g
+	[ 183] __YjFlZmZjYmXV_g
+	[ 184] __YjJhMWJjYzmQ_g
+	[ 185] __YjM1ODVmZGMJ_g
+	[ 186] __YjRlNGEzNTf__g
+	[ 187] __YjVmZjg5YWGy_g
+	[ 188] __YjY0ZWRiYzFH_g
+	[ 189] __Yjc3MGNjMWJp_g
+	[ 190] __YjhmODlkYWMk_g
+	[ 191] __YjkwY2U3Nzba_g
+	[ 192] __YmFjNjFmZTFU_g
+	[ 193] __YmI5MzJmMmEx_g
+	[ 194] __YmNjOTkwZTkr_g
+	[ 195] __YmQ1ZWM4YzIB_g
+	[ 196] __YmVkNWNkYzUj_g
+	[ 197] __YmYxMzcxNGMU_g
+	[ 198] __YzAxMGUwNDaL_g
+	[ 199] __YzE0N2Q2MmVC_g
+	[ 200] __YzIwMWRlYTIX_g
+	[ 201] __YzNiNWZmODmq_g
+	[ 202] __YzRhZjAzNTBz_g
+	[ 203] __YzUyMzBkNmQt_g
+	[ 204] __YzYxZmUxNTTt_g
+	[ 205] __Yzc4NmRkMzYG_g
+	[ 206] __YzhjMjAxZGWi_g
+	[ 207] __Yzk5MGU5MmKC_g
+	[ 208] __ZDBjYWM0YWYD_g
+	[ 209] __ZDE3OGYzN2J__g
+	[ 210] __ZDIwMmI2NGXb_g
+	[ 211] __ZDMzZDA1YjkM_g
+	[ 212] __ZDRmOTkyYWRj_g
+	[ 213] __ZDVjZGM1MjMN_g
+	[ 214] __ZDYyZTQyMDRy_g
+	[ 215] __ZDdmMjk2YjTk_g
+	[ 216] __ZDg2YTQxMzPS_g
+	[ 217] __ZDlmMDc0MTmA_g
+	[ 218] __ZGFiMDhkNGJR_g
+	[ 219] __ZGJjMTQ3ZDYu_g
+	[ 220] __ZGMwOTNjNjW7_g
+	[ 221] __ZGQzNjA2OThZ_g
+	[ 222] __ZGVhMjE3ZTgs_g
+	[ 223] __ZGYxZDFjYTbL_g
+	[ 224] __ZTA0NjhiOWP2_g
+	[ 225] __ZTE1NGVkZmQY_g
+	[ 226] __ZTJhMDI4OWVI_g
+	[ 227] __ZTM0NDY3NzW4_g
+	[ 228] __ZTRhMzU3ZmVd_g
+	[ 229] __ZTViMWVmZmO__g
+	[ 230] __ZTY3Y2RmMWQc_g
+	[ 231] __ZTc3NmRhYjCN_g
+	[ 232] __ZTgyY2NmZjFa_g
+	[ 233] __ZTkyYjgyMzUP_g
+	[ 234] __ZWFiZDVlYzjC_g
+	[ 235] __ZWI2MDRmMzCU_g
+	[ 236] __ZWM4YTg4M2HD_g
+	[ 237] __ZWRmZDE4ZTNE_g
+	[ 238] __ZWU0NWE5MzTH_g
+	[ 239] __ZWZmY2JlZDXN_g
+	[ 240] __ZjA3NDE5ODDX_g
+	[ 241] __ZjE1YWViNjBP_g
+	[ 242] __ZjI5NmI0ZTSj_g
+	[ 243] __ZjM3YjdlZDhq_g
+	[ 244] __ZjRlNjdjZGYd_g
+	[ 245] __ZjU3OWQzM2QF_g
+	[ 246] __ZjZmYWY3Mzmf_g
+	[ 247] __ZjczOTlmZTKg_g
+	[ 248] __Zjg5ZGFjMjSk_g
+	[ 249] __Zjk5MmFkNjML_g
+	[ 250] __ZmFmNzM5OWbi_g
+	[ 251] __ZmI1NTUyYmHG_g
+	[ 252] __ZmNiZWQ1Y2TF_g
+	[ 253] __ZmQxOGUzNDRn_g
+	[ 254] __ZmU1ZDM4ODdc_g
+	[ 255] __ZmY4OWFhYjKh_g
 	[ 256] __tls_end
 	[ 257] __tls_start
 	[ 258] start
 
-There is a debug directory in .buildid at 0x406000
+There is a debug directory in .buildid at 0x40006000
 
 Type                Size     Rva      Offset
   2        CodeView 00000019 0000601c 0000341c
-(format RSDS signature d5a78f27087619f9eeb7575153216afb age 1)
+(format RSDS signature 0ff10dd12e442baf1488ad2ca7bf5d3b age 1)
 
 The .rsrc Resource Directory section:
 000  Type Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 4
@@ -723,48 +723,48 @@ The .rsrc Resource Directory section:
 070     Entry: ID: 0x000062, Value: 0x80000088
 088      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 098       Entry: ID: 00000000, Value: 0x000140
-140        Leaf: Addr: 0x03d038, Size: 0x000a65, Codepage: 0
+140        Leaf: Addr: 0x03d038, Size: 0x000e45, Codepage: 0
 078     Entry: ID: 0x000063, Value: 0x800000a0
 0a0      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 0b0       Entry: ID: 00000000, Value: 0x000150
-150        Leaf: Addr: 0x03daa0, Size: 0x0044e5, Codepage: 0
+150        Leaf: Addr: 0x03de80, Size: 0x0044e5, Codepage: 0
 080     Entry: ID: 0x000064, Value: 0x800000b8
 0b8      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 0c8       Entry: ID: 00000000, Value: 0x000160
-160        Leaf: Addr: 0x041f88, Size: 0x0052cc, Codepage: 0
+160        Leaf: Addr: 0x042368, Size: 0x0052cc, Codepage: 0
 020   Entry: ID: 0x00000e, Value: 0x800000d0
 0d0    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 0e0     Entry: ID: 0x000065, Value: 0x800000e8
 0e8      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 0f8       Entry: ID: 00000000, Value: 0x000170
-170        Leaf: Addr: 0x047258, Size: 0x000014, Codepage: 0
+170        Leaf: Addr: 0x047638, Size: 0x000014, Codepage: 0
 028   Entry: ID: 0x000010, Value: 0x80000100
 100    Name Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 110     Entry: ID: 0x000001, Value: 0x80000118
 118      Language Table: Char: 0, Time: 00000000, Ver: 0/0, Num Names: 0, IDs: 1
 128       Entry: ID: 00000000, Value: 0x000180
-180        Leaf: Addr: 0x047270, Size: 0x00022c, Codepage: 0
+180        Leaf: Addr: 0x047650, Size: 0x00022c, Codepage: 0
  Resources start at offset: 0x190
 
 Sections:
 Idx Name          Size      VMA               LMA               File off  Algn
-  0 .text         00002af0  0000000000401000  0000000000401000  00000400  2**4
+  0 .text         00002ad0  0000000140001000  0000000140001000  00000400  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         000000e0  0000000000404000  0000000000404000  00003000  2**5
+  1 .data         000000e0  0000000140004000  0000000140004000  00003000  2**5
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .rdata        000001c0  0000000000405000  0000000000405000  00003200  2**5
+  2 .rdata        000001c0  0000000140005000  0000000140005000  00003200  2**5
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .buildid      00000035  0000000000406000  0000000000406000  00003400  2**2
+  3 .buildid      00000035  0000000140006000  0000000140006000  00003400  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  4 .bss          00030680  0000000000407000  0000000000407000  00000000  2**5
+  4 .bss          00030680  0000000140007000  0000000140007000  00000000  2**5
                   ALLOC
-  5 .edata        00001b6f  0000000000438000  0000000000438000  00003600  2**2
+  5 .edata        00001b6f  0000000140038000  0000000140038000  00003600  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  6 .idata        00000ab0  000000000043a000  000000000043a000  00005200  2**2
+  6 .idata        00000ab0  000000014003a000  000000014003a000  00005200  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  7 .tls          00000008  000000000043b000  000000000043b000  00005e00  2**2
+  7 .tls          00000008  000000014003b000  000000014003b000  00005e00  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  8 .rsrc         0000b4a0  000000000043c000  000000000043c000  00006000  2**2
+  8 .rsrc         0000b880  000000014003c000  000000014003c000  00006000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
 SYMBOL TABLE:
 no symbols
