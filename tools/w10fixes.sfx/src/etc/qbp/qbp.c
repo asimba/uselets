@@ -160,8 +160,7 @@ void pack_file(){
             uint16_t i=symbol,j=cnode;
             while(i!=vocroot&&vocbuf[i]==vocbuf[j++]) i++;
             if((i-=symbol)>=length){
-              if(buf_size!=LZ_BUF_SIZE&&(uint16_t)(cnode-rle_shift)>0xfefe) cnode=vocarea[cnode];
-              else{
+              if((uint16_t)(cnode-rle_shift)<=0xfefe){
                 offset=cnode;
                 if((length=i)==buf_size) break;
               };
@@ -216,7 +215,7 @@ void pack_file(){
 }
 
 void unpack_file(){
-  uint8_t c,rle_flag=0,cflags=0;
+  uint8_t c,rle_flag=0,cflags=0,flush=0;
   length=0;
   for(c=0;c<4;c++){
     hlp<<=8;
@@ -227,7 +226,11 @@ void unpack_file(){
       if(rle_flag) vocbuf[vocroot++]=offset;
       else vocbuf[vocroot++]=vocbuf[offset++];
       length--;
-      if(!vocroot&&(!WriteFile(ofile,vocbuf,0x10000,pwout,NULL))) break;
+      flush=1;
+      if(!vocroot){
+        if(!WriteFile(ofile,vocbuf,0x10000,pwout,NULL)) break;
+        flush=0;
+      };
       continue;
     };
     if(flags){
@@ -252,7 +255,7 @@ void unpack_file(){
     if(rc32_getc(&cflags,0)) break;
     flags=0xff;
   };
-  if(length) WriteFile(ofile,vocbuf,vocroot?vocroot:0x10000,pwout,NULL);
+  if(length&&flush) WriteFile(ofile,vocbuf,vocroot?vocroot:0x10000,pwout,NULL);
 }
 
 /***********************************************************************************************************/
