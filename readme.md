@@ -130,7 +130,11 @@ easyrsa build-ca nopass
 easyrsa gen-req <имя_сервера> nopass
 easyrsa sign-req server <имя_сервера>
 openvpn --genkey --secret ta.key
-```  
+```
+- генерация самоподписанного сертификата/ключа
+```
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 3650 -nodes -subj "/C=XX/ST=StateName/L=CityName/O=CompanyName/OU=CompanySectionName/CN=CommonNameOrHostname"
+```
 - генерация файла отозванных ключей (по умолчанию данную процедуру требуется повторять раз в 180 дней)  
 ```
 easyrsa gen-crl
