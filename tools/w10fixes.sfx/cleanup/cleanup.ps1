@@ -40,6 +40,7 @@ $cleanflags=@(
 )
 
 $temp_dirs=@(
+"$env:windir\InboxApps\*"
 "$env:windir\memory.dmp"
 "$env:windir\minidump\*"
 "$env:windir\Logs\CBS\*"
@@ -48,19 +49,20 @@ $temp_dirs=@(
 "$env:windir\Logs\SIH\*"
 "$env:windir\Logs\waasmedic\*"
 "$env:windir\Logs\waasmediccapsule\*"
+"$env:windir\Logs\WindowsServerBackup\*"
 "$env:windir\Logs\WindowsUpdate\*"
 "$env:windir\servicing\LCU\*"
 "$env:windir\System32\sru\*"
 "$env:windir\System32\config\systemprofile\AppData\Local\Microsoft\Windows\WebCache\*"
 "$env:windir\System32\config\systemprofile\AppData\Local\*.tmp"
+"$env:windir\SysWOW64\config\systemprofile\AppData\Local\RemoteHelper\logs\*"
 "$env:windir\SoftwareDistribution\*"
-"$env:windir\Temp\*"
+"$env:windir\Performance\WinSAT\DataStore\*"
 "$env:windir\Prefetch\*"
+"$env:windir\Temp\*"
 "$env:systemdrive\ProgramData\Microsoft\Windows\WER\*"
 "$env:systemdrive\ProgramData\Microsoft\Windows Defender\Scans\mpcache*.bin"
-"$env:systemdrive\Program Files (x86)\Microsoft\EdgeCore\*"
 "$env:systemdrive\Program Files (x86)\Microsoft\Edge\Application\SetupMetrics\*"
-"$env:systemdrive\Program Files (x86)\Microsoft\EdgeWebView\Application\1*"
 "$env:systemdrive\Program Files (x86)\Microsoft\EdgeWebView\Application\SetupMetrics\*"
 "$env:systemdrive\Program Files (x86)\Microsoft\EdgeUpdate\Install\*"
 "$env:systemdrive\Program Files (x86)\Microsoft\EdgeUpdate\Download\*"
@@ -124,7 +126,9 @@ $temp_dirs=@(
 "$env:systemdrive\Users\*\AppData\Local\Moonchild Productions\Pale Moon\Profiles\*\thumbnails\*"
 "$env:systemdrive\Users\*\AppData\Local\Mozilla\Firefox\Profiles\*\cache2\*"
 "$env:systemdrive\Users\*\AppData\Local\Mozilla\Firefox\Profiles\*\startupCache\*"
+"$env:systemdrive\Users\*\AppData\Local\Mozilla\Firefox\Profiles\*\jumpListCache\*"
 "$env:systemdrive\Users\*\AppData\Local\Mozilla\Firefox\Profiles\*\thumbnails\*"
+"$env:systemdrive\Users\*\AppData\LocalLow\Adobe\Acrobat\DC\ConnectorIcons\*"
 "$env:systemdrive\Users\*\AppData\Roaming\Mozilla\Firefox\Crash Reports\*"
 "$env:systemdrive\Users\*\AppData\Roaming\Mozilla\Firefox\Pending Pings\*"
 "$env:systemdrive\Users\*\AppData\Roaming\Mozilla\Firefox\Profiles\*\crashes\*"
@@ -216,6 +220,15 @@ function clean_dir($path){
   if(Test-Path -LiteralPath $path){rf($path)}
 }
 
+function clean_edge(){
+  $list=ls "${env:ProgramFiles(x86)}\Microsoft\EdgeCore\*"|Select-String -NotMatch -Pattern '(Optimize|arch)'|sort|select -SkipLast 1
+  foreach($l in $list){clean_dir($l)}
+  $list=ls "${env:ProgramFiles(x86)}\Microsoft\EdgeWebView\Application\*"|Select-String -NotMatch -Pattern '(Setup)'|sort|select -SkipLast 1
+  foreach($l in $list){clean_dir($l)}
+  $list=ls "${env:ProgramFiles(x86)}\Microsoft\EdgeUpdate\" -Exclude "*.exe" |Select-String -NotMatch -Pattern '(Download|Install|Offline)'|sort|select -SkipLast 1
+  foreach($l in $list){clean_dir($l)}
+}
+
 function cleanup(){
   wh "Windows components cleanup..."
   Dism /Online /Cleanup-Image /StartComponentCleanup /ResetBase /NoRestart /Quiet
@@ -231,12 +244,13 @@ function cleanup(){
   stop_browsers
   gps dllhost* -ea 0|foreach{$p=$_;$_.Modules|foreach{if($_.ModuleName -eq "wininet.dll"){spps $p.id -Force -ea 0}}}
   wh "Deleting temporary folders and files..."
-  foreach($p in $acl_reset_dirs) {
+  	foreach($p in $acl_reset_dirs) {
     takeown /a /f $p *>$null
     icacls $p /reset /t /c /q *>$null
     cmd /c "del /q /s `"$p\*`"" *>$null
   }
   foreach($p in $temp_dirs){clean_dir($p)}
+  clean_edge
   try{ls $env:systemdrive\ -Include "*.log","*.tmp","*.dmp","*.mdmp","*.old","LOG","LOCK","iconcache*.db","thumbcache*.db" -Force -s -File -ea 0|foreach{rf($_)}}catch{}
   sasv DPS -ea 0 *>$null
   sasv TrustedInstaller -ea 0 *>$null
