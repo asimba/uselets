@@ -147,7 +147,7 @@ class MainWindow(QWidget):
 
     def getfilelist_success_callback(self,links):
         for link in links:
-            path=join(self.basepath,link[0],link[1])
+            path=join(self.basepath,link[0],link[1]).replace("\r", "").replace("\n", "")
             try: makedirs(path,exist_ok=True)
             except: return
             link.append(realpath(join(path,link[2])))
@@ -286,6 +286,10 @@ class MainWindow(QWidget):
             function start_parser(){
                 var file_links=[];
                 var details_links=[];
+//                var partitions=['IrdDocuments'];
+//                var partitions=['RIIDocuments'];
+//                var partitions=['ProjectDocuments'];
+//                var partitions=['SmetaDocuments'];
                 var partitions=['ProjectDocuments','RIIDocuments','SmetaDocuments','IrdDocuments'];
                 new QWebChannel(qt.webChannelTransport,(channel)=>{
                     window.qtwebchannel=channel.objects.backend;
@@ -321,7 +325,7 @@ class MainWindow(QWidget):
                 };
             };
             function sec_replace(section){
-                return section.trim().replaceAll('"','_').trim().replaceAll(':','_').slice(0,64).trim();
+                return section.trim().replaceAll('"','_').trim().replaceAll(':','_').slice(0,64).trim().replace(/\\n|\\r\\n|\\r/g,'');
             };
             async function get_sig_links_details(file_links,details_links,partitions){
                 if(window.process_canceled){
@@ -562,7 +566,6 @@ class MainWindow(QWidget):
         self.basepath=realpath('out')
         try: makedirs(self.basepath,exist_ok=True)
         except: pass
-
         self.reload_button.clicked.connect(self.reload)
         self.get_data_button.clicked.connect(self.getfileslist)
         self.get_all_data_button.clicked.connect(self.getallfileslist)
